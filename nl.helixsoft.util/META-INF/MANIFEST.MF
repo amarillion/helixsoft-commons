@@ -1,0 +1,6 @@
+Bundle-SymbolicName: nl.helixsoft.util
+Bundle-Version: 1.0.0
+Bundle-Name: nl.helixsoft.util
+Export-Package: nl.helixsoft.util,
+ nl.helixsoft.recordstream,
+ org.pathvisio.core.debug

@@ -2,3 +2,25 @@ helixsoft-commons
 =================
 
 A bunch of useful java utility classes that I'm re-using between multiple projects
+
+What is here?
+=============
+
+At the moment, the utilities are divided in three broad categories:
+
+* nl.helixsoft.util: which contains the packages
+** nl.helixsoft.recordstream: for mangling tabular data, such as 
+   tab-delimited files and database records
+** nl.helixsoft.util: mixed bag
+* nl.helixsoft.xml: simple xml and html generator
+* nl.helixsoft.gui: a bunch of GUI methods
+	
+	
+Where is this code used?
+========================
+
+It may be helpful to see living examples of this code in action.
+This code is being used
+
+* By various plugins of PathVisio (http://www.pathvisio.org)
+* By Dr. Higgins (http://www.helixsoft.nl/project_page.php?file_name=higgins.proj)

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<project name="common-libs" default="all" basedir=".">
+
+   <macrodef name="iterate">
+		<attribute name="target"/>
+		<sequential>
+			<subant target="@{target}">
+				<filelist dir=".">
+					<file name="nl.helixsoft.util/build.xml"/>
+					<file name="nl.helixsoft.util.gui/build.xml"/>
+					<file name="nl.helixsoft.util.xml/build.xml"/>
+				</filelist>
+			</subant>
+		</sequential>
+	</macrodef>
+
+	<target name="clean" description="Remove all intermediate files.">
+		<iterate target="clean"/>
+	</target>
+
+	<target name="jar" description="Create jar bundles.">
+		<iterate target="jar"/>
+	</target>
+
+	<target name="all" depends="jar" description="Compile all versions of this project" />
+
+</project>

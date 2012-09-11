@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project name="nl.helixsoft.util.xml" default="jar" basedir=".">
+
+	<import file="../build-common.xml" />
+
+	<property name="jar.name" value="nl.helixsoft.util.xml.jar"/>
+	
+	<path id="project.class.path"/>
+
+	<path id="test.class.path"/>
+
+</project>
