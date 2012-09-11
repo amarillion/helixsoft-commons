@@ -24,3 +24,12 @@ This code is being used
 
 * By various plugins of PathVisio (http://www.pathvisio.org)
 * By Dr. Higgins (http://www.helixsoft.nl/project_page.php?file_name=higgins.proj)
+
+Terms of use
+============
+
+Copyright: Martijn van Iersel
+
+You may use this code under the terms of, at your option, either the 
+Apache 2.0 license (http://www.apache.org/licenses/LICENSE-2.0.html)
+or the LGPL-3.0 license (http://www.gnu.org/licenses/lgpl.html)
