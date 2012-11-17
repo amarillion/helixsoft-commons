@@ -1,6 +1,8 @@
 package nl.helixsoft.recordstream;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nl.helixsoft.recordstream.Reducer.Count;
@@ -12,12 +14,12 @@ public class TestRecordStream extends TestCase {
 
 	private static class MockRecordStream implements RecordStream
 	{
-		private final String[] cols;
+		private final List<String> cols;
 		private final Object[][] data;
 		
-		MockRecordStream (String[] cols, Object[][] data)
+		MockRecordStream (String[] _cols, Object[][] data)
 		{
-			this.cols = cols;
+			this.cols = Arrays.asList(_cols);
 			this.data = data;
 		}
 		
@@ -26,18 +28,24 @@ public class TestRecordStream extends TestCase {
 		@Override
 		public int getNumCols() 
 		{
-			return cols.length;
+			return cols.size();
 		}
 
 		@Override
 		public String getColumnName(int i) {
-			return cols[i];
+			return cols.get(i);
 		}
 
 		@Override
 		public Record getNext() throws RecordStreamException {
 			if (row >= data.length) return null;
 			return new DefaultRecord(this, data[row++]);
+		}
+
+		@Override
+		public int getColumnIndex(String name) 
+		{
+			return cols.indexOf(name);
 		}
 	}
 	
@@ -120,6 +128,45 @@ public class TestRecordStream extends TestCase {
 		
 		r = cast.getNext();
 		assertEquals ("group2", r.getValue(idx.get("group")));
+		assertEquals ("ghi", r.getValue(idx.get("col1")));
+		assertEquals ("jkl", r.getValue(idx.get("col2")));
+
+		r = cast.getNext();
+		assertNull (r);
+	}
+
+	public void testCastMultiKey() throws RecordStreamException
+	{
+		RecordStream rs = new MockRecordStream (
+				new String[] { "group", "subgroup", "col", "var" },
+				new Object[][] 	{
+							{ "group0", "subgroup1", "col1", "abc" },
+							{ "group0", "subgroup1", "col2", "def" },
+							{ "group0", "subgroup2", "col1", "ghi" }, 
+							{ "group0", "subgroup2", "col2", "jkl" }
+				});
+
+		Cast cast = new Cast (rs, new String[] { "group", "subgroup" }, "col", "var");
+		
+		assertEquals (4, cast.getNumCols());
+		
+		Map<String, Integer> idx = new HashMap<String, Integer>();
+		for (int i = 0; i < cast.getNumCols(); ++i) idx.put (cast.getColumnName(i), i);
+		assertTrue (idx.containsKey("group"));
+		assertTrue (idx.containsKey("subgroup"));
+		assertTrue (idx.containsKey("col1"));
+		assertTrue (idx.containsKey("col2"));
+		
+		Record r;
+		r = cast.getNext();
+		assertEquals ("group0", r.getValue(idx.get("group")));
+		assertEquals ("subgroup1", r.getValue(idx.get("subgroup")));
+		assertEquals ("abc", r.getValue(idx.get("col1")));
+		assertEquals ("def", r.getValue(idx.get("col2")));
+		
+		r = cast.getNext();
+		assertEquals ("group0", r.getValue(idx.get("group")));
+		assertEquals ("subgroup2", r.getValue(idx.get("subgroup")));
 		assertEquals ("ghi", r.getValue(idx.get("col1")));
 		assertEquals ("jkl", r.getValue(idx.get("col2")));
 

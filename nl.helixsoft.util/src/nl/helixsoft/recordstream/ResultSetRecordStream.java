@@ -2,26 +2,27 @@ package nl.helixsoft.recordstream;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class ResultSetRecordStream implements RecordStream
 {
 	private final ResultSet rs;
+	private boolean closed = false;
 	private int colNum;
-	private List<String> colnames;
+	private BiMap<String, Integer> colnames;
 	
 	public ResultSetRecordStream(ResultSet wrapped) throws RecordStreamException 
 	{ 
 		this.rs = wrapped;
 		try {
-		colNum = rs.getMetaData().getColumnCount();
-		colnames = new ArrayList<String>();
-		for (int col = 1; col <= colNum; ++col)
-		{
-			colnames.add(rs.getMetaData().getColumnName(col));
-		}
+			colNum = rs.getMetaData().getColumnCount();
+			colnames = HashBiMap.create();
+			for (int col = 1; col <= colNum; ++col)
+			{
+				colnames.put(rs.getMetaData().getColumnName(col), col-1);
+			}
 		}
 		catch (SQLException ex)
 		{
@@ -30,21 +31,29 @@ public class ResultSetRecordStream implements RecordStream
 	}
 
 	@Override
-	public int getNumCols() {
+	public int getNumCols() 
+	{
 		return colNum;
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		return colnames.get(i);
+		return colnames.inverse().get(i);
 	}
 
 	@Override
 	public Record getNext() throws RecordStreamException 
 	{
 		try {
-			if (!rs.next()) return null;
+			if (closed)
+				return null;
+			
+			if (!rs.next()) 
+			{
+				close();
+				return null;
+			}
 			
 			Object[] data = new Object[colNum];
 			for (int col = 1; col <= colNum; ++col)
@@ -54,6 +63,30 @@ public class ResultSetRecordStream implements RecordStream
 			return new DefaultRecord(this, data);
 		} catch (SQLException ex) {
 			throw new RecordStreamException(ex);
+		}
+	}
+
+	private void close() throws SQLException 
+	{
+		closed = true;
+		rs.close();
+	}
+
+	@Override
+	public int getColumnIndex(String name) 
+	{
+		return colnames.get(name);
+	}
+	
+	@Override
+	public void finalize()
+	{
+		try {
+			if (!closed) rs.close();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
 		}
 	}
 }

@@ -98,4 +98,10 @@ public class Adjuster implements RecordStream
 		}
 	}
 
+	@Override
+	public int getColumnIndex(String name)
+	{
+		return parent.getColumnIndex(name);
+	}
+
 }

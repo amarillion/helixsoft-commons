@@ -4,3 +4,4 @@ Bundle-Name: nl.helixsoft.util
 Export-Package: nl.helixsoft.util,
  nl.helixsoft.recordstream,
  org.pathvisio.core.debug
+Require-Bundle: com.google.collect;bundle-version="1.0.0"

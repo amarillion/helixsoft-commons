@@ -1,6 +1,6 @@
 package nl.helixsoft.recordstream;
 
-//TODO
+//TODO unimplemented
 public class Melt implements RecordStream {
 
 	@Override
@@ -19,6 +19,13 @@ public class Melt implements RecordStream {
 	public Record getNext() throws RecordStreamException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getColumnIndex(String name)
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -36,8 +36,8 @@ import java.util.Map;
 public class Cast implements RecordStream
 {
 	private final RecordStream parent;
-	private final String groupVar;
-	private final int groupIdx;
+	private List<String> groupVar;
+	private final int[] groupIdx;
 	private final int columnIdx;
 	private final int valueIdx;
 	
@@ -47,10 +47,10 @@ public class Cast implements RecordStream
 	/**
 	 * If the input stream contains more than three columns, the remaining ones are quietly ignored.
 	 * @param parent incoming recordStream. Note it must be sorted by groupVar for this to work properly.
-	 * @param groupVar
+	 * @param _groupVar
 	 * @throws RecordStreamException 
 	 */	
-	public Cast (RecordStream parent, String groupVar, String columnVar, String valueVar) throws RecordStreamException
+	public Cast (RecordStream parent, String[] _groupVar, String columnVar, String valueVar) throws RecordStreamException
 	{
 		Map<String, Integer> idx = new HashMap<String, Integer>();
 		for (int i = 0; i < parent.getNumCols(); ++i)
@@ -59,13 +59,25 @@ public class Cast implements RecordStream
 		}
 		
 		this.parent = parent;
-		this.groupVar = groupVar;
-		groupIdx = idx.get(groupVar);
+		groupVar = new ArrayList<String>(_groupVar.length);
+		groupIdx = new int[_groupVar.length];
+		int i = 0;
+		for (String g : _groupVar) 
+		{
+			groupVar.add(g);
+			groupIdx[i++] = idx.get(g);
+		}
+		
 		columnIdx = idx.get(columnVar);
 		valueIdx = idx.get(valueVar);
 		
 		next = parent.getNext();
 		loadNextRecord();
+	}
+
+	public Cast (RecordStream parent, String groupVar, String columnVar, String valueVar) throws RecordStreamException
+	{
+		this (parent, new String[] { groupVar }, columnVar, valueVar);
 	}
 	
 	private class IndexedRecord implements Record
@@ -100,8 +112,12 @@ public class Cast implements RecordStream
 		}
 
 		nextResult = new IndexedRecord();
-		String currentGroup = "" + next.getValue(groupIdx);
-		nextResult.putValue (0, currentGroup);
+		String[] currentGroup = new String[groupIdx.length];
+		for (int i = 0; i < groupIdx.length; ++i)
+		{
+			currentGroup[i] = "" + next.getValue(groupIdx[i]);
+			nextResult.putValue (i, currentGroup[i]);
+		}
 
 		while (true)
 		{
@@ -114,28 +130,41 @@ public class Cast implements RecordStream
 				outCols.add(col);
 			}
 			int idx = outColIdx.get(col);
-			nextResult.putValue(idx+1, val);
+			nextResult.putValue(idx + groupIdx.length, val);
 			
 			next = parent.getNext();
 			if (next == null) break;
-			if (!currentGroup.equals ("" + next.getValue(groupIdx))) break;
+			
+			if (!sameGroup(currentGroup)) break;
 		}
+	}
+
+	private boolean sameGroup(String[] currentGroup)
+	{
+		for (int i = 0; i < groupIdx.length; ++i)
+		{
+			if (!currentGroup[i].equals ("" + next.getValue(groupIdx[i])))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	
 	@Override
 	public int getNumCols() 
 	{
-		return outCols.size() + 1;
+		return outCols.size() + groupIdx.length;
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		if (i == 0)
-			return groupVar;
+		if (i < groupVar.size())
+			return groupVar.get(i);
 		else
-			return outCols.get(i - 1);
+			return outCols.get(i - groupVar.size());
 	}
 
 	@Override
@@ -143,6 +172,13 @@ public class Cast implements RecordStream
 		Record result = nextResult;
 		loadNextRecord();
 		return result;
+	}
+
+
+	@Override
+	public int getColumnIndex(String name)
+	{
+		return outColIdx.get(name);
 	}
 	
 }

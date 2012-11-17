@@ -1,9 +1,9 @@
 package nl.helixsoft.recordstream;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 
 /**
@@ -19,9 +19,7 @@ public class Reducer implements RecordStream
 {
 	private final RecordStream parent;
 	private final Map<String, GroupFunc> accumulator;
-	private final Map<String, Integer> idxByKey;
-	private final String groupKey;
-	private final List<String> dataHeaders;
+	private final BiMap<String, Integer> outHeaders;
 	private Object prevValue = null;
 	private Record row;
 	private int idxGroupVar;
@@ -31,14 +29,15 @@ public class Reducer implements RecordStream
 		this.parent = parent;
 		this.accumulator = accumulator; //TODO: should really make a defensive copy
 		
-		idxByKey = new HashMap<String, Integer>();
-		for (int i = 0; i < parent.getNumCols(); ++i)
+		outHeaders = HashBiMap.create();
+		outHeaders.put (groupVar, 0);
+		int i = 1;
+		for (String header : accumulator.keySet())
 		{
-			idxByKey.put (parent.getColumnName(i), i);
+			outHeaders.put(header, i);
+			i++;
 		}
-		dataHeaders = new ArrayList<String>(accumulator.keySet());
-		this.groupKey = groupVar;
-		idxGroupVar = idxByKey.get(groupVar);
+		idxGroupVar = parent.getColumnIndex(groupVar);
 		
 		row = parent.getNext();
 		prevValue = row.getValue(idxGroupVar);
@@ -49,22 +48,23 @@ public class Reducer implements RecordStream
 	@Override
 	public int getNumCols() 
 	{
-		return dataHeaders.size() + 1;
+		return outHeaders.size();
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		if (i == 0) return groupKey; else return dataHeaders.get(i - 1);
+		return outHeaders.inverse().get(i);
 	}
 
 	private Record writeAccumulator() 
 	{
 		Object[] vals = new Object[getNumCols()];
 		vals[0] = prevValue;
-		for (int i = 0; i < dataHeaders.size(); ++i)
+		for (int i = 1; i < outHeaders.size(); ++i)
 		{
-			vals[i+1] = accumulator.get(dataHeaders.get(i)).getResult();
+			String colName = outHeaders.inverse().get(i);
+			vals[i] = accumulator.get(colName).getResult();
 		}
 		return new DefaultRecord(this, vals);
 	}
@@ -197,5 +197,10 @@ public class Reducer implements RecordStream
 			}
 			return idx;
 		}
+	}
+
+	@Override
+	public int getColumnIndex(String name) {
+		return outHeaders.get(name);
 	}
 }
