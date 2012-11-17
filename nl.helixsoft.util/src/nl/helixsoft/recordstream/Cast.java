@@ -98,6 +98,12 @@ public class Cast implements RecordStream
 		public RecordStream getParent() {
 			return Cast.this;
 		}
+
+		@Override
+		public Object getValue(String s) 
+		{
+			return values.get(Cast.this.outColIdx.get(s));
+		}
 	}
 
 	private IndexedRecord nextResult;

@@ -7,4 +7,5 @@ public class DefaultRecord implements Record
 	private final Object[] fields;
 	public DefaultRecord (RecordStream parent, Object fields[]) { this.parent = parent; this.fields = fields; }
 	public Object getValue(int i) { return fields[i]; }
+	public Object getValue(String s) { return fields[parent.getColumnIndex(s)]; }
 }
