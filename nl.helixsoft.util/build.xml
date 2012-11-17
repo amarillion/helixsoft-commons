@@ -5,7 +5,11 @@
 
 	<property name="jar.name" value="nl.helixsoft.util.jar"/>
 	
-	<path id="project.class.path"/>
+	<path id="project.class.path">
+		<fileset dir="../lib">
+			<include name="com.google.collect*.jar"/>
+		</fileset>
+	</path>
 
 	<path id="test.class.path"/>
 
