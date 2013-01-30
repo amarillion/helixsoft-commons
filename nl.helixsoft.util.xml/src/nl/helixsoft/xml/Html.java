@@ -3,7 +3,7 @@ package nl.helixsoft.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Html
+public class Html implements HtmlRenderable
 {
 	/** Color constants */
 	public static String RED = "#FF0000";
@@ -17,7 +17,7 @@ public class Html
 	
 	private final String tag;
 	private List<String> attrKey = new ArrayList<String>();
-	private List<String> attrVal = new ArrayList<String>();
+	private List<Object> attrVal = new ArrayList<Object>();
 	private List<Object> contents = new ArrayList<Object>();
 
 	private Html(String tag)
@@ -126,16 +126,21 @@ public class Html
 		return result;
 	}
 
-	public Html attr(String key, String value)
+	public Html attr(String key, Object value)
 	{
 		attrKey.add(key);
 		attrVal.add(value);
 		return this;
 	}
 
-	public Html href(String value)
+	public Html href(Object value)
 	{
 		return attr ("href", value);
+	}
+
+	public Html href(Page p)
+	{
+		return attr ("href", p.getLink());
 	}
 
 	public Html id(String value)
@@ -156,34 +161,9 @@ public class Html
 	@Override
 	public String toString()
 	{
-		StringBuilder builder = new StringBuilder();
-		builder.append ("<");
-		builder.append (tag);
-
-		if(attrKey.size() > 0) 
-		{
-			for(int i = 0; i < attrKey.size(); i++) 
-			{
-				builder.append(" ");
-				builder.append(attrKey.get(i));
-				builder.append("=\"");
-				builder.append(attrVal.get(i));
-				builder.append('"');
-			}
-		}
-
-		builder.append (">\n");
-
-		for (Object o : contents)
-		{
-			builder.append ("" + o);
-		}
-
-		builder.append ("</");
-		builder.append (tag);
-		builder.append (">\n");
-
-		return builder.toString();
+		Context c = new Context();
+		flush (c);
+		return c.builder.toString();
 	}
 
 	public Html addChild (Object... os)
@@ -195,4 +175,65 @@ public class Html
 		return this;
 	}
 
+	public static Html title(Object... os) 
+	{
+		return tag ("title", os);
+	}
+
+	public static Html head(Object... os) 
+	{
+		return tag ("head", os);
+	}
+
+	public static Html td(Object... os) 
+	{
+		return tag ("td", os);
+	}
+
+	public void flush (Context c)
+	{
+		c.builder.append ("<");
+		c.builder.append (tag);
+
+		if(attrKey.size() > 0) 
+		{
+			for(int i = 0; i < attrKey.size(); i++) 
+			{
+				c.builder.append(" ");
+				c.builder.append(attrKey.get(i));
+				c.builder.append("=\"");
+				c.render (attrVal.get(i));
+				c.builder.append('"');
+			}
+		}
+
+		if (contents.isEmpty())
+		{
+			c.builder.append ("/>\n");
+		}
+		else
+		{
+			c.builder.append (">\n");
+	
+			for (Object o : contents)
+			{
+				c.render(o);
+			}
+	
+			c.builder.append ("</");
+			c.builder.append (tag);
+			c.builder.append (">\n");
+		}
+	}
+
+	public static Html th(Object[] data) 
+	{
+		Html result = new Html ("tr");
+		for (Object cell : data)
+		{
+			result.addChild (Html.tag("th", cell));
+		}
+		return result;
+	}
+	
 }

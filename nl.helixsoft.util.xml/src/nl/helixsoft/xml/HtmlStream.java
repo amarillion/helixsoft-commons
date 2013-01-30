@@ -27,8 +27,14 @@ public class HtmlStream
 		parent.println(string);
 	}
 	
-	public void add (Html html)
+	public HtmlStream add (Html html)
 	{
 		parent.print (html.toString());
+		return this;
+	}
+
+	public void close() 
+	{
+		parent.close();
 	}
 }

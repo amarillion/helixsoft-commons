@@ -1,13 +1,10 @@
 package nl.helixsoft.xml;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 public class HtmlSite
 {
-	File siteDir;
+	private final File siteDir;
 	
 	public HtmlSite (File f)
 	{
@@ -19,15 +16,15 @@ public class HtmlSite
 		{
 			throw new IllegalArgumentException("Must pass a directory to HtmlSite");
 		}
+		siteDir = f;
 	}
 	
-	public HtmlStream addPage(String name) throws FileNotFoundException
+	
+	public Page addPage(String name)
 	{
-		HtmlStream result;
-		File f = new File (siteDir, name + ".html");
-		PrintStream str = new PrintStream (new FileOutputStream (f));
-		result = new HtmlStream (str);
-		return result;
+		String link = name + ".html";
+		File f = new File (siteDir, link);
+		return new Page (f, link);
 	}
 	
 }
