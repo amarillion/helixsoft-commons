@@ -7,7 +7,7 @@
 	
 	<path id="project.class.path">
 		<fileset dir="../lib">
-			<include name="com.google.collect*.jar"/>
+			<include name="guava*.jar"/>
 		</fileset>
 	</path>
 

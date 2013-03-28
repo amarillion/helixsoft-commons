@@ -3,7 +3,11 @@ package nl.helixsoft.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils 
 {
@@ -22,12 +26,35 @@ public class StringUtils
 		return encoded;
 	}
 
+	/** 
+	 * Strip html tags from a String.
+	 * For example, abc&lt;b&gt;def will be turned into abcdef.
+	 * Http entities such as &amp;amp; are left unchanged, for doing that as well, see stripHtml.
+	 */
+	public static String stripTags(String s)
+	{
+		return s.replaceAll("<[^>]+>", "");
+	}
+	
 	/**
 	 * Join collection into a single string, with a separator between.
 	 */
 	public static String join (String sep, Collection<?> values)
 	{
 		StringBuilder builder = new StringBuilder();
+		join (builder, sep, values);
+		return builder.toString();
+	}
+
+	/**
+	 * Join collection into and appent to a StringBuilder, with a separator between.
+	 * Useful if you want to join strings and append to an existing StringBuilder.
+	 * @param builder StringBuilder you want to append to. This variable will be modified.
+	 * @param sep Separator between strings
+	 * @param values collection of strings to join.
+	 */
+	public static void join (StringBuilder builder, String sep, Collection<?> values)
+	{
 		boolean first = true;
 		for (Object o : values)
 		{
@@ -37,6 +64,106 @@ public class StringUtils
 				builder.append (sep);
 			builder.append ("" + o);
 		}
-		return builder.toString();
 	}
+
+	public static String rep (String base, int count)
+	{
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < count; ++i)
+		{
+			builder.append (base);
+		}
+		return builder.toString();
+		
+	}
+	
+	private static final Map<String, String> httpEntities;
+	
+	//TODO: add more. see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+	static {
+		httpEntities = new HashMap<String, String>();
+		httpEntities.put ("larr", "\u2190");
+		httpEntities.put ("harr", "\u2194");
+		httpEntities.put ("rarr", "\u2192");			
+		httpEntities.put ("amp", "&");			
+		httpEntities.put ("lt", "<");
+		httpEntities.put ("gt", ">");
+		httpEntities.put ("alpha",		"\u03B1");			
+		httpEntities.put ("beta",		"\u03B2");			
+		httpEntities.put ("gamma",		"\u03B3");			
+		httpEntities.put ("delta",		"\u03B4");			
+		httpEntities.put ("epsilon",	"\u03B5");			
+		httpEntities.put ("zeta",		"\u03B6");			
+		httpEntities.put ("eta",		"\u03B7");			
+		httpEntities.put ("theta",		"\u03B8");			
+		httpEntities.put ("iota",		"\u03B9");			
+		httpEntities.put ("kappa",		"\u03BA");			
+		httpEntities.put ("lambda",		"\u03BB");			
+		httpEntities.put ("mu", 		"\u03BC");			
+		httpEntities.put ("nu", 		"\u03BD");			
+		httpEntities.put ("xi", 		"\u03BE");			
+		httpEntities.put ("omicron",	"\u03BF");			
+		httpEntities.put ("pi",			"\u03C0");			
+		
+		httpEntities.put ("omega", 		"\u03C9");
+	}
+	
+	/**
+	 * Strips html tags and http entities.
+	 * Http entities such as '&amp;amp;' are replaced with '&amp;'
+	 */
+	public static String stripHtml(String string) 
+	{
+		String s = string;
+		
+		// strip tags
+		s = s.replaceAll("<[^>]+>", "");
+		// reduce double whitespace that may have been left as a result from previous step.
+		s = s.replaceAll(" +", " ");			
+		// replace some common entities
+
+		// now replace http entities
+		StringBuffer buf = new StringBuffer();
+		Matcher m = Pattern.compile("&(\\w+);").matcher(s);
+		while (m.find()) 
+		{
+			String r = httpEntities.get(m.group(1));
+			if (r != null) {
+				m.appendReplacement(buf, r);
+			}
+			else
+			{
+				// put original back
+				m.appendReplacement(buf, m.group(0));
+				System.err.println ("Failed to look up " + m.group(1));
+			}
+		}
+		m.appendTail(buf);
+
+		return buf.toString();
+	}
+	
+	public static final String[] EMPTY_STRING_ARRAY = new String[] {};
+	
+	/** safely split a string, 
+	 * Unlike String.split(), this works on null strings.
+	 * Returns a zero-length array if the input is null */
+	public static String[] safeSplit(String regex, Object o)
+	{
+		if (o == null) return EMPTY_STRING_ARRAY;
+		String s = o.toString();
+		if ("".equals(s)) return EMPTY_STRING_ARRAY;
+		return s.split(regex);
+	}
+	
+	/**
+	 * Safely convert an object to null;
+	 * If the input is null, the result is null as well.
+	 */
+	public static String safeToString (Object o)
+	{
+		if (o == null) return null;
+		return o.toString();
+	}
+
 }

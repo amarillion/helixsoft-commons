@@ -63,7 +63,7 @@ public class ListWithPropertiesTableModel<U extends PropertyColumn, T extends Ro
 		fireTableRowsInserted(newRowIndex, newRowIndex);
 	}
 
-	public void setColumns (U[] cols)
+	public void setColumns (U... cols)
 	{
 		columns = cols;
 		fireTableStructureChanged();

@@ -2,8 +2,12 @@ package nl.helixsoft.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public class FileUtils 
 {
@@ -74,5 +78,22 @@ public class FileUtils
 		return fileList;
 	}
 
+	/**
+	 * Open a file as a regular file input stream or a gzip input stream, depending on the extension.
+	 */
+	public static InputStream openZipStream(File g) throws IOException 
+	{
+		InputStream is;
+		if (g.getName().endsWith(".gz"))
+		{
+			is = new GZIPInputStream(new FileInputStream(g));
+		}
+		else
+		{
+			is = new FileInputStream(g);
+		}
+		return is;
+	}
+		
 	
 }

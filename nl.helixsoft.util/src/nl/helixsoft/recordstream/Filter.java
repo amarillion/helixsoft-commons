@@ -45,7 +45,41 @@ public class Filter implements RecordStream
 			return allowedVals.contains(val);
 		}
 	}
-	
+
+	public static class FieldEquals implements FilterFunc 
+	{ 
+		private final String eq;
+		private final String field;
+		
+		public FieldEquals (String field, String eq)
+		{
+			this.eq = eq.toString();
+			this.field = field;
+		}
+		
+		public boolean accept (Record r) 
+		{ 
+			return r.getValue(field).toString().equals(eq); 
+		} 
+	}
+
+	public static class FieldNotEquals implements FilterFunc 
+	{ 
+		private final String neq;
+		private final String field;
+		
+		public FieldNotEquals (String field, String neq)
+		{
+			this.neq = neq.toString();
+			this.field = field;
+		}
+		
+		public boolean accept (Record r) 
+		{ 
+			return !r.getValue(field).toString().equals(neq); 
+		} 
+	}
+
 	private final RecordStream parent;
 	private final FilterFunc func;
 	
@@ -74,7 +108,8 @@ public class Filter implements RecordStream
 		{
 			Record result = parent.getNext();
 			if (result == null) return null; // end of stream
-			if (func.accept(result)) return result; // return accepted record
+			if (func.accept(result)) 
+				return result; // return accepted record
 			// not accepted -> try next
 		}
 	}

@@ -6,16 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: gui.jar,
  lib/org.bridgedb.gui.jar,
  lib/org.pathvisio.jgoodies.forms-1.2.0.jar
-Export-Package: com.jgoodies.forms.builder,
- com.jgoodies.forms.debug,
- com.jgoodies.forms.factories,
- com.jgoodies.forms.layout,
- com.jgoodies.forms.util,
- nl.helixsoft.util.gui,
+Export-Package: nl.helixsoft.util.gui,
  nl.helixsoft.util.table,
- org.bridgedb.gui,
  org.pathvisio.core.preferences,
  org.pathvisio.desktop,
  org.pathvisio.desktop.parameter,
  org.pathvisio.desktop.util,
  org.pathvisio.gui.dialogs
+Require-Bundle: org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
+ org.bridgedb.gui;bundle-version="1.1.0"

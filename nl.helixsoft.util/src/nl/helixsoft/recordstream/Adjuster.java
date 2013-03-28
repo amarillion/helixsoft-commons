@@ -2,6 +2,8 @@ package nl.helixsoft.recordstream;
 
 import java.util.Map;
 
+import nl.helixsoft.util.StringUtils;
+
 /**
  * Adjuster can apply operations to individual fields of a RecordStream on the fly.
  * <p>
@@ -75,26 +77,11 @@ public class Adjuster implements RecordStream
 	
 	/** 
 	 * Adjuster func to remove html tags, and replace html entities with the corresponding characters.
-	 * //TODO: use more complete list of html entities 
 	 **/
 	public static class HtmlStrip implements AdjustFunc
 	{
 		public Object adjust (Object val) { 
-			String s = "" + val;
-			// strip tags
-			s = s.replaceAll("<[^>]+>", "");
-			// reduce double whitespace that may have been left as a result from previous step.
-			s = s.replaceAll(" +", " ");			
-			// replace some common entities
-			s = s.replaceAll("&larr;", "←");
-			s = s.replaceAll("&harr;", "↔");
-			s = s.replaceAll("&rarr;", "→");			
-			s = s.replaceAll("&delta;", "δ");			
-			s = s.replaceAll("&gamma;", "γ");			
-			s = s.replaceAll("&beta;", "β");			
-			s = s.replaceAll("&alpha;", "α");			
-			s = s.replaceAll("&omega;", "ω");			
-		return s;
+			return StringUtils.stripHtml("" + val);
 		}
 	}
 

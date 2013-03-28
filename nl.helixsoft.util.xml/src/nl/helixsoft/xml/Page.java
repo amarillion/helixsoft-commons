@@ -29,17 +29,19 @@ public class Page
 
 	public String getLink() 
 	{
-		try {
-			return URLEncoder.encode (link, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Wrong encoding, programming error");
-		}
+		// hack for a name that starts with %2F....
+		return link.replaceAll("%2F", "%252F").replaceAll("%3A", "%253A");
+//		try {
+//			return URLEncoder.encode (link, "UTF-8");
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//			throw new RuntimeException("Wrong encoding, programming error");
+//		}
 	}
 	
 	public void render(Html template, Object data) throws FileNotFoundException
 	{
-		System.out.println ("Rendering " + f.getAbsolutePath());
+//		System.out.println ("Rendering " + f.getAbsolutePath());
 		if (!f.getParentFile().exists()) 
 		{
 			f.getParentFile().mkdirs();

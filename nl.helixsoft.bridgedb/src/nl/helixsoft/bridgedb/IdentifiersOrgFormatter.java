@@ -5,11 +5,25 @@ import java.util.regex.Pattern;
 
 import nl.helixsoft.util.StringUtils;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 
+/**
+ * Converts Xrefs to identifiers.org URI's.
+ * <p>
+ * Identifiers.org URI's have the nice property that they are
+ * resolveable.
+ * <p>
+ * For Xrefs that are not in the miriam registry
+ * (for example, Affymetrix id's), it is not possible to generate
+ * an identifiers.org URI. Instead a URI is generated that starts 
+ * with http://bridgedb.org. These are unfortunately not resolveable.
+ */
 public class IdentifiersOrgFormatter implements XrefFormatter 
 {
 	Pattern pat = Pattern.compile("urn:miriam:(.+):(.+)");
+	Pattern rev = Pattern.compile("http://(bridgedb|identifiers).org/(.+)/(.+)");
 	
 	@Override
 	public String format(Xref ref) 

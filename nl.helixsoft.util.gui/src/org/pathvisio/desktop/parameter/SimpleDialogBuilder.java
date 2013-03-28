@@ -61,4 +61,9 @@ public class SimpleDialogBuilder extends OkCancelDialog
 	{
 		return model.getBoolean(i);
 	}
+
+	public int getInteger(int i) 
+	{
+		return Integer.parseInt(model.getString(i));
+	}
 }

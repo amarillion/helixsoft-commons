@@ -1,6 +1,10 @@
 package nl.helixsoft.recordstream;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -24,7 +28,7 @@ public class Reducer implements RecordStream
 	private Record row;
 	private int idxGroupVar;
 	
-	Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws RecordStreamException
+	public Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws RecordStreamException
 	{
 		this.parent = parent;
 		this.accumulator = accumulator; //TODO: should really make a defensive copy
@@ -174,6 +178,24 @@ public class Reducer implements RecordStream
 		public void accumulate (Record val) { int i = getIdx(val); if (first) first = false; else builder.append(sep); builder.append(val.getValue(i).toString()); }
 		public Object getResult() { return builder.toString(); }			
 		public void clear() { first = true; builder = new StringBuilder(); }
+	}
+	
+	public static class AsList extends AbstractGroupFunc
+	{
+		public AsList(String col) { super(col); }
+		private List<Object> list;
+		public void accumulate (Record val) { int i = getIdx(val); list.add (val.getValue(i)); }
+		public Object getResult() { return list; }
+		public void clear() { list = new ArrayList<Object>(); }
+	}
+
+	public static class AsSet extends AbstractGroupFunc
+	{
+		public AsSet(String col) { super(col); }
+		private Set<Object> set;
+		public void accumulate (Record val) { int i = getIdx(val); set.add (val.getValue(i)); }
+		public Object getResult() { return set; }
+		public void clear() { set = new HashSet<Object>(); }
 	}
 
 	public static abstract class AbstractGroupFunc implements GroupFunc

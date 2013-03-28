@@ -16,6 +16,8 @@
 //
 package org.pathvisio.core.debug;
 
+import java.io.PrintStream;
+
 
 /**
    A simple helper class for speed optimizations
@@ -24,10 +26,12 @@ public class StopWatch
 {
 	boolean running;
 	long start;
+	long startLap;
 	long last;
-
+	
 	public void start() {
 		start = System.currentTimeMillis();
+		startLap = start;
 		running = true;
 	}
 
@@ -41,6 +45,21 @@ public class StopWatch
 		if(running) return System.currentTimeMillis() - start;
 		return last;
 	}
+	
+	public long lap() 
+	{
+		long current = System.currentTimeMillis();
+		long result = current - startLap;
+		startLap = current;
+		return result; 
+	}
+	
+	public void lapAndReport (PrintStream ps)
+	{
+		long lap = lap();
+		ps.println ("Total: " + look() + " msec, Lap: " + lap + " msec");
+	}
+	
 /*
 	public void stopToLog(String msg) {
 		Logger.log.trace(msg + "\t" + stop());

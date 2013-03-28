@@ -10,7 +10,7 @@ import nl.helixsoft.recordstream.Reducer.GroupFunc;
 
 import junit.framework.TestCase;
 
-public class TestRecordStream extends TestCase {
+public class TestReduceAndCast extends TestCase {
 
 	private static class MockRecordStream implements RecordStream
 	{
