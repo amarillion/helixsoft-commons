@@ -3,6 +3,7 @@ Bundle-Version: 1.0.0
 Bundle-Name: nl.helixsoft.util
 Export-Package: nl.helixsoft.recordstream,
  nl.helixsoft.util,
+ nl.helixsoft.debug,
  org.pathvisio.core.debug
 Import-Package: com.google.common.collect;specification-version="1.0.0",
  com.google.common.primitives;specification-version="11.0.1"
