@@ -27,7 +27,13 @@ public class Filter implements RecordStream
 			this.field = field;
 			for (String s : set) allowedVals.add(s);
 		}
-		
+
+		public FieldInSet (String field, Set<String> set)
+		{
+			this.field = field;
+			allowedVals.addAll(set);
+		}
+
 		public boolean accept (Record r)
 		{
 			// find column index if needed

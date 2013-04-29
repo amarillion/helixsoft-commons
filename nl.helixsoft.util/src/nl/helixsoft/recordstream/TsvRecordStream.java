@@ -125,7 +125,7 @@ public class TsvRecordStream implements RecordStream
 	@Override
 	public int getColumnIndex(String name) 
 	{
-		if (!header.containsKey(name)) throw new IllegalArgumentException("Column '" + name + "' doesn't exist");
+		if (!header.containsKey(name)) throw new IllegalArgumentException("Column '" + name + "' doesn't exist, options are " + header.keySet());
 		return header.get(name);
 	}
 

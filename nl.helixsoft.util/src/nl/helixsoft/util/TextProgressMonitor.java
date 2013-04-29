@@ -24,6 +24,11 @@ public class TextProgressMonitor
 		taskText = val;
 	}
 	
+	public long getCount()
+	{
+		return i;
+	}
+	
 	// TODO: make adaptive
 	public void setAdaptive (boolean value)
 	{

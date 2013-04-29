@@ -94,6 +94,19 @@ public class FileUtils
 		}
 		return is;
 	}
+
+	public static String addBeforeExtension(String fname, String string) 
+	{
+		int last = fname.lastIndexOf('.');
+		if (last >= 0)
+		{
+			return fname.substring (0, last) + string + fname.substring (last);
+		}
+		else
+		{
+			return fname + string;
+		}
+	}
 		
 	
 }

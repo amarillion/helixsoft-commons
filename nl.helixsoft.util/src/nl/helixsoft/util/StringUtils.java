@@ -2,6 +2,7 @@ package nl.helixsoft.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,32 @@ public class StringUtils
 		}
 	}
 
+	/**
+	 * Join an multi value list into a single string, with a separator between.
+	 */
+	public static <T> void join (StringBuilder builder, String sep, T... values)
+	{
+		boolean first = true;
+		for (Object o : values)
+		{
+			if (first)
+				first = false;
+			else
+				builder.append (sep);
+			builder.append ("" + o);
+		}
+	}
+	
+	/**
+	 * Join an multi value list into a single string, with a separator between.
+	 */
+	public static <T> String join (String sep, T... values)
+	{
+		StringBuilder builder = new StringBuilder();
+		join (builder, sep, values);
+		return builder.toString();
+	}
+
 	public static String rep (String base, int count)
 	{
 		StringBuilder builder = new StringBuilder();
@@ -76,7 +103,7 @@ public class StringUtils
 		return builder.toString();
 		
 	}
-	
+
 	private static final Map<String, String> httpEntities;
 	
 	//TODO: add more. see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
