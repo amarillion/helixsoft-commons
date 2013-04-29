@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Graph
+Bundle-SymbolicName: nl.helixsoft.graph
+Bundle-Version: 1.0.0.qualifier
+Export-Package: nl.helixsoft.graph
+Require-Bundle: osgi-jung;bundle-version="1.0.0",
+ nl.helixsoft.util;bundle-version="1.0.0"
