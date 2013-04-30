@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project name="nl.helixsoft.graph" default="jar" basedir=".">
+
+	<import file="../build-common.xml" />
+
+	<property name="jar.name" value="nl.helixsoft.graph.jar"/>
+	
+	<path id="project.class.path">
+		<fileset dir="..">
+			<include name="nl.helixsoft.util.jar"/>
+		</fileset>
+		<!-- TODO make more portable !-->
+		<fileset dir="../../gb/gbcode/osgi-jung/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="test.class.path"/>
+
+</project>
