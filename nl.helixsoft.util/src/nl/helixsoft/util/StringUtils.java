@@ -2,16 +2,30 @@ package nl.helixsoft.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils 
 {
+	/** default ascii-betical null-safe string comparator implementation */
+	public static class StringComparator implements Comparator<String> 
+	{
+		public int compare(String s1, String s2) 
+		{
+			if (s1 == null)
+			{
+				if (s2 == null) return 0;
+				return -1;
+			}
+			if (s2 == null) return 1;
+			return s1.compareTo(s2);
+		}
+	}
+	
 	public static boolean emptyOrNull (String s)
 	{
 		return (s == null || s.equals (""));
