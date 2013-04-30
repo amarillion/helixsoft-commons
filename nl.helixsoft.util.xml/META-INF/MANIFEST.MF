@@ -4,3 +4,4 @@ Bundle-Name: Xml
 Bundle-SymbolicName: nl.helixsoft.util.xml
 Bundle-Version: 1.0.0.qualifier
 Export-Package: nl.helixsoft.xml
+Require-Bundle: org.junit;bundle-version="4.10.0";resolution:=optional
