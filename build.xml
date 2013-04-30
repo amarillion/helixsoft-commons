@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="common-libs" default="all" basedir=".">
+<project name="helixsoft-common-libs" default="all" basedir=".">
 
    <macrodef name="iterate">
 		<attribute name="target"/>
@@ -10,6 +10,7 @@
 					<file name="nl.helixsoft.bridgedb/build.xml"/>
 					<file name="nl.helixsoft.util.gui/build.xml"/>
 					<file name="nl.helixsoft.util.xml/build.xml"/>
+					<file name="nl.helixsoft.graph/build.xml"/>
 				</filelist>
 			</subant>
 		</sequential>
@@ -17,6 +18,10 @@
 
 	<target name="clean" description="Remove all intermediate files.">
 		<iterate target="clean"/>
+	</target>
+
+	<target name="test" description="junit test.">
+		<iterate target="test"/>
 	</target>
 
 	<target name="jar" description="Create jar bundles.">
