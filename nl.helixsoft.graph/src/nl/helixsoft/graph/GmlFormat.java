@@ -15,8 +15,11 @@ import org.apache.commons.collections15.BidiMap;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import edu.uci.ics.jung.graph.DirectedGraph;
 
-public class GmlFormat 
+public final class GmlFormat 
 {
+	/** tool class should never be instantiated */
+	private GmlFormat() {}
+	
 	/** same as other writeGml, but sorts nodes and edges, for stable output. */
 	public static <V, E> void writeGml(OutputStream fos, final DirectedGraph<V, E> graph, AttributesTable<V> nodeAttr, AttributesTable<E> edgeAttr, Comparator<V> comp)
 	{
@@ -56,7 +59,7 @@ public class GmlFormat
 		writeEdges(graph, edgeAttr, idx, gml, sortedE);
 
 		gml.closeList();
-
+		gml.close();
 	}
 
 	private static <V, E> void writeEdges(final DirectedGraph<V, E> graph,
@@ -97,6 +100,7 @@ public class GmlFormat
 		writeNodes(nodeAttr, idx, gml, graph.getVertices());
 		writeEdges(graph, edgeAttr, idx, gml, graph.getEdges());
 		gml.closeList();
+		gml.close();
 	}
 
 	private static <V> void writeNodes(AttributesTable<V> nodeAttr,

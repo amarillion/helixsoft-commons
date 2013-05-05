@@ -63,4 +63,9 @@ public class GmlEmitter implements Emitter
 		out.println(" " + value);								
 	}
 
+	public void close() 
+	{
+		out.close();
+	}
+
 }
