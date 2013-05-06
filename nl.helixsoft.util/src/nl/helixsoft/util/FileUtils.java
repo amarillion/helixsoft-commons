@@ -107,6 +107,26 @@ public class FileUtils
 			return fname + string;
 		}
 	}
+
+	/**
+	 * Get suitable directory to store application data in a cross-platform way.
+	 * On *NIX: $HOME
+	 * On Windows: %APPDATA%
+	 */
+	public static File getApplicationDir() 
+	{
+		File dirApplication = null;
 		
-	
+		String os = System.getProperty("os.name");
+		if	(os.startsWith("Win"))
+		{
+			dirApplication = new File(System.getenv("APPDATA"));
+		} 
+		else 
+		{ //All other OS
+			dirApplication = new File(System.getProperty("user.home"));
+		}
+		return dirApplication;
+	}
+
 }
