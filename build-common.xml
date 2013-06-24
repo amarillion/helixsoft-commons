@@ -28,7 +28,7 @@
 			   includes="**"
 			   destdir="build"
 			   debug="${debug.mode}"
-			   source="1.5">
+			   source="1.6">
 		  <classpath refid="project.class.path"/>
 		</javac>
 		<!-- workaround: make an empty directory so that the next step doesn't fail -->
@@ -42,14 +42,14 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<jar jarfile="${bundle.dest}/${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
+		<jar jarfile="${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
 	</target>
 	
 	<target name="test">
 		<javac srcdir="test" debug="${debug.mode}"
 					includes="**"
 					destdir="build"
-					source="1.5">
+					source="1.6">
 			<classpath>
 				<path refid="test.class.path"/>
 				<path refid="project.class.path"/>

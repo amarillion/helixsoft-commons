@@ -7,9 +7,8 @@
 			<subant target="@{target}">
 				<filelist dir=".">
 					<file name="nl.helixsoft.util/build.xml"/>
-					<file name="nl.helixsoft.bridgedb/build.xml"/>
-					<file name="nl.helixsoft.util.gui/build.xml"/>
-					<file name="nl.helixsoft.util.xml/build.xml"/>
+					<file name="nl.helixsoft.gui/build.xml"/>
+					<file name="nl.helixsoft.xml/build.xml"/>
 					<file name="nl.helixsoft.graph/build.xml"/>
 				</filelist>
 			</subant>

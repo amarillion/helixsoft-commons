@@ -3,8 +3,6 @@
 
 	<import file="../build-common.xml" />
 
-	<property name="jar.name" value="nl.helixsoft.graph.jar"/>
-	
 	<path id="project.class.path">
 		<fileset dir="..">
 			<include name="nl.helixsoft.util.jar"/>
