@@ -207,4 +207,23 @@ public class StringUtils
 		return o.toString();
 	}
 
+	/**
+	 * Make a string suitable for use as filename, 
+	 * by replacing unsafe characters with a dash.
+	 */
+	public static String makeFileName (String s)
+	{
+		return s.replaceAll("[^a-zA-Z0-9\\-_()\\]\\[}{. ]+", "-");
+	}
+
+	/**
+	 * Make sure a string stays within a certain length, by cutting a bit from the middle.
+	 */
+	public static String abbrev(String result, int maxLength, String separator)
+	{
+		int mid = maxLength / 2;
+		if (result.length() > maxLength) result = result.substring(0, mid - 1) + separator + result.substring(result.length() - mid);
+		return result;
+	}
+	
 }
