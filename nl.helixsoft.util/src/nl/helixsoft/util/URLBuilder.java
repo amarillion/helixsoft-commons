@@ -20,7 +20,7 @@ public class URLBuilder
 	private StringBuilder result;
 	private Map<String, String> params = new HashMap<String, String>();
 
-	URLBuilder(String base)
+	public URLBuilder(String base)
 	{
 		result = new StringBuilder (base);
 	}
