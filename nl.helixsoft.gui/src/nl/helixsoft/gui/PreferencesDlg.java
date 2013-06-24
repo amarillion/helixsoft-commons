@@ -1,4 +1,4 @@
-package nl.helixsoft.util.gui;
+package nl.helixsoft.gui;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -41,7 +41,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import nl.helixsoft.util.gui.ColorConverter;
+import nl.helixsoft.gui.ColorConverter;
 
 import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.desktop.PreferencePanel;

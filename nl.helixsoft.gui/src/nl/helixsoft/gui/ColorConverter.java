@@ -1,4 +1,4 @@
-package nl.helixsoft.util.gui;
+package nl.helixsoft.gui;
 
 import java.awt.Color;
 

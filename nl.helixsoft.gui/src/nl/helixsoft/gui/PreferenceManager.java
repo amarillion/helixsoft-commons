@@ -1,4 +1,4 @@
-package nl.helixsoft.util.gui;
+package nl.helixsoft.gui;
 
 import java.awt.Color;
 import java.io.File;
@@ -14,7 +14,7 @@ import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceEvent;
 import org.pathvisio.core.preferences.PreferenceListener;
 
-import nl.helixsoft.util.gui.ColorConverter;
+import nl.helixsoft.gui.ColorConverter;
 
 /**
  * Adapted from PathVisio.

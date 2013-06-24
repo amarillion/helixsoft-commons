@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
-<project name="nl.helixsoft.util.gui" default="jar" basedir=".">
+<project name="nl.helixsoft.gui" default="jar" basedir=".">
 
 	<import file="../build-common.xml" />
 
-	<property name="jar.name" value="nl.helixsoft.util.gui.jar"/>
-	
 	<path id="project.class.path">
 	  <fileset dir="lib">
 		<include name="*.jar"/>

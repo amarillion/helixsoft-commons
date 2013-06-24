@@ -1,17 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gui
-Bundle-SymbolicName: nl.helixsoft.util.gui
+Bundle-SymbolicName: nl.helixsoft.gui
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: gui.jar,
  lib/org.bridgedb.gui.jar,
  lib/org.pathvisio.jgoodies.forms-1.2.0.jar
-Export-Package: nl.helixsoft.util.gui,
- nl.helixsoft.util.table,
+Export-Package: nl.helixsoft.gui,
+ nl.helixsoft.gui.table,
+ nl.helixsoft.param,
  org.pathvisio.core.preferences,
  org.pathvisio.desktop,
  org.pathvisio.desktop.parameter,
  org.pathvisio.desktop.util,
  org.pathvisio.gui.dialogs
-Require-Bundle: org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
- org.junit;bundle-version="4.10.0";resolution:=optional
+Require-Bundle: org.pathvisio.jgoodies.forms;bundle-version="1.2.0"
+Import-Package: junit.framework;resolution:=optional

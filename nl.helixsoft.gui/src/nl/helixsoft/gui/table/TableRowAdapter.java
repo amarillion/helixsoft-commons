@@ -1,4 +1,4 @@
-package nl.helixsoft.util.table;
+package nl.helixsoft.gui.table;
 
 /**
  * Adapter to plug a list of S into a table

@@ -1,4 +1,4 @@
-package nl.helixsoft.util.table;
+package nl.helixsoft.gui.table;
 
 import java.util.ArrayList;
 import java.util.Collection;

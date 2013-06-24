@@ -1,5 +1,6 @@
 package nl.helixsoft.util.table;
 
+import nl.helixsoft.gui.table.MapTableModel;
 import junit.framework.TestCase;
 
 public class TestMapTableModel extends TestCase
