@@ -8,15 +8,7 @@ import java.util.Set;
  */
 public class Filter implements RecordStream
 {
-	/**
-	 * Test a record, if accept returns false the record will be filtered out.
-	 */
-	public interface FilterFunc
-	{
-		public boolean accept (Record r);
-	}
-	
-	public static class FieldInSet implements FilterFunc
+	public static class FieldInSet implements Predicate<Record>
 	{
 		private Set<String> allowedVals = new HashSet<String>();
 		private final String field;
@@ -52,7 +44,7 @@ public class Filter implements RecordStream
 		}
 	}
 
-	public static class FieldEquals implements FilterFunc 
+	public static class FieldEquals implements Predicate<Record>
 	{ 
 		private final String eq;
 		private final String field;
@@ -69,7 +61,7 @@ public class Filter implements RecordStream
 		} 
 	}
 
-	public static class FieldNotEquals implements FilterFunc 
+	public static class FieldNotEquals implements Predicate<Record>
 	{ 
 		private final String neq;
 		private final String field;
@@ -87,9 +79,9 @@ public class Filter implements RecordStream
 	}
 
 	private final RecordStream parent;
-	private final FilterFunc func;
+	private final Predicate<Record> func;
 	
-	public Filter (RecordStream parent, FilterFunc func)
+	public Filter (RecordStream parent, Predicate<Record> func)
 	{
 		this.parent = parent;
 		this.func = func;
