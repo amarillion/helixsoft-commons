@@ -16,10 +16,7 @@ public class TestFilter extends TestCase
 				"1\t2\n" +
 				"3\t4\n");
 		
-		RecordStream rs = new Filter (
-				new TsvRecordStream(reader),
-				new FieldEquals ("a", "3")
-			);
+		RecordStream rs = new TsvRecordStream(reader).filter (new FieldEquals ("a", "3"));
 		
 		Record r;
 		
@@ -27,8 +24,6 @@ public class TestFilter extends TestCase
 		assertEquals("4", r.getValue("b"));
 		r = rs.getNext();
 		assertNull(r);
-
 	}
-	
 
 }

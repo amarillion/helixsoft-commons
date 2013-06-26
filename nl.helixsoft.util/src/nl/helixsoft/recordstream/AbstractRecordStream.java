@@ -4,7 +4,7 @@ public abstract class AbstractRecordStream implements RecordStream
 {
 	public RecordStream filter (Predicate<Record> predicate)
 	{
-		throw new UnsupportedOperationException();
+		return new Filter (this, predicate);
 	}
 	
 }
