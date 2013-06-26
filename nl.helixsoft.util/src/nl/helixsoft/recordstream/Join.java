@@ -1,7 +1,7 @@
 package nl.helixsoft.recordstream;
 
 //TODO: unfinished
-public class Join implements RecordStream
+public class Join extends AbstractRecordStream
 {
 	private final String onField;
 	private final RecordStream left;

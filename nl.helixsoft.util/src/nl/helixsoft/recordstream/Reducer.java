@@ -19,7 +19,7 @@ import com.google.common.collect.HashBiMap;
  * @throws IllegalAccessException 
  * @throws InstantiationException 
  */
-public class Reducer implements RecordStream
+public class Reducer extends AbstractRecordStream
 {
 	private final RecordStream parent;
 	private final Map<String, GroupFunc> accumulator;

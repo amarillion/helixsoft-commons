@@ -33,7 +33,7 @@ import java.util.Map;
  * Note that the incoming recordstream must be sorted by groupVar for this to work properly.
  */
 
-public class Cast implements RecordStream
+public class Cast extends AbstractRecordStream
 {
 	private final RecordStream parent;
 	private List<String> groupVar;

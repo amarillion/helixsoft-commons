@@ -10,7 +10,7 @@ import nl.helixsoft.util.StringUtils;
  * Pass one or more AdjustFunc implementations to the constructor. Unadjusted fields are
  * left unharmed.
  */
-public class Adjuster implements RecordStream
+public class Adjuster extends AbstractRecordStream
 {
 	private final Map<String, AdjustFunc> adjust;
 	private final RecordStream parent;

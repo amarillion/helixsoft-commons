@@ -7,7 +7,7 @@ import java.io.Reader;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class TsvRecordStream implements RecordStream
+public class TsvRecordStream extends AbstractRecordStream
 {
 	public static int FILTER_COMMENTS = 256;
 	public static int NO_HEADER = 512;

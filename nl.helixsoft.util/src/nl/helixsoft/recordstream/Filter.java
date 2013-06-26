@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Wrap a record stream, while filtering out records that do not meet a certain criterion
  */
-public class Filter implements RecordStream
+public class Filter extends AbstractRecordStream
 {
 	public static class FieldInSet implements Predicate<Record>
 	{

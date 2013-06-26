@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 
 public class TestReduceAndCast extends TestCase {
 
-	private static class MockRecordStream implements RecordStream
+	private static class MockRecordStream extends AbstractRecordStream
 	{
 		private final List<String> cols;
 		private final Object[][] data;

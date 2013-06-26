@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class ResultSetRecordStream implements RecordStream
+public class ResultSetRecordStream extends AbstractRecordStream
 {
 	private final ResultSet rs;
 	private boolean closed = false;

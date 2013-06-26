@@ -1,7 +1,7 @@
 package nl.helixsoft.recordstream;
 
 //TODO unimplemented
-public class Melt implements RecordStream {
+public class Melt extends AbstractRecordStream {
 
 	@Override
 	public int getNumCols() {
