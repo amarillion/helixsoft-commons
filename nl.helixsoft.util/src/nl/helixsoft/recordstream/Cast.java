@@ -104,6 +104,12 @@ public class Cast extends AbstractRecordStream
 		{
 			return values.get(Cast.this.outColIdx.get(s));
 		}
+
+		@Override
+		public RecordMetaData getMetaData() 
+		{
+			return new DefaultRecordMetaData(Cast.this);
+		}
 	}
 
 	private IndexedRecord nextResult;
