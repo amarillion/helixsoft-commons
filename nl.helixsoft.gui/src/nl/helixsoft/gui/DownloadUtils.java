@@ -18,24 +18,32 @@ public class DownloadUtils
 	//TODO: add option for silent downloading, or for a CLI progress monitor.
 	public static void downloadFile(URL url, File dest) throws IOException
 	{
-		System.out.println ("Please wait while downloading bridge database from " + url);
-		
-		File temp = File.createTempFile(dest.getName(), ".tmp", dest.getParentFile());
-		
+		URLConnection conn = url.openConnection();
+		downloadFile (conn, dest);
+	}
+	
+	//TODO: add option for silent downloading, or for a CLI progress monitor.
+	/**
+	 * The URLConnection form allows setting extra request headers, such as for HTTP Basic Authentication etc.
+	 */
+	public static void downloadFile(URLConnection conn, File dest) throws IOException
+	{		
+		System.out.println ("Please wait while downloading file from " + conn.getURL());
+		File temp = File.createTempFile(dest.getName(), ".tmp", dest.getParentFile());	
 		try
 		{
 			OutputStream out = new BufferedOutputStream(
 					new FileOutputStream(temp));
-			URLConnection conn = url.openConnection();
-			
+						
 			// For websites that provide different downloads depending on language - it's rare, but Oryzabase (http://www.shigen.nig.ac.jp/) does this.
+			// TODO: move this bit to Oryzabase parser and use URLConnection form
 			conn.setRequestProperty("Accept-Language", Locale.getDefault().getISO3Language());
 			
 			InputStream in = conn.getInputStream();
 	
 			ProgressMonitorInputStream pin = new ProgressMonitorInputStream(
 					null,
-					"Downloading " + url,
+					"Downloading " + conn.getURL(),
 					in
 			);
 			pin.getProgressMonitor().setMillisToDecideToPopup(0);
