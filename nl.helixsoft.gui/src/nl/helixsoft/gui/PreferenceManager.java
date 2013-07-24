@@ -20,14 +20,29 @@ import nl.helixsoft.gui.ColorConverter;
  * Adapted from PathVisio.
  * <p>
  * Loads & saves application preferences
+ * <p>
+ * PreferenceManager is a wrapper of java.util.Properties.
+ * It could be argued that java.util.Properties is implemented wrong - it should wrap a HashMap instead of extending it.
+ * As it is, the Properties.get() method ignores defaults, whereas the Properties.getProperty() method does take them into account.
+ * This class solves that issue.
  */
 public class PreferenceManager
 {
 	private final File propertiesFile;
+	private final Properties defaults;
+	
+	/**
+	 * @param defaults default properties to be used in case a property is not defined in the defaults file. defaults specified in this way take priority over the value of Property.getDefault().
+	 */
+	public PreferenceManager (File propertiesFile, Properties defaults)
+	{
+		this.propertiesFile = propertiesFile;
+		this.defaults = defaults;
+	}
 	
 	public PreferenceManager (File propertiesFile)
 	{
-		this.propertiesFile = propertiesFile;
+		this (propertiesFile, null);
 	}
 	
 	private Properties properties;
@@ -72,7 +87,7 @@ public class PreferenceManager
 	 */
 	public void load()
 	{
-		properties = new Properties();
+		properties = new Properties(defaults);
 		try
 		{
 			if(propertiesFile.exists()) {
@@ -86,7 +101,7 @@ public class PreferenceManager
 			System.err.println ("Could not read properties");
 			e.printStackTrace();
 		}
-		dirty = false;
+		dirty = false;		
 	}
 
 	/**
@@ -95,14 +110,7 @@ public class PreferenceManager
 	public String get (Preference p)
 	{
 		String key = p.name();
-		if (properties.containsKey(key))
-		{
-			return properties.getProperty(key);
-		}
-		else
-		{
-			return p.getDefault();
-		}
+		return properties.getProperty(key, p.getDefault());
 	}
 
 	public void set (Preference p, String newVal)
