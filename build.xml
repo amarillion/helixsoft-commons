@@ -1,30 +1,34 @@
 <?xml version="1.0"?>
-<project name="helixsoft-common-libs" default="all" basedir=".">
+<project name="helixsoft-common-libs" default="all" basedir="."  xmlns:ivy="antlib:org.apache.ivy.ant">
 
-   <macrodef name="iterate">
-		<attribute name="target"/>
-		<sequential>
-			<subant target="@{target}">
-				<filelist dir=".">
-					<file name="nl.helixsoft.util/build.xml"/>
-					<file name="nl.helixsoft.gui/build.xml"/>
-					<file name="nl.helixsoft.xml/build.xml"/>
-					<file name="nl.helixsoft.graph/build.xml"/>
-				</filelist>
-			</subant>
-		</sequential>
-	</macrodef>
+	<property name="project.revision" value="9.9.9"/>
 
-	<target name="clean" description="Remove all intermediate files.">
-		<iterate target="clean"/>
+	<target name="buildlist">
+		<ivy:buildlist reference="build-path">
+			<fileset dir=".">
+				<include name="nl.helixsoft.util/build.xml"/>
+				<include name="nl.helixsoft.gui/build.xml"/>
+				<include name="nl.helixsoft.xml/build.xml"/>
+				<include name="nl.helixsoft.graph/build.xml"/>
+			</fileset>
+		</ivy:buildlist>
+	</target>
+   
+	<target name="clean" depends="buildlist" description="Remove all intermediate files.">
+		<ivy:cleancache/>
+		<subant target="clean" buildpathref="build-path" />
 	</target>
 
-	<target name="test" description="junit test.">
-		<iterate target="test"/>
+	<target name="test" depends="buildlist" description="junit test.">
+		<subant target="test" buildpathref="build-path" />
 	</target>
 
-	<target name="jar" description="Create jar bundles.">
-		<iterate target="jar"/>
+	<target name="jar" depends="buildlist" description="Create jar bundles.">
+		<subant target="jar" buildpathref="build-path" />
+	</target>
+
+	<target name="publish" depends="buildlist" description="Create jar bundles.">
+		<subant target="publish" buildpathref="build-path" />
 	</target>
 
 	<target name="all" depends="jar" description="Compile all versions of this project" />
