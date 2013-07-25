@@ -28,6 +28,7 @@
 	</target>
 
 	<target name="compile" depends="prepare,prepare-common">
+		<ivy:retrieve/>
 		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"

@@ -4,8 +4,8 @@
 	<import file="../build-common.xml" />
 	
 	<path id="project.class.path">
-		<fileset dir="../lib">
-			<include name="guava*.jar"/>
+		<fileset dir="lib">
+			<include name="*guava*.jar"/>
 		</fileset>
 	</path>
 

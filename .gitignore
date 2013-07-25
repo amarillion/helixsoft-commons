@@ -3,3 +3,4 @@
 .project
 .settings
 nl.helixsoft.*.jar
+/nl.helixsoft.*/lib/

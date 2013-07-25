@@ -3,4 +3,7 @@
   <publications>
     <artifact name="nl.helixsoft.util" ext="jar" type="jar"/>
   </publications>
+  <dependencies>
+    <dependency org="guava" name="guava-osgi" rev="11.0.1"/>
+  </dependencies>
 </ivy-module>
