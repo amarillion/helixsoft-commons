@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="common-libs-common" xmlns:ivy="antlib:org.apache.ivy.ant">
 
+	<property name="project.revision" value="1.0.1"/>
+
 	<property name="debug.mode" value="true"/>
 	<property name="ant.build.javac.target" value="1.6"/>
 	<property name="ant.build.javac.source" value="1.6"/>
@@ -78,10 +80,10 @@
 
 	<target name="publish" depends="clean,jar" description="Publish this build into repository">
 		<ivy:resolve/>
-		<ivy:publish resolver="local" overwrite="true" forcedeliver="true" pubrevision="3.2.1" status="release">
+		<ivy:publish resolver="local" overwrite="true" forcedeliver="true" pubrevision="${project.revision}" status="release">
 			<artifacts pattern="${bundle.dest}/[artifact].[ext]"/>
 		</ivy:publish>
-		<echo message="project ${ant.project.name} released with version 3.2.1"/>
+		<echo message="project ${ant.project.name} released with version ${project.revision}"/>
 	</target>
 
 </project>

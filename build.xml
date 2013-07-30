@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <project name="helixsoft-common-libs" default="all" basedir="."  xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<property name="project.revision" value="9.9.9"/>
-
 	<target name="buildlist">
 		<ivy:buildlist reference="build-path">
 			<fileset dir=".">
