@@ -31,9 +31,9 @@ public class Filter extends AbstractRecordStream
 			// find column index if needed
 			if (idx == -1)
 			{
-				for (idx = 0; idx < r.getParent().getNumCols(); ++idx)
+				for (idx = 0; idx < r.getMetaData().getNumCols(); ++idx)
 				{
-					if (field.equals (r.getParent().getColumnName(idx)))
+					if (field.equals (r.getMetaData().getColumnName(idx)))
 							break;
 				}
 			}

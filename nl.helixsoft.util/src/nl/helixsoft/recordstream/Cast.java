@@ -95,11 +95,6 @@ public class Cast extends AbstractRecordStream
 		}
 
 		@Override
-		public RecordStream getParent() {
-			return Cast.this;
-		}
-
-		@Override
 		public Object getValue(String s) 
 		{
 			return values.get(Cast.this.outColIdx.get(s));

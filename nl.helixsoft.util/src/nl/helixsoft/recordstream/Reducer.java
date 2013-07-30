@@ -209,7 +209,7 @@ public class Reducer extends AbstractRecordStream
 			if (idx < 0)
 			{
 				// lazy initialization of idx
-				RecordStream rs = val.getParent();
+				RecordMetaData rs = val.getMetaData();
 				for (int col = 0; col < rs.getNumCols(); ++col)
 					if (rs.getColumnName(col).equals(colName))
 					{
