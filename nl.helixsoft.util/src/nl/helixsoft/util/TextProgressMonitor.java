@@ -48,4 +48,8 @@ public class TextProgressMonitor
 		i++;
 	}
 	
+	public void reset()
+	{
+		i = 0;
+	}
 }
