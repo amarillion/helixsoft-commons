@@ -4,5 +4,5 @@ Bundle-Name: Graph
 Bundle-SymbolicName: nl.helixsoft.graph
 Bundle-Version: 1.0.0.qualifier
 Export-Package: nl.helixsoft.graph
-Require-Bundle: osgi-jung;bundle-version="1.0.0",
- nl.helixsoft.util;bundle-version="1.0.0"
+Require-Bundle: nl.helixsoft.util;bundle-version="1.0.0",
+ com.generalbioinformatics.jung;bundle-version="2.0.1"

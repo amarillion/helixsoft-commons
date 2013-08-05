@@ -8,8 +8,8 @@
 			<include name="nl.helixsoft.util.jar"/>
 		</fileset>
 		<!-- TODO make more portable !-->
-		<fileset dir="../../gb/gbcode/osgi-jung/lib">
-			<include name="*.jar"/>
+		<fileset dir="lib">
+			<include name="*jung*.jar"/>
 		</fileset>
 	</path>
 

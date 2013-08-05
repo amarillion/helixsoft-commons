@@ -80,7 +80,7 @@
 
 	<target name="publish" depends="clean,jar" description="Publish this build into repository">
 		<ivy:resolve/>
-		<ivy:publish resolver="local" overwrite="true" forcedeliver="true" pubrevision="${project.revision}" status="release">
+		<ivy:publish resolver="libraries" overwrite="true" forcedeliver="true" pubrevision="${project.revision}" status="release">
 			<artifacts pattern="${bundle.dest}/[artifact].[ext]"/>
 		</ivy:publish>
 		<echo message="project ${ant.project.name} released with version ${project.revision}"/>
