@@ -40,19 +40,29 @@ public class DownloadUtils
 			conn.setRequestProperty("Accept-Language", Locale.getDefault().getISO3Language());
 			
 			InputStream in = conn.getInputStream();
-	
-			ProgressMonitorInputStream pin = new ProgressMonitorInputStream(
-					null,
-					"Downloading " + conn.getURL(),
-					in
-			);
-			pin.getProgressMonitor().setMillisToDecideToPopup(0);
-			pin.getProgressMonitor().setMaximum(conn.getContentLength());
+			
+			InputStream xin;
+			if (!GraphicsEnvironment.isHeadless())
+			{
+				ProgressMonitorInputStream pin = new ProgressMonitorInputStream(
+						null,
+						"Downloading " + conn.getURL(),
+						in
+				);
+				pin.getProgressMonitor().setMillisToDecideToPopup(0);
+				pin.getProgressMonitor().setMaximum(conn.getContentLength());
+				xin = pin;
+			}
+			else
+			{
+				//TODO: use printProgBar as alternative
+				xin = in;
+			}
 	
 			byte[] buffer = new byte[1024];
 			int numRead;
 			long numWritten = 0;
-			while ((numRead = pin.read(buffer)) != -1) {
+			while ((numRead = xin.read(buffer)) != -1) {
 				out.write(buffer, 0, numRead);
 				numWritten += numRead;
 			}
