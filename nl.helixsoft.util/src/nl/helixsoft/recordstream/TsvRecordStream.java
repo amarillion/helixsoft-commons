@@ -9,8 +9,11 @@ import com.google.common.collect.HashBiMap;
 
 public class TsvRecordStream extends AbstractRecordStream
 {
-	public static int FILTER_COMMENTS = 256;
-	public static int NO_HEADER = 512;
+	public static int FILTER_COMMENTS = 0x100;
+	public static int NO_HEADER = 0x200;
+	
+	/** If this flag is on, check for each header and row field if it is enclosed in double quotes, and remove them */
+	public static int REMOVING_OPTIONAL_QUOTES = 0x400;
 	
 	private int flags = 0;
 	private final BufferedReader reader;
@@ -20,8 +23,8 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		this.reader = new BufferedReader(_reader);
 		int i = 0;
-		for (String h : _header)
 		{
+			for (String h : _header)
 			header.put (h, i);
 			i++;
 		}
@@ -32,6 +35,16 @@ public class TsvRecordStream extends AbstractRecordStream
 		this (_reader, 0);
 	}
 
+	private String removeOptionalQuotes(String in)
+	{
+		if (in.startsWith("\"") && in.endsWith("\""))
+		{
+			return in.substring (1, in.length() - 1);
+		}
+		else
+			return in;
+	}
+	
 	public TsvRecordStream (Reader _reader, int flags) throws RecordStreamException
 	{
 		this.flags = flags;
@@ -45,7 +58,12 @@ public class TsvRecordStream extends AbstractRecordStream
 			{
 				for (String h : headerLine.split("\t"))
 				{
-					header.put (h, i);
+					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
+					{
+						header.put (removeOptionalQuotes(h), i);
+					}
+					else
+						header.put (h, i);
 					i++;
 				}
 			}
@@ -84,6 +102,13 @@ public class TsvRecordStream extends AbstractRecordStream
 			if (split.length == header.size())
 			{
 				fields = split;
+				if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
+				{
+					for (int col = 0; col < header.size(); ++col)
+					{
+						fields[col] = removeOptionalQuotes(fields[col]);
+					}
+				}
 			}
 			else
 			{
@@ -92,7 +117,11 @@ public class TsvRecordStream extends AbstractRecordStream
 				int col = 0;
 				for (String field : split)
 				{
-					fields[col] = field;
+					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
+						fields[col] = removeOptionalQuotes(field);
+					else
+						fields[col] = field;
+					
 					col++;
 					if (col == header.size()) 
 					{
