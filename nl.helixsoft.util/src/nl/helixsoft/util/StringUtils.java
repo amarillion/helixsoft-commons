@@ -198,6 +198,23 @@ public class StringUtils
 	}
 	
 	/**
+	 * May return null, but will not throw an exception
+	 */
+	public static Double safeParseDouble(String val)
+	{
+		if (val == null) return null;
+		try
+		{
+			Double result = Double.parseDouble(val);
+			return result;
+		}
+		catch (NumberFormatException e)
+		{
+			return null;
+		}
+	}
+	
+	/**
 	 * Safely convert an object to null;
 	 * If the input is null, the result is null as well.
 	 */

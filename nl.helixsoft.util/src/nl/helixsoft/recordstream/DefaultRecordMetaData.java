@@ -4,7 +4,7 @@ public class DefaultRecordMetaData implements RecordMetaData
 {
 	private final RecordStream parent;
 	
-	DefaultRecordMetaData(RecordStream parent)
+	public DefaultRecordMetaData(RecordStream parent)
 	{
 		this.parent = parent;
 	}
