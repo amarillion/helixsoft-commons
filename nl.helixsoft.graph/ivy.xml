@@ -4,7 +4,7 @@
     <artifact name="nl.helixsoft.graph" ext="jar" type="jar"/>
   </publications>
   <dependencies>
-    <dependency org="com.generalbioinformatics" name="com.generalbioinformatics.jung" rev="2.0.1"/>
+    <dependency org="jung" name="jung-all" rev="2.0.1.genbifo1"/>
     <dependency org="nl.helixsoft" name="nl.helixsoft.util" rev="[1.0,)"/>
   </dependencies>
 </ivy-module>
