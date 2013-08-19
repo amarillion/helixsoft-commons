@@ -23,8 +23,8 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		this.reader = new BufferedReader(_reader);
 		int i = 0;
+		for (String h : _header)
 		{
-			for (String h : _header)
 			header.put (h, i);
 			i++;
 		}
