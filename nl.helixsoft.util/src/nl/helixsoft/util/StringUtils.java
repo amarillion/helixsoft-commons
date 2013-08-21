@@ -243,4 +243,12 @@ public class StringUtils
 		return result;
 	}
 	
+	/**
+	 * Compare two strings, without throwing nullpointerexception, ignoring case
+	 */
+	public static boolean safeEqualsIgnoreCase(String a, String b)
+	{
+		return (a == null) ? a == b : b.equalsIgnoreCase(a); 
+	}
+	
 }
