@@ -38,6 +38,11 @@ public abstract class AbstractParameterModel implements ParameterModel
 		return (Boolean)getValue(i);
 	}
 	
+	public int getInteger (int i)
+	{
+		return (Integer)getValue(i);
+	}
+	
 	private List<ParameterModelListener> listeners = new ArrayList<ParameterModelListener>();
 	
 	public void addParameterModelListener(ParameterModelListener l)

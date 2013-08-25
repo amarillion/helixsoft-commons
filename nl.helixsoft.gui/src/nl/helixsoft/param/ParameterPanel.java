@@ -80,6 +80,10 @@ public class ParameterPanel extends JPanel implements ParameterModelListener
 			{
 				editors[i] = new BooleanEditor (model, i, this, builder);
 			}
+			else if (model.getMetaData(i) instanceof Integer)
+			{
+				editors[i] = new IntegerEditor (model, i, this, builder);
+			}
 			else if (model.getMetaData(i) instanceof List<?>)
 			{
 				editors[i] = new EnumEditor (model, i, this, builder);
