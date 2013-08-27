@@ -32,6 +32,7 @@ public class StringUtils
 	}
 
 	public static String urlEncode(String name) {
+		//TODO: replace with apache codec?
 		String encoded;
 		try {
 			encoded = URLEncoder.encode(name, "UTF-8");
@@ -155,6 +156,7 @@ public class StringUtils
 	 */
 	public static String stripHtml(String string) 
 	{
+		//TODO: replace with apache codec?
 		String s = string;
 		
 		// strip tags
@@ -182,6 +184,14 @@ public class StringUtils
 		m.appendTail(buf);
 
 		return buf.toString();
+	}
+	
+	public static String escapeHtml(String s)
+	{
+		//TODO: replace with apache codec?
+		s = s.replaceAll("<", "&lt;");
+		s = s.replaceAll(">", "&gt;");
+		return s;
 	}
 	
 	public static final String[] EMPTY_STRING_ARRAY = new String[] {};
