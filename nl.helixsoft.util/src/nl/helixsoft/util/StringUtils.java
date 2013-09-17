@@ -130,10 +130,19 @@ public class StringUtils
 		httpEntities.put ("amp", "&");			
 		httpEntities.put ("lt", "<");
 		httpEntities.put ("gt", ">");
-		httpEntities.put ("alpha",		"\u03B1");			
+		
+		httpEntities.put ("alpha",		"\u03B1");
+		httpEntities.put ("Alpha",		"\u0391");			
+
 		httpEntities.put ("beta",		"\u03B2");			
+		httpEntities.put ("Beta",		"\u0392");			
+		
 		httpEntities.put ("gamma",		"\u03B3");			
+		httpEntities.put ("Gamma",		"\u0393");			
+		
 		httpEntities.put ("delta",		"\u03B4");			
+		httpEntities.put ("Delta",		"\u0394");
+		
 		httpEntities.put ("epsilon",	"\u03B5");			
 		httpEntities.put ("zeta",		"\u03B6");			
 		httpEntities.put ("eta",		"\u03B7");			
