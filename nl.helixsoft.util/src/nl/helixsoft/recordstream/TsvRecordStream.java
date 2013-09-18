@@ -3,6 +3,8 @@ package nl.helixsoft.recordstream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -17,17 +19,12 @@ public class TsvRecordStream extends AbstractRecordStream
 	
 	private int flags = 0;
 	private final BufferedReader reader;
-	private BiMap<String, Integer> header = HashBiMap.create();
-
+	private final RecordMetaData rmd;
+	
 	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
 	{
 		this.reader = new BufferedReader(_reader);
-		int i = 0;
-		for (String h : _header)
-		{
-			header.put (h, i);
-			i++;
-		}
+		rmd = new DefaultRecordMetaData (_header);
 	}
 	
 	public TsvRecordStream (Reader _reader) throws RecordStreamException
@@ -51,22 +48,22 @@ public class TsvRecordStream extends AbstractRecordStream
 		try 
 		{
 			this.reader = new BufferedReader(_reader);
-			int i = 0;
-			
 			String headerLine = getNextNonCommentLine();
+			List<String> header = new ArrayList<String>();
 			if (headerLine != null) // empty file has no header
 			{
 				for (String h : headerLine.split("\t"))
 				{
 					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
 					{
-						header.put (removeOptionalQuotes(h), i);
+						header.add (removeOptionalQuotes(h));
 					}
 					else
-						header.put (h, i);
-					i++;
+						header.add (h);
 				}
 			}
+			
+			rmd = new DefaultRecordMetaData(header);
 		} 
 		catch (IOException e) 
 		{
@@ -77,13 +74,13 @@ public class TsvRecordStream extends AbstractRecordStream
 	@Override
 	public int getNumCols() 
 	{
-		return header.size();
+		return rmd.getNumCols();
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		return header.inverse().get(i);
+		return rmd.getColumnName(i);
 	}
 
 	@Override
@@ -99,12 +96,12 @@ public class TsvRecordStream extends AbstractRecordStream
 			String[] split = line.split("\t", -1);
 			
 			String[] fields;
-			if (split.length == header.size())
+			if (split.length == rmd.getNumCols())
 			{
 				fields = split;
 				if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
 				{
-					for (int col = 0; col < header.size(); ++col)
+					for (int col = 0; col < rmd.getNumCols(); ++col)
 					{
 						fields[col] = removeOptionalQuotes(fields[col]);
 					}
@@ -113,7 +110,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			else
 			{
 				// ensure that array of fields is the expected length
-				fields = new String[header.size()];
+				fields = new String[rmd.getNumCols()];
 				int col = 0;
 				for (String field : split)
 				{
@@ -123,14 +120,14 @@ public class TsvRecordStream extends AbstractRecordStream
 						fields[col] = field;
 					
 					col++;
-					if (col == header.size()) 
+					if (col == rmd.getNumCols()) 
 					{
 						System.err.println ("Warning: found extra column in TSV file");
 						break; // ignoring extra column
 					}
 				}
 			}
-			return new DefaultRecord(this, fields);
+			return new DefaultRecord(rmd, fields);
 		} 
 		catch (IOException e) 
 		{
@@ -154,8 +151,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	@Override
 	public int getColumnIndex(String name) 
 	{
-		if (!header.containsKey(name)) throw new IllegalArgumentException("Column '" + name + "' doesn't exist, options are " + header.keySet());
-		return header.get(name);
+		return rmd.getColumnIndex(name);
 	}
 
 }

@@ -23,23 +23,21 @@ public class Reducer extends AbstractRecordStream
 {
 	private final RecordStream parent;
 	private final Map<String, GroupFunc> accumulator;
-	private final BiMap<String, Integer> outHeaders;
 	private Object prevValue = null;
 	private Record row;
 	private int idxGroupVar;
+	private final RecordMetaData rmd;
 	
 	public Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws RecordStreamException
 	{
 		this.parent = parent;
 		this.accumulator = accumulator; //TODO: should really make a defensive copy
 		
-		outHeaders = HashBiMap.create();
-		outHeaders.put (groupVar, 0);
-		int i = 1;
+		List<String> outHeaders = new ArrayList<String>();
+		outHeaders.add (groupVar);
 		for (String header : accumulator.keySet())
 		{
-			outHeaders.put(header, i);
-			i++;
+			outHeaders.add(header);
 		}
 		idxGroupVar = parent.getColumnIndex(groupVar);
 		
@@ -47,30 +45,31 @@ public class Reducer extends AbstractRecordStream
 		prevValue = row.getValue(idxGroupVar);
 		// Reset the accumulator at start
 		resetAccumulator();
+		rmd = new DefaultRecordMetaData(outHeaders);
 	}
 	
 	@Override
 	public int getNumCols() 
 	{
-		return outHeaders.size();
+		return rmd.getNumCols();
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		return outHeaders.inverse().get(i);
+		return rmd.getColumnName(i);
 	}
 
 	private Record writeAccumulator() 
 	{
 		Object[] vals = new Object[getNumCols()];
 		vals[0] = prevValue;
-		for (int i = 1; i < outHeaders.size(); ++i)
+		for (int i = 1; i < rmd.getNumCols(); ++i)
 		{
-			String colName = outHeaders.inverse().get(i);
+			String colName = rmd.getColumnName(i);
 			vals[i] = accumulator.get(colName).getResult();
 		}
-		return new DefaultRecord(this, vals);
+		return new DefaultRecord(rmd, vals);
 	}
 
 	private void resetAccumulator() 
@@ -222,7 +221,8 @@ public class Reducer extends AbstractRecordStream
 	}
 
 	@Override
-	public int getColumnIndex(String name) {
-		return outHeaders.get(name);
+	public int getColumnIndex(String name) 
+	{
+		return rmd.getColumnIndex(name);
 	}
 }

@@ -43,6 +43,7 @@ public class Cast extends AbstractRecordStream
 	
 	private List<String> outCols = new ArrayList<String>();
 	private Map<String, Integer> outColIdx = new HashMap<String, Integer>();
+	private final RecordMetaData rmd;
 	
 	/**
 	 * If the input stream contains more than three columns, the remaining ones are quietly ignored.
@@ -73,6 +74,11 @@ public class Cast extends AbstractRecordStream
 		
 		next = parent.getNext();
 		loadNextRecord();
+		
+		List<String> colNames = new ArrayList<String>();
+		colNames.addAll (groupVar);
+		colNames.addAll (outCols);
+		rmd = new DefaultRecordMetaData(colNames);
 	}
 
 	public Cast (RecordStream parent, String groupVar, String columnVar, String valueVar) throws RecordStreamException
@@ -103,7 +109,7 @@ public class Cast extends AbstractRecordStream
 		@Override
 		public RecordMetaData getMetaData() 
 		{
-			return new DefaultRecordMetaData(Cast.this);
+			return Cast.this.rmd;
 		}
 	}
 
@@ -162,16 +168,13 @@ public class Cast extends AbstractRecordStream
 	@Override
 	public int getNumCols() 
 	{
-		return outCols.size() + groupIdx.length;
+		return rmd.getNumCols();
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		if (i < groupVar.size())
-			return groupVar.get(i);
-		else
-			return outCols.get(i - groupVar.size());
+		return rmd.getColumnName(i);
 	}
 
 	@Override
@@ -185,7 +188,7 @@ public class Cast extends AbstractRecordStream
 	@Override
 	public int getColumnIndex(String name)
 	{
-		return outColIdx.get(name);
+		return rmd.getColumnIndex(name);
 	}
 	
 }

@@ -16,11 +16,13 @@ public class TestReduceAndCast extends TestCase {
 	{
 		private final List<String> cols;
 		private final Object[][] data;
+		private final RecordMetaData rmd;
 		
 		MockRecordStream (String[] _cols, Object[][] data)
 		{
 			this.cols = Arrays.asList(_cols);
 			this.data = data;
+			rmd = new DefaultRecordMetaData(_cols);
 		}
 		
 		int row = 0;
@@ -39,7 +41,7 @@ public class TestReduceAndCast extends TestCase {
 		@Override
 		public Record getNext() throws RecordStreamException {
 			if (row >= data.length) return null;
-			return new DefaultRecord(this, data[row++]);
+			return new DefaultRecord(rmd, data[row++]);
 		}
 
 		@Override

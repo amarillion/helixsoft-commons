@@ -2,6 +2,8 @@ package nl.helixsoft.recordstream;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -10,19 +12,19 @@ public class ResultSetRecordStream extends AbstractRecordStream
 {
 	private final ResultSet rs;
 	private boolean closed = false;
-	private int colNum;
-	private BiMap<String, Integer> colnames;
+	private final RecordMetaData rmd;
 	
 	public ResultSetRecordStream(ResultSet wrapped) throws RecordStreamException 
 	{ 
 		this.rs = wrapped;
 		try {
-			colNum = rs.getMetaData().getColumnCount();
-			colnames = HashBiMap.create();
+			int colNum = rs.getMetaData().getColumnCount();
+			List<String> colnames = new ArrayList<String>();
 			for (int col = 1; col <= colNum; ++col)
 			{
-				colnames.put(rs.getMetaData().getColumnName(col), col-1);
+				colnames.add(rs.getMetaData().getColumnName(col));
 			}
+			rmd = new DefaultRecordMetaData(colnames);
 		}
 		catch (SQLException ex)
 		{
@@ -33,13 +35,13 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	@Override
 	public int getNumCols() 
 	{
-		return colNum;
+		return rmd.getNumCols();
 	}
 
 	@Override
 	public String getColumnName(int i) 
 	{
-		return colnames.inverse().get(i);
+		return rmd.getColumnName(i);
 	}
 
 	@Override
@@ -55,12 +57,12 @@ public class ResultSetRecordStream extends AbstractRecordStream
 				return null;
 			}
 			
-			Object[] data = new Object[colNum];
-			for (int col = 1; col <= colNum; ++col)
+			Object[] data = new Object[rmd.getNumCols()];
+			for (int col = 1; col <= rmd.getNumCols(); ++col)
 			{
 				data[col-1] = rs.getObject(col);
 			}
-			return new DefaultRecord(this, data);
+			return new DefaultRecord(rmd, data);
 		} catch (SQLException ex) {
 			throw new RecordStreamException(ex);
 		}
@@ -75,7 +77,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	@Override
 	public int getColumnIndex(String name) 
 	{
-		return colnames.get(name);
+		return rmd.getColumnIndex(name);
 	}
 	
 	@Override

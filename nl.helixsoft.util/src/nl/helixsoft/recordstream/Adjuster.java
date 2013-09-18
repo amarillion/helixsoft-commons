@@ -14,7 +14,8 @@ public class Adjuster extends AbstractRecordStream
 {
 	private final Map<String, AdjustFunc> adjust;
 	private final RecordStream parent;
-	
+	private final RecordMetaData rmd;
+
 	/**
 	 * Wraps a recordstream, modifies it on the fly by applying one or more adjustment functions.
 	 * <p>
@@ -26,6 +27,13 @@ public class Adjuster extends AbstractRecordStream
 	{
 		this.parent = parent;
 		this.adjust = adjust; //TODO: really should make a defensive copy here.
+		
+		String[] colNames = new String[parent.getNumCols()];
+		for (int i = 0; i < parent.getNumCols(); ++i)
+		{
+			colNames[i] = parent.getColumnName(i);
+		}
+		rmd = new DefaultRecordMetaData(colNames);	
 	}
 
 	/**
@@ -35,7 +43,7 @@ public class Adjuster extends AbstractRecordStream
 	@Override
 	public int getNumCols() 
 	{
-		return parent.getNumCols();
+		return rmd.getNumCols();
 	}
 
 	@Override
@@ -44,7 +52,7 @@ public class Adjuster extends AbstractRecordStream
 	 */
 	public String getColumnName(int i)
 	{
-		return parent.getColumnName(i);
+		return rmd.getColumnName(i);
 	}
 
 	@Override
@@ -54,20 +62,20 @@ public class Adjuster extends AbstractRecordStream
 	 */
 	public Record getNext() throws RecordStreamException 
 	{
-		int colNum = parent.getNumCols();
+		int colNum = rmd.getNumCols();
 		Object[] fields = new Object[colNum];
 		Record r = parent.getNext();
 		if (r == null) return null;
 		
 		for (int col = 0; col < colNum; ++col)
 		{
-			String colName = parent.getColumnName(col);
+			String colName = rmd.getColumnName(col);
 			if (adjust.containsKey(colName))
 				fields[col] = adjust.get(colName).adjust(r.getValue(col));
 			else
 				fields[col] = r.getValue(col);
 		}
-		return new DefaultRecord(this, fields);
+		return new DefaultRecord(rmd, fields);
 	}
 	
 	public interface AdjustFunc

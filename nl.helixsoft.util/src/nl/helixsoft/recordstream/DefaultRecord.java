@@ -5,9 +5,6 @@ public class DefaultRecord implements Record
 	private final RecordMetaData metaData;
 	private final Object[] fields;
 	
-	@Deprecated
-	public DefaultRecord (RecordStream parent, Object fields[]) { this.metaData = new DefaultRecordMetaData(parent); this.fields = fields; }
-	
 	public DefaultRecord (RecordMetaData _metaData, Object fields[]) { this.metaData = _metaData; this.fields = fields; }
 	
 	public Object getValue(int i) { return fields[i]; }
