@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 
 /**
  * I implemented this utility method because the SPARQL GROUP BY implementation of virtuoso sucks.

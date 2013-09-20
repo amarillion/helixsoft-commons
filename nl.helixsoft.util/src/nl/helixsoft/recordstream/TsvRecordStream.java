@@ -6,9 +6,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 public class TsvRecordStream extends AbstractRecordStream
 {
 	public static int FILTER_COMMENTS = 0x100;
