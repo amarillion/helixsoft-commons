@@ -3,9 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Gui
 Bundle-SymbolicName: nl.helixsoft.gui
 Bundle-Version: 1.0.0.qualifier
-Bundle-ClassPath: gui.jar,
- lib/org.bridgedb.gui.jar,
- lib/org.pathvisio.jgoodies.forms-1.2.0.jar
 Export-Package: nl.helixsoft.gui,
  nl.helixsoft.gui.table,
  nl.helixsoft.param,
