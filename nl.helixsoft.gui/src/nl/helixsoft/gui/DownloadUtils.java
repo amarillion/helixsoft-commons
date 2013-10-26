@@ -33,9 +33,6 @@ public class DownloadUtils
 	public static void downloadStream (URLConnection conn, OutputStream out) throws IOException
 	{
 		System.out.println ("Please wait while downloading file from " + conn.getURL());
-		// For websites that provide different downloads depending on language - it's rare, but Oryzabase (http://www.shigen.nig.ac.jp/) does this.
-		// TODO: move this bit to Oryzabase parser and use URLConnection form
-		conn.setRequestProperty("Accept-Language", Locale.getDefault().getISO3Language());
 		
 		InputStream in = conn.getInputStream();
 		
