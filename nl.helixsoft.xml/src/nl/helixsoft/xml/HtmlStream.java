@@ -33,6 +33,14 @@ public class HtmlStream
 		return this;
 	}
 
+	public void render(Html template, Object[] data)
+	{
+		Context c = new Context(data);
+		template.flush(c);
+		
+		this.println(c.builder.toString());
+	}
+	
 	public void close() 
 	{
 		parent.close();

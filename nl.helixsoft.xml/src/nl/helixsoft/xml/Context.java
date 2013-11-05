@@ -10,6 +10,11 @@ public class Context
 	StringBuilder builder;
 	private Object data;
 	
+	public String build()
+	{
+		return builder.toString();
+	}
+	
 	public Context()
 	{
 		this(null);
