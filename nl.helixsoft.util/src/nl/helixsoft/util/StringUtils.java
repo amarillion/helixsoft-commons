@@ -144,6 +144,8 @@ public class StringUtils
 		httpEntities.put ("Delta",		"\u0394");
 		
 		httpEntities.put ("epsilon",	"\u03B5");			
+		httpEntities.put ("Epsilon",	"\u0395");
+		
 		httpEntities.put ("zeta",		"\u03B6");			
 		httpEntities.put ("eta",		"\u03B7");			
 		httpEntities.put ("theta",		"\u03B8");			
@@ -155,8 +157,84 @@ public class StringUtils
 		httpEntities.put ("xi", 		"\u03BE");			
 		httpEntities.put ("omicron",	"\u03BF");			
 		httpEntities.put ("pi",			"\u03C0");			
+		httpEntities.put ("rho",		"\u03C1");
+		// gap
+		httpEntities.put ("sigma",		"\u03C3");			
+		httpEntities.put ("tau",		"\u03C4");			
+		httpEntities.put ("upsilon",	"\u03C5");			
+		httpEntities.put ("phi",		"\u03C6");			
+		httpEntities.put ("chi",		"\u03C7");			
+		httpEntities.put ("psi",		"\u03C8");			
 		
+		httpEntities.put ("Omega", 		"\u03A9");
 		httpEntities.put ("omega", 		"\u03C9");
+	}
+
+	private static final Map<Character, String> greek;
+	
+	//TODO: add more. see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+	static {
+		greek = new HashMap<Character, String>();
+		greek.put ('\u03B1',	"alpha");
+		greek.put ('\u0391',	"Alpha");			
+
+		greek.put ('\u03B2',	"beta");			
+		greek.put ('\u0392',	"Beta");			
+		
+		greek.put ('\u03B3',	"gamma");			
+		greek.put ('\u0393',	"Gamma");			
+		
+		greek.put ('\u03B4',	"delta");			
+		greek.put ('\u0394',	"Delta");
+		
+		greek.put ('\u03B5',	"epsilon");
+		greek.put ('\u0395',	"Epsilon");	
+		
+		greek.put ('\u03B6',	"zeta");			
+		greek.put ('\u03B7',	"eta");			
+		greek.put ('\u03B8',	"theta");			
+		greek.put ('\u03B9',	"iota");			
+		greek.put ('\u03BA',	"kappa");			
+		greek.put ('\u03BB',	"lambda");			
+		greek.put ('\u03BC', 	"mu");			
+		greek.put ('\u03BD', 	"nu");			
+		greek.put ('\u03BE', 	"xi");			
+		greek.put ('\u03BF',	"omicron");			
+		greek.put ('\u03C0',	"pi");			
+
+		greek.put ('\u03C1',	"rho");
+		// gap
+		greek.put ('\u03C3',	"sigma");	
+		greek.put ('\u03C4',	"tau");
+		greek.put ('\u03C5',	"upsilon");			
+		greek.put ('\u03C6',	"phi");			
+		greek.put ('\u03C7',	"chi");			
+		greek.put ('\u03C8',	"psi");	
+		greek.put ('\u03A9', 	"Omega");
+		greek.put ('\u03C9', 	"omega");
+	}
+	
+	/**
+	 * Replace greek letters such as \u03B2 with english text such as "Beta";
+	 */
+	public static String greekToEnglish(String input)
+	{
+		Pattern patGreek = Pattern.compile("[\u0391-\u03A9\u03B1-\u03C9]");
+
+		if (!patGreek.matcher(input).find())
+			return input; // no replacement needed.
+		
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < input.length(); ++i)
+		{
+			 char c = input.charAt(i);
+			 String rep = greek.get(c); 
+			 if (rep == null)
+				 result.append (c);
+			 else
+				 result.append (rep);
+		}
+		return result.toString();
 	}
 	
 	/**
