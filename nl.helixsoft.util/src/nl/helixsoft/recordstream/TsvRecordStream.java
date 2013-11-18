@@ -6,6 +6,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Turn a stream of delimited values into a record stream.
+ */
 public class TsvRecordStream extends AbstractRecordStream
 {
 	public static int FILTER_COMMENTS = 0x100;
@@ -13,10 +16,14 @@ public class TsvRecordStream extends AbstractRecordStream
 	
 	/** If this flag is on, check for each header and row field if it is enclosed in double quotes, and remove them */
 	public static int REMOVING_OPTIONAL_QUOTES = 0x400;
-	
+
+	public static int TAB_DELIMITED = 0x000; // default, so zero.
+	public static int COMMA_DELIMITED = 0x800;
+
 	private int flags = 0;
 	private final BufferedReader reader;
 	private final RecordMetaData rmd;
+	private String delimiter = "\t";
 	
 	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
 	{
@@ -42,6 +49,11 @@ public class TsvRecordStream extends AbstractRecordStream
 	public TsvRecordStream (Reader _reader, int flags) throws RecordStreamException
 	{
 		this.flags = flags;
+		if ((flags & COMMA_DELIMITED) > 0)
+		{
+			delimiter = ",";
+		}
+		
 		try 
 		{
 			this.reader = new BufferedReader(_reader);
@@ -49,7 +61,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			List<String> header = new ArrayList<String>();
 			if (headerLine != null) // empty file has no header
 			{
-				for (String h : headerLine.split("\t"))
+				for (String h : headerLine.split(delimiter))
 				{
 					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
 					{
@@ -90,7 +102,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			line = getNextNonCommentLine();
 			if (line == null) return null;
 			
-			String[] split = line.split("\t", -1);
+			String[] split = line.split(delimiter, -1);
 			
 			String[] fields;
 			if (split.length == rmd.getNumCols())
