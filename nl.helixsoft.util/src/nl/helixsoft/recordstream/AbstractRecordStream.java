@@ -5,7 +5,7 @@ import java.util.Map;
 
 import nl.helixsoft.recordstream.Adjuster.AdjustFunc;
 
-public abstract class AbstractRecordStream extends AbstractStream<Record> implements RecordStream
+public abstract class AbstractRecordStream extends AbstractStream<Record> implements RecordStream, NextUntilNull<Record>
 {
 	@Override
 	public RecordStream filter (Predicate<Record> predicate)
@@ -19,53 +19,9 @@ public abstract class AbstractRecordStream extends AbstractStream<Record> implem
 		return new Adjuster (this, adjustMap);
 	}
 
-	private class RecordStreamIterator implements Iterator<Record>
-	{
-		private Record next;
-		private final RecordStream parent;
-		
-		RecordStreamIterator (RecordStream parent)
-		{
-			this.parent = parent;
-			try {
-				next = parent.getNext();
-			} 
-			catch (RecordStreamException e) 
-			{
-				throw new RuntimeException (e);
-			}
-		}
-
-		@Override
-		public boolean hasNext() 
-		{
-			return (next != null);
-		}
-
-		@Override
-		public Record next() 
-		{
-			Record result = next;
-			try {
-				next = parent.getNext();
-			} 
-			catch (RecordStreamException e) 
-			{
-				throw new RuntimeException(e);
-			}
-			return result;
-		}
-
-		@Override
-		public void remove() 
-		{
-			throw new UnsupportedOperationException();
-		}
-	}
-		
 	@Override
 	public Iterator<Record> iterator()
 	{
-		return new RecordStreamIterator(this);
+		return new IteratorHelper<Record>(this);
 	}
 }
