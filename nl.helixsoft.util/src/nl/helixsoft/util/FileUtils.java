@@ -128,5 +128,144 @@ public class FileUtils
 		}
 		return dirApplication;
 	}
+	
+	/**
+	 * Expand a unix GLOB, such as '~' or '*.java' into a list of files.
+	 * only files that actually exist are returned.
+	 * 
+	 * <br>
+	 * TODO only tested on unix, not likely to work well on Windows.
+	 */
+	public static List<File> expandGlob (String glob)
+	{
+		List<File> result = new ArrayList<File>();
+		
+		File base;
+		if (glob.startsWith ("/"))
+		{
+			base = new File ("/");
+			glob = glob.substring(1);
+		}
+		else if (glob.equals ("~") || glob.startsWith ("~/"))
+		{
+			base = new File (System.getProperty("user.home"));
+			glob = glob.substring(1);			
+		}
+		else
+		{
+			base = new File (".");
+		}
+		
+		result.addAll (expandGlobHelper (glob, base));
+		return result;
+	}
 
+	/**
+	 * Helper for expandGlob.
+	 * <br>
+	 * Tests if a given file name matches a given glob pattern with * or ?.
+	 * Does not handle directories.
+	 */
+	private static boolean matches(String text, String glob) 
+	{
+	    String rest = null;
+	    int pos = glob.indexOf('*');
+	    if (pos != -1) {
+	        rest = glob.substring(pos + 1);
+	        glob = glob.substring(0, pos);
+	    }
+
+	    if (glob.length() > text.length())
+	        return false;
+
+	    // handle the part up to the first *
+	    for (int i = 0; i < glob.length(); i++)
+	        if (glob.charAt(i) != '?' 
+	                && !glob.substring(i, i + 1).equalsIgnoreCase(text.substring(i, i + 1)))
+	            return false;
+
+	    // recurse for the part after the first *, if any
+	    if (rest == null) {
+	        return glob.length() == text.length();
+	    } else {
+	        for (int i = glob.length(); i <= text.length(); i++) {
+	            if (matches(text.substring(i), rest))
+	                return true;
+	        }
+	        return false;
+	    }
+	}
+	
+	/**
+	 * Helper for expandGlob.
+	 * <br>
+	 * get a list of files matching a glob in a directory. Does not traverse directories. 
+	 */
+	private static List<File> getLocalMatches (String remain, File base)
+	{
+		List<File> result = new ArrayList<File>();
+		if (remain.equals ("."))
+		{
+			result.add (base);
+		}
+		else if (remain.equals (".."))
+		{
+			result.add (base.getParentFile());
+		}
+		else if (remain.contains("*") || remain.contains ("?"))
+		{			
+			// look for directories in base matching
+			for (File child : base.listFiles())
+			{
+				if (matches (child.getName(), remain))
+				{
+					result.add (child);
+				}
+			}
+		}
+		else
+		{
+			File f = new File (base, remain);
+			if (f.exists()) result.add (f);
+		}
+		return result;
+	}
+	
+	private static List<File> expandGlobHelper (String glob, File base)
+	{
+		// deal with sequences of slashes...
+		while (glob.startsWith ("/"))
+		{
+			glob = glob.substring (1);
+		}
+		
+		// if nothing remains, then we only select the current directory.
+		if (glob.equals (""))
+		{
+			List<File> result = new ArrayList<File>();
+			result.add (base);
+		}
+		
+		int pos = glob.indexOf ('/');
+		
+		if (pos >= 0)
+		{
+			List<File> result = new ArrayList<File>();
+			
+			String dir = glob.substring (0, pos);
+			glob = glob.substring (pos);
+			for (File f: getLocalMatches (dir, base))
+			{
+				if (f.isDirectory())
+				{
+					result.addAll (expandGlobHelper(glob, f));
+				}				
+			}
+			return result;
+		}
+		else
+		{
+			return getLocalMatches(glob, base);
+		}
+	}
 }
