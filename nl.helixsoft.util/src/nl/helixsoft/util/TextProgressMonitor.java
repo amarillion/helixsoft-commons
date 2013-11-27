@@ -1,6 +1,7 @@
 package nl.helixsoft.util;
 
 import java.io.OutputStream;
+import java.util.Formatter;
 
 
 public class TextProgressMonitor 
@@ -39,13 +40,41 @@ public class TextProgressMonitor
 	{
 		if ((i % period) == 0)
 		{
-			if ((i % (period * 40)) == 0)
-			{
-				System.out.print("\n" + taskText + NumberFormatter.thousandsSeparatedFormat(i, ',', 12) + ": ");
-			}
-			System.out.print ('.');
+			printLine();
 		}
 		i++;
+	}
+	
+	public void printLine()
+	{
+		if (max > 0)
+		{
+			float pct = (float)(i / max);
+			int filled = Math.min (20, Math.max (0, (int)(pct * 20)));
+			String progressFormatted = StringUtils.rep("=", filled) + StringUtils.rep("-", 20-filled);
+			
+			String spinner;			
+			switch ((int)(i % 4))
+			{
+			case 0: spinner = "-"; break;
+			case 1: spinner = "/"; break;
+			case 2: spinner = "|"; break;
+			default: spinner = "\\"; break;
+			}
+			
+			System.out.printf("%40s [%20s] %3.0f%% %s\r", taskText, progressFormatted, pct, spinner);
+		}
+		else
+		{
+			System.out.printf("%40s: %s\r", taskText, NumberFormatter.thousandsSeparatedFormat(i, ',', 12));
+		}
+	}
+				
+	private long max = -1;
+	
+	public void setMax(long value)
+	{
+		max = value;
 	}
 	
 	public void reset()
