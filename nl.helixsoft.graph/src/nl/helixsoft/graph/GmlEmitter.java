@@ -38,7 +38,8 @@ public class GmlEmitter implements Emitter
 		out.print(indent);
 		out.print (key);
 		out.print (" \"");
-		out.print (value);
+		//TODO: replace all ISO-8859-1 characters characters above ASCII code 127 this way
+		out.print (value.replaceAll ("&", "&amp;").replaceAll ("\"", "&quot;"));
 		out.println ("\"");			
 	}
 
