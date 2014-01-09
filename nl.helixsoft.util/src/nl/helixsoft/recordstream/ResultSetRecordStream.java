@@ -19,7 +19,9 @@ public class ResultSetRecordStream extends AbstractRecordStream
 			List<String> colnames = new ArrayList<String>();
 			for (int col = 1; col <= colNum; ++col)
 			{
-				colnames.add(rs.getMetaData().getColumnName(col));
+				// use getColumnLabel instead of getColumnName, so ALIASed columns work
+				// see: http://bugs.mysql.com/bug.php?id=43684
+				colnames.add(rs.getMetaData().getColumnLabel(col));
 			}
 			rmd = new DefaultRecordMetaData(colnames);
 		}

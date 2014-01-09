@@ -1,7 +1,6 @@
 package nl.helixsoft.util;
 
 import java.io.OutputStream;
-import java.util.Formatter;
 
 
 public class TextProgressMonitor 
@@ -49,7 +48,7 @@ public class TextProgressMonitor
 	{
 		if (max > 0)
 		{
-			float pct = (float)(i / max);
+			float pct = (float)(i) / (float)(max);
 			int filled = Math.min (20, Math.max (0, (int)(pct * 20)));
 			String progressFormatted = StringUtils.rep("=", filled) + StringUtils.rep("-", 20-filled);
 			
@@ -62,7 +61,7 @@ public class TextProgressMonitor
 			default: spinner = "\\"; break;
 			}
 			
-			System.out.printf("%40s [%20s] %3.0f%% %s\r", taskText, progressFormatted, pct, spinner);
+			System.out.printf("%40s [%20s] %3.0f%% (%d / %d) %s\r", taskText, progressFormatted, pct, i, max, spinner);
 		}
 		else
 		{

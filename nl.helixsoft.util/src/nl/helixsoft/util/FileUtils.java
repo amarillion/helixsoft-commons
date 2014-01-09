@@ -131,12 +131,18 @@ public class FileUtils
 	
 	/**
 	 * Expand a unix GLOB, such as '~' or '*.java' into a list of files.
-	 * only files that actually exist are returned.
+	 * only files or directories that actually exist are returned. If there are no matches,
+	 * returns an empty list.
 	 * 
-	 * <br>
+	 * <p>
 	 * TODO only tested on unix, not likely to work well on Windows.
+	 * 
+	 * @param glob the glob pattern
+	 * @param baseDir if the glob is relative, it will be taken relative to this Directory. If it is absolute, this parameter has no effect. 
+	 *        If baseDir is null, the current directory will be used.
+	 * @return list of files or directories, or an empty list if there are no matches.
 	 */
-	public static List<File> expandGlob (String glob)
+	public static List<File> expandGlob (String glob, File baseDir)
 	{
 		List<File> result = new ArrayList<File>();
 		
@@ -153,13 +159,20 @@ public class FileUtils
 		}
 		else
 		{
-			base = new File (".");
+			// relative - use supplied base Directory (if it isn't null)
+			base = baseDir == null ? new File(".") : baseDir;
 		}
 		
 		result.addAll (expandGlobHelper (glob, base));
 		return result;
 	}
 
+	/** expand glob relative to current directory */
+	public static List<File> expandGlob (String glob)
+	{
+		return expandGlob (glob, new File("."));
+	}
+	
 	/**
 	 * Helper for expandGlob.
 	 * <br>
@@ -210,7 +223,7 @@ public class FileUtils
 		}
 		else if (remain.equals (".."))
 		{
-			result.add (base.getParentFile());
+			result.add (base.getAbsoluteFile().getParentFile());
 		}
 		else if (remain.contains("*") || remain.contains ("?"))
 		{			
