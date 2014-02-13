@@ -53,6 +53,11 @@ public class AttributesTable<K>
 		return e.entrySet();
 	}
 	
+	public Map<String, Object> getRow(K t)
+	{
+		return data.get(t);
+	}
+	
 	public Set<String> getAttributeSet(K t)
 	{
 		if (data.containsKey(t))

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nl.helixsoft.recordstream.Reducer.Count;
 import nl.helixsoft.recordstream.Reducer.GroupFunc;
@@ -49,6 +50,67 @@ public class TestReduceAndCast extends TestCase {
 		{
 			return cols.indexOf(name);
 		}
+	}
+
+	/*
+	 * Test Reduce, and in particular the AsSet and AsList functions
+	 */
+	@SuppressWarnings("unchecked")
+	public void testReduceSet() throws RecordStreamException
+	{
+		Map<String, GroupFunc> map = new HashMap<String, GroupFunc>();
+		map.put ("str1_set", new Reducer.AsSet("str1"));
+		map.put ("str2_list", new Reducer.AsList("str2"));
+
+		RecordStream rs = new MockRecordStream (
+				new String[] { "groupid", "str1", "str2" },
+				new Object[][] 	{
+							{ 1, "a", "x" },
+							{ 1, "a", "y" },
+							{ 2, "b", "z" }, 
+							{ 2, "c", "z" },
+							{ 3, "d", "p" },
+							{ 3, "e", "q" },
+				});
+
+		Reducer reducer = new Reducer (rs, "groupid", map);
+		
+		assertEquals (3, reducer.getNumCols());
+		
+		@SuppressWarnings("unused")
+		int dummy = reducer.getColumnIndex("groupid"); // throws exception if not found
+		dummy = reducer.getColumnIndex("str1_set"); // throws exception if not found
+		dummy = reducer.getColumnIndex("str2_list"); // throws exception if not found
+		try
+		{
+			dummy = reducer.getColumnIndex("strx_set");
+			fail ("Expected an exception after requesting unknown column");
+		}
+		catch (IllegalArgumentException e) { /* OK, as expected */ }
+		
+		Set<Object> set1;
+		List<Object> list2;
+		
+		Record r = reducer.getNext();
+		set1 = (Set<Object>)r.getValue("str1_set");
+		assertTrue (set1.size() == 1 && set1.contains ("a"));
+		list2 = (List<Object>)r.getValue("str2_list");
+		assertTrue (list2.size() == 2 && list2.get(0).equals("x") && list2.get(1).equals ("y"));
+		
+		r = reducer.getNext();
+		set1 = (Set<Object>)r.getValue("str1_set");
+		assertTrue (set1.size() == 2 && set1.contains ("b") && set1.contains ("c"));
+		list2 = (List<Object>)r.getValue("str2_list");
+		assertTrue (list2.size() == 2 && list2.get(0).equals("z") && list2.get(1).equals ("z"));
+
+		r = reducer.getNext();
+		set1 = (Set<Object>)r.getValue("str1_set");
+		assertTrue (set1.size() == 2 && set1.contains ("d") && set1.contains ("e"));
+		list2 = (List<Object>)r.getValue("str2_list");
+		assertTrue (list2.size() == 2 && list2.get(0).equals("p") && list2.get(1).equals ("q"));
+
+		r = reducer.getNext();
+		assertNull (r);
 	}
 	
 	public void testReduce() throws RecordStreamException
