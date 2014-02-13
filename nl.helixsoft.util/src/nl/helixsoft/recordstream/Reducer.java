@@ -184,22 +184,13 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { list = new ArrayList<Object>(); }
 	}
 
-	/**
-	 * For efficiency, this accumulator re-uses the same set object between invocations.
-	 * An unmodifiable view of the set is returned as result.
-	 * 
-	 * This view is not valid between rows of the Reducer, and must not be re-used
-	 * accross invocations of Reducer.getNext();
-	 */
 	public static class AsSet extends AbstractGroupFunc
 	{
-		private Set<Object> set = new HashSet<Object>();
-		private Set<Object> alt = new HashSet<Object>();
-		
+		private Set<Object> set;		
 		public AsSet(String col) { super(col); }
 		public void accumulate (Record val) { int i = getIdx(val); set.add (val.getValue(i)); }
 		public Object getResult() { return set; }
-		public void clear() { Set<Object> swap = set; set = alt; alt = swap; set.clear(); }
+		public void clear() { set = new HashSet<Object>(); }
 	}
 
 	public static abstract class AbstractGroupFunc implements GroupFunc
