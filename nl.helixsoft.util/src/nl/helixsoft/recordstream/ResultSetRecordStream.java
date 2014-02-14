@@ -32,18 +32,6 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public int getNumCols() 
-	{
-		return rmd.getNumCols();
-	}
-
-	@Override
-	public String getColumnName(int i) 
-	{
-		return rmd.getColumnName(i);
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException 
 	{
 		try {
@@ -74,12 +62,6 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public int getColumnIndex(String name) 
-	{
-		return rmd.getColumnIndex(name);
-	}
-	
-	@Override
 	public void finalize()
 	{
 		try {
@@ -89,5 +71,11 @@ public class ResultSetRecordStream extends AbstractRecordStream
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public RecordMetaData getMetaData() 
+	{
+		return rmd;
 	}
 }

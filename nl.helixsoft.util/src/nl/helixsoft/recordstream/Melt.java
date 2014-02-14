@@ -4,28 +4,14 @@ package nl.helixsoft.recordstream;
 public class Melt extends AbstractRecordStream {
 
 	@Override
-	public int getNumCols() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String getColumnName(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int getColumnIndex(String name)
+	public RecordMetaData getMetaData() 
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
-
 }

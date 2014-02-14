@@ -88,18 +88,6 @@ public class Filter extends AbstractRecordStream
 	}
 	
 	@Override
-	public int getNumCols()
-	{
-		return parent.getNumCols();
-	}
-
-	@Override
-	public String getColumnName(int i)
-	{
-		return parent.getColumnName(i);
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException
 	{
 		while (true)
@@ -113,8 +101,8 @@ public class Filter extends AbstractRecordStream
 	}
 
 	@Override
-	public int getColumnIndex(String name) 
+	public RecordMetaData getMetaData() 
 	{
-		return parent.getColumnIndex(name);
+		return parent.getMetaData();
 	}
 }

@@ -23,27 +23,14 @@ public class Join extends AbstractRecordStream
 	}
 	
 	@Override
-	public int getNumCols() 
-	{
-		return left.getNumCols() + right.getNumCols() - 1;
-	}
-
-	@Override
-	public String getColumnName(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int getColumnIndex(String name) {
-		// TODO Auto-generated method stub
-		return 0;
+	public RecordMetaData getMetaData() 
+	{
+		return null;
 	}
-
 }

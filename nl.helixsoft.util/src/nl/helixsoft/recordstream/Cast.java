@@ -54,9 +54,9 @@ public class Cast extends AbstractRecordStream
 	public Cast (RecordStream parent, String[] _groupVar, String columnVar, String valueVar) throws RecordStreamException
 	{
 		Map<String, Integer> idx = new HashMap<String, Integer>();
-		for (int i = 0; i < parent.getNumCols(); ++i)
+		for (int i = 0; i < parent.getMetaData().getNumCols(); ++i)
 		{
-			idx.put (parent.getColumnName(i), i);
+			idx.put (parent.getMetaData().getColumnName(i), i);
 		}
 		
 		this.parent = parent;
@@ -166,18 +166,6 @@ public class Cast extends AbstractRecordStream
 	
 	
 	@Override
-	public int getNumCols() 
-	{
-		return rmd.getNumCols();
-	}
-
-	@Override
-	public String getColumnName(int i) 
-	{
-		return rmd.getColumnName(i);
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException {
 		Record result = nextResult;
 		loadNextRecord();
@@ -186,9 +174,8 @@ public class Cast extends AbstractRecordStream
 
 
 	@Override
-	public int getColumnIndex(String name)
+	public RecordMetaData getMetaData() 
 	{
-		return rmd.getColumnIndex(name);
+		return rmd;
 	}
-	
 }

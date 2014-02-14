@@ -81,18 +81,6 @@ public class TsvRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public int getNumCols() 
-	{
-		return rmd.getNumCols();
-	}
-
-	@Override
-	public String getColumnName(int i) 
-	{
-		return rmd.getColumnName(i);
-	}
-
-	@Override
 	public Record getNext() throws RecordStreamException 
 	{
 		try 
@@ -158,9 +146,8 @@ public class TsvRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public int getColumnIndex(String name) 
+	public RecordMetaData getMetaData() 
 	{
-		return rmd.getColumnIndex(name);
+		return rmd;
 	}
-
 }

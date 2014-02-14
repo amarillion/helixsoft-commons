@@ -28,31 +28,12 @@ public class Adjuster extends AbstractRecordStream
 		this.parent = parent;
 		this.adjust = adjust; //TODO: really should make a defensive copy here.
 		
-		String[] colNames = new String[parent.getNumCols()];
-		for (int i = 0; i < parent.getNumCols(); ++i)
+		String[] colNames = new String[parent.getMetaData().getNumCols()];
+		for (int i = 0; i < parent.getMetaData().getNumCols(); ++i)
 		{
-			colNames[i] = parent.getColumnName(i);
+			colNames[i] = parent.getMetaData().getColumnName(i);
 		}
 		rmd = new DefaultRecordMetaData(colNames);	
-	}
-
-	/**
-	 * The number of columns in this record stream is always the 
-	 * same as the number of columns in the parent record stream.
-	 */
-	@Override
-	public int getNumCols() 
-	{
-		return rmd.getNumCols();
-	}
-
-	@Override
-	/**
-	 * Column names are always the same as the parent record stream.
-	 */
-	public String getColumnName(int i)
-	{
-		return rmd.getColumnName(i);
 	}
 
 	@Override
@@ -93,10 +74,15 @@ public class Adjuster extends AbstractRecordStream
 		}
 	}
 
+	/**
+	 * The number of columns in this record stream is always the 
+	 * same as the number of columns in the parent record stream.
+	 * Column names are always the same as the parent record stream.
+	 */
 	@Override
-	public int getColumnIndex(String name)
+	public RecordMetaData getMetaData() 
 	{
-		return parent.getColumnIndex(name);
+		return rmd;
 	}
 
 }

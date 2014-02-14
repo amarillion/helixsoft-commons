@@ -13,7 +13,7 @@ public class RecordStreamFormatter {
 	 */
 	public static void asTsv(PrintStream out, RecordStream rs, PrintStream progress, boolean addHeader) throws RecordStreamException
 	{
-		int colNum = rs.getNumCols();
+		int colNum = rs.getMetaData().getNumCols();
 		
 		if (addHeader)
 		{
@@ -21,7 +21,7 @@ public class RecordStreamFormatter {
 			for (int col = 0; col < colNum; ++col)
 			{
 				out.print (sep);
-				out.print (rs.getColumnName(col));
+				out.print (rs.getMetaData().getColumnName(col));
 				sep = "\t";
 			}
 			out.println();

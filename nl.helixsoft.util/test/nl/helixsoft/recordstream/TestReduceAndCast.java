@@ -29,26 +29,16 @@ public class TestReduceAndCast extends TestCase {
 		int row = 0;
 
 		@Override
-		public int getNumCols() 
-		{
-			return cols.size();
-		}
-
-		@Override
-		public String getColumnName(int i) {
-			return cols.get(i);
-		}
-
-		@Override
 		public Record getNext() throws RecordStreamException {
 			if (row >= data.length) return null;
 			return new DefaultRecord(rmd, data[row++]);
 		}
 
+		
 		@Override
-		public int getColumnIndex(String name) 
+		public RecordMetaData getMetaData() 
 		{
-			return cols.indexOf(name);
+			return rmd;
 		}
 	}
 
@@ -75,15 +65,15 @@ public class TestReduceAndCast extends TestCase {
 
 		Reducer reducer = new Reducer (rs, "groupid", map);
 		
-		assertEquals (3, reducer.getNumCols());
+		assertEquals (3, reducer.getMetaData().getNumCols());
 		
 		@SuppressWarnings("unused")
-		int dummy = reducer.getColumnIndex("groupid"); // throws exception if not found
-		dummy = reducer.getColumnIndex("str1_set"); // throws exception if not found
-		dummy = reducer.getColumnIndex("str2_list"); // throws exception if not found
+		int dummy = reducer.getMetaData().getColumnIndex("groupid"); // throws exception if not found
+		dummy = reducer.getMetaData().getColumnIndex("str1_set"); // throws exception if not found
+		dummy = reducer.getMetaData().getColumnIndex("str2_list"); // throws exception if not found
 		try
 		{
-			dummy = reducer.getColumnIndex("strx_set");
+			dummy = reducer.getMetaData().getColumnIndex("strx_set");
 			fail ("Expected an exception after requesting unknown column");
 		}
 		catch (IllegalArgumentException e) { /* OK, as expected */ }
@@ -131,10 +121,10 @@ public class TestReduceAndCast extends TestCase {
 
 		Reducer reducer = new Reducer (rs, "groupid", map);
 		
-		assertEquals (4, reducer.getNumCols());
+		assertEquals (4, reducer.getMetaData().getNumCols());
 		
 		Map<String, Integer> idx = new HashMap<String, Integer>();
-		for (int i = 0; i < reducer.getNumCols(); ++i) idx.put (reducer.getColumnName(i), i);
+		for (int i = 0; i < reducer.getMetaData().getNumCols(); ++i) idx.put (reducer.getMetaData().getColumnName(i), i);
 		assertTrue (idx.containsKey("groupid"));
 		assertTrue (idx.containsKey("count"));
 		assertTrue (idx.containsKey("avg_float"));
@@ -176,10 +166,10 @@ public class TestReduceAndCast extends TestCase {
 
 		Cast cast = new Cast (rs, "group", "col", "var");
 		
-		assertEquals (3, cast.getNumCols());
+		assertEquals (3, cast.getMetaData().getNumCols());
 		
 		Map<String, Integer> idx = new HashMap<String, Integer>();
-		for (int i = 0; i < cast.getNumCols(); ++i) idx.put (cast.getColumnName(i), i);
+		for (int i = 0; i < cast.getMetaData().getNumCols(); ++i) idx.put (cast.getMetaData().getColumnName(i), i);
 		assertTrue (idx.containsKey("group"));
 		assertTrue (idx.containsKey("col1"));
 		assertTrue (idx.containsKey("col2"));
@@ -212,10 +202,10 @@ public class TestReduceAndCast extends TestCase {
 
 		Cast cast = new Cast (rs, new String[] { "group", "subgroup" }, "col", "var");
 		
-		assertEquals (4, cast.getNumCols());
+		assertEquals (4, cast.getMetaData().getNumCols());
 		
 		Map<String, Integer> idx = new HashMap<String, Integer>();
-		for (int i = 0; i < cast.getNumCols(); ++i) idx.put (cast.getColumnName(i), i);
+		for (int i = 0; i < cast.getMetaData().getNumCols(); ++i) idx.put (cast.getMetaData().getColumnName(i), i);
 		assertTrue (idx.containsKey("group"));
 		assertTrue (idx.containsKey("subgroup"));
 		assertTrue (idx.containsKey("col1"));

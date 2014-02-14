@@ -1,6 +1,5 @@
 package nl.helixsoft.recordstream;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +36,7 @@ public class Reducer extends AbstractRecordStream
 		{
 			outHeaders.add(header);
 		}
-		idxGroupVar = parent.getColumnIndex(groupVar);
+		idxGroupVar = parent.getMetaData().getColumnIndex(groupVar);
 		
 		row = parent.getNext();
 		prevValue = row.getValue(idxGroupVar);
@@ -46,21 +45,9 @@ public class Reducer extends AbstractRecordStream
 		rmd = new DefaultRecordMetaData(outHeaders);
 	}
 	
-	@Override
-	public int getNumCols() 
-	{
-		return rmd.getNumCols();
-	}
-
-	@Override
-	public String getColumnName(int i) 
-	{
-		return rmd.getColumnName(i);
-	}
-
 	private Record writeAccumulator() 
 	{
-		Object[] vals = new Object[getNumCols()];
+		Object[] vals = new Object[rmd.getNumCols()];
 		vals[0] = prevValue;
 		for (int i = 1; i < rmd.getNumCols(); ++i)
 		{
@@ -217,8 +204,8 @@ public class Reducer extends AbstractRecordStream
 	}
 
 	@Override
-	public int getColumnIndex(String name) 
+	public RecordMetaData getMetaData() 
 	{
-		return rmd.getColumnIndex(name);
+		return rmd;
 	}
 }
