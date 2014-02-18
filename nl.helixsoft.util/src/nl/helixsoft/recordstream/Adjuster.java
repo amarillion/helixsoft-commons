@@ -52,24 +52,21 @@ public class Adjuster extends AbstractRecordStream
 		{
 			String colName = rmd.getColumnName(col);
 			if (adjust.containsKey(colName))
-				fields[col] = adjust.get(colName).adjust(r.getValue(col));
+				fields[col] = adjust.get(colName).apply(r.getValue(col));
 			else
 				fields[col] = r.getValue(col);
 		}
 		return new DefaultRecord(rmd, fields);
 	}
 	
-	public interface AdjustFunc
-	{
-		public Object adjust (Object val);
-	}
+	public interface AdjustFunc extends Function<Object, Object> {}
 	
 	/** 
 	 * Adjuster func to remove html tags, and replace html entities with the corresponding characters.
 	 **/
 	public static class HtmlStrip implements AdjustFunc
 	{
-		public Object adjust (Object val) { 
+		public Object apply (Object val) { 
 			return StringUtils.stripHtml("" + val);
 		}
 	}
