@@ -27,10 +27,22 @@ public class TsvRecordStream extends AbstractRecordStream
 	
 	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
 	{
+		this (_reader, _header, 0);
+	}
+
+	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, int)   
+	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws RecordStreamException
+	{
+		this.flags = flags;
+		if ((flags & COMMA_DELIMITED) > 0)
+		{
+			delimiter = ",";
+		}
+		
 		this.reader = new BufferedReader(_reader);
 		rmd = new DefaultRecordMetaData (_header);
 	}
-	
+
 	public TsvRecordStream (Reader _reader) throws RecordStreamException
 	{
 		this (_reader, 0);
@@ -46,6 +58,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			return in;
 	}
 	
+	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String[], int)
 	public TsvRecordStream (Reader _reader, int flags) throws RecordStreamException
 	{
 		this.flags = flags;
