@@ -16,6 +16,12 @@
 
 	<target name="prepare-common" depends="prepare-jar-name">
 		<mkdir dir="build"/>
+		<tstamp>
+			<format property="builddate" pattern="yyyyMMdd"/>
+		</tstamp>
+		<exec executable="git" outputproperty="githash" failifexecutionfails="false">
+			<arg line="log -1 --format='%H'"/>
+		</exec>
 	</target>
 	
 	<target name="prepare">
@@ -53,7 +59,13 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<jar jarfile="${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
+		<jar jarfile="${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF">
+			<manifest>
+					<attribute name="Built-Date" value="${builddate}"/>
+					<attribute name="Built-By" value="${user.name}"/>
+					<attribute name="Git-Hash" value="${githash}"/>
+			</manifest>
+		</jar>
 	</target>
 	
 	<target name="test">
@@ -82,6 +94,14 @@
 	</target>
 
 	<target name="publish" depends="clean,jar" description="Publish this build into repository">
+		<echo>Checking if git repository is clean
+If exec returns 1, you have to git commit first</echo>
+		<exec executable="git" outputproperty="diff" failifexecutionfails="false" failonerror="true">
+			<!-- this will cause task to fail if there are dirty commits -->
+			<!-- however, if the git executable can't be run, this check is skipped -->
+			<arg line="diff --exit-code"/>
+		</exec>
+		<echo message="Repository OK"/>
 		<ivy:resolve/>
 		<ivy:publish resolver="libraries" overwrite="true" forcedeliver="true" pubrevision="${project.revision}" status="release">
 			<artifacts pattern="${bundle.dest}/[artifact].[ext]"/>
