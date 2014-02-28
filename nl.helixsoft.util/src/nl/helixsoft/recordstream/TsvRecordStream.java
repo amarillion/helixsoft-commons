@@ -1,10 +1,18 @@
 package nl.helixsoft.recordstream;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+
+
+//TODO: rename to FileRecordStream
 
 /**
  * Turn a stream of delimited values into a record stream.
@@ -17,7 +25,9 @@ public class TsvRecordStream extends AbstractRecordStream
 	/** If this flag is on, check for each header and row field if it is enclosed in double quotes, and remove them */
 	public static int REMOVING_OPTIONAL_QUOTES = 0x400;
 
+	@Deprecated
 	public static int TAB_DELIMITED = 0x000; // default, so zero.
+	@Deprecated
 	public static int COMMA_DELIMITED = 0x800;
 
 	private int flags = 0;
@@ -25,27 +35,134 @@ public class TsvRecordStream extends AbstractRecordStream
 	private final RecordMetaData rmd;
 	private String delimiter = "\t";
 	
-	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
+	public static TsvRecordStreamBuilder open (Reader _reader)
 	{
-		this (_reader, _header, 0);
+		return new TsvRecordStreamBuilder(_reader);	
 	}
+	
+	public static TsvRecordStreamBuilder open (File _file) throws FileNotFoundException
+	{
+		return new TsvRecordStreamBuilder(_file);	
+	}
+	
+	public static class TsvRecordStreamBuilder
+	{
+		private final Reader reader;
+		private String delimiter = "\t";
+		private int flags;
+		private String[] header = null;
+		
+		TsvRecordStreamBuilder(Reader _reader)
+		{
+			this.reader = _reader;
+		}
 
-	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, int)   
-	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws RecordStreamException
+		TsvRecordStreamBuilder(File f) throws FileNotFoundException
+		{
+			this.reader = new FileReader (f);
+		}
+
+		TsvRecordStreamBuilder(InputStream is)
+		{
+			this.reader = new InputStreamReader (is);
+		}
+
+		public TsvRecordStreamBuilder tabSeparated()
+		{
+			delimiter = "\t";
+			return this;
+		}
+		
+		public TsvRecordStreamBuilder commaSeparated()
+		{
+			delimiter = ",";
+			return this;
+		}
+		
+		public TsvRecordStreamBuilder customSeparator(String regex)
+		{
+			delimiter = regex;
+			return this;
+		}
+
+		public TsvRecordStreamBuilder removeOptionalQuotes()
+		{
+			flags |= REMOVING_OPTIONAL_QUOTES;
+			return this;
+		}
+
+		public TsvRecordStreamBuilder firstLineIsHeader()
+		{
+			if ((flags & NO_HEADER) > 0) flags -= NO_HEADER;
+			return this;
+		}
+		
+		public TsvRecordStreamBuilder setHeader(String[] header)
+		{
+			this.header = header;
+			flags |= NO_HEADER;
+			return this;
+		}
+
+		public TsvRecordStreamBuilder setHeader(List<String> header)
+		{
+			this.header = header.toArray(new String[header.size()]);
+			flags |= NO_HEADER;
+			return this;
+		}
+
+		public TsvRecordStreamBuilder filterComments()
+		{
+			flags |= FILTER_COMMENTS;
+			return this;
+		}
+		
+		TsvRecordStream get() throws RecordStreamException
+		{
+			if (header == null)
+			{
+				return new TsvRecordStream (reader, delimiter, flags);
+			}
+			else
+			{
+				return new TsvRecordStream (reader, delimiter, header, flags);
+			}
+		}
+
+	}
+	
+	public TsvRecordStream (Reader _reader, String _delimiter, String[] _header, int flags) throws RecordStreamException
 	{
 		this.flags = flags;
 		if ((flags & COMMA_DELIMITED) > 0)
 		{
 			delimiter = ",";
 		}
+		else
+		{
+			delimiter = _delimiter;
+		}
 		
 		this.reader = new BufferedReader(_reader);
-		rmd = new DefaultRecordMetaData (_header);
+		rmd = new DefaultRecordMetaData (_header);		
+	}
+	
+	@Deprecated
+	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
+	{
+		this (_reader, "\t", _header, 0);
 	}
 
+	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, int)   
+	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws RecordStreamException
+	{
+		this (_reader, "\t", _header, flags);
+	}
+
+	@Deprecated
 	public TsvRecordStream (Reader _reader) throws RecordStreamException
 	{
-		this (_reader, 0);
+		this (_reader, "\t", 0);
 	}
 
 	private String removeOptionalQuotes(String in)
@@ -57,14 +174,24 @@ public class TsvRecordStream extends AbstractRecordStream
 		else
 			return in;
 	}
-	
-	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String[], int)
+
+	@Deprecated
 	public TsvRecordStream (Reader _reader, int flags) throws RecordStreamException
+	{
+		this (_reader, "\t", flags);
+	}
+	
+	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, String[], int)
+	public TsvRecordStream (Reader _reader, String _delimiter, int flags) throws RecordStreamException
 	{
 		this.flags = flags;
 		if ((flags & COMMA_DELIMITED) > 0)
 		{
 			delimiter = ",";
+		}
+		else
+		{
+			delimiter = _delimiter;
 		}
 		
 		try 
