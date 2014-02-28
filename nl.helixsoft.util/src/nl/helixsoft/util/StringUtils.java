@@ -348,4 +348,13 @@ public class StringUtils
 		return (a == null) ? a == b : b.equalsIgnoreCase(a); 
 	}
 	
+	/**
+	 * Make the first character in the String uppercase.
+	 */
+	public static String initialUpper (String input)
+	{
+		String result = input.substring(0, 1).toUpperCase() + input.substring (1);
+		return result;
+	}
+	
 }
