@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tools
+Bundle-SymbolicName: nl.helixsoft.misc
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.kohsuke.args4j;bundle-version="2.0.21",
+ joda-time;bundle-version="1.5.2",
+ nl.helixsoft.util;bundle-version="1.0.0",
+ poi;bundle-version="3.9.0"
+Export-Package: nl.helixsoft.misc

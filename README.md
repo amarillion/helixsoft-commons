@@ -14,7 +14,7 @@ At the moment, the utilities are divided in three broad categories:
 ** nl.helixsoft.util: mixed bag
 * nl.helixsoft.xml: simple xml and html generator
 * nl.helixsoft.gui: a bunch of GUI methods
-	
+* nl.helixsoft.misc: a bunch of Utility classes with unusual dependencies
 	
 Where is this code used?
 ========================

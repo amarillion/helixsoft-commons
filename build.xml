@@ -8,6 +8,7 @@
 				<include name="nl.helixsoft.gui/build.xml"/>
 				<include name="nl.helixsoft.xml/build.xml"/>
 				<include name="nl.helixsoft.graph/build.xml"/>
+				<include name="nl.helixsoft.misc/build.xml"/>
 			</fileset>
 		</ivy:buildlist>
 	</target>

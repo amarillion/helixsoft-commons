@@ -29,8 +29,11 @@
 		<delete file="${bundle.dest}/${jar.name}"/>
 	</target>
 
-	<target name="compile" depends="prepare,prepare-common">
+	<target name="retrieve">
 		<ivy:retrieve/>
+	</target>
+	
+	<target name="compile" depends="prepare,prepare-common,retrieve">
 		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"

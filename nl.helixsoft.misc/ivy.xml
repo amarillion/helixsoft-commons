@@ -1,0 +1,12 @@
+<ivy-module version="2.0">
+  <info organisation="nl.helixsoft" module="nl.helixsoft.misc"/>
+  <publications>
+    <artifact name="nl.helixsoft.misc" ext="jar" type="jar"/>
+  </publications>
+  <dependencies>
+    <dependency org="nl.helixsoft" name="nl.helixsoft.util" rev="[1.0,)"/>
+    <dependency org="poi" name="poi" rev="3.9+"/>
+    <dependency org="joda-time" name="joda-time" rev="1.5+"/>
+    <dependency org="org.kohsuke" name="org.kohsuke.args4j" rev="2.0+"/>
+  </dependencies>
+</ivy-module>
