@@ -34,7 +34,8 @@ public class BackupCull
 		
 		public int compare(File a, File b)
 		{
-			return Integer.compare(score(b), score(a));
+			// From Java 7: Integer.compare (score(a), score(b))
+			return Integer.valueOf(score(b)).compareTo(Integer.valueOf(score(a)));
 		}
 	}
 
