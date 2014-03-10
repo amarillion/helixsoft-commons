@@ -73,10 +73,27 @@ public class BackupCull
 			boolean first = true;
 			for (File f : files)
 			{
-				System.out.println ("    " + (first ? "KEEP " : "REM  ") + f);
+				if (first)
+				{
+					if (dryrun) System.out.println ("    KEEP " + f);
+				}
+				else
+				{
+					if (dryrun)
+					{
+						System.out.println ("    REM  " + f);
+					}
+					else
+					{
+						System.out.print ("DELETE " + f);
+						// perform actual delete
+						if (!f.delete()) { System.out.print ("-> FAILED"); }
+						System.out.println();
+					}
+				}
 				first = false;
 			}
-			System.out.println (end);
+			if (dryrun) System.out.println (end);
 			
 			if (next != null)
 			{
@@ -98,7 +115,7 @@ public class BackupCull
 		@Option(name="--help", aliases="-h", usage="Show usage")
 		boolean help = false;
 		
-		@Argument()
+		@Argument(usage="Files to cull")
 		List<File> files;
 	}
 	
@@ -114,6 +131,7 @@ public class BackupCull
 	    {
 	    	parser.parseArgument(args);
 	    	if (opts.help) throw new CmdLineException (parser, "Help requested");
+	    	if (opts.files == null) throw new CmdLineException (parser, "Expected at least one file");
 	    }
 	    catch (CmdLineException ex)
 	    {
@@ -123,19 +141,18 @@ public class BackupCull
 	        return;
 	    }
 
-		LocalDate now = new LocalDate();
+		LocalDate today = new LocalDate();
 
 		Bin chain = new Bin ();
-		chain.end = now.minus (Period.days(2));
+		chain.end = today;
 		chain.
-		    andThen (now.minus(Period.days(7))).
-			andThen (now.minus(Period.months(1))).
-			andThen (now.minus(Period.months(3))).
-			andThen (now.minus(Period.years(1))).
-			andThen (now.minus(Period.years(2)));
+			andThen (today.minus(Period.days(3))).
+		    andThen (today.minus(Period.days(7))).
+			andThen (today.minus(Period.months(1))).
+			andThen (today.minus(Period.months(3))).
+			andThen (today.minus(Period.years(1))).
+			andThen (today.minus(Period.years(2)));
 		
-//		List<File> files = FileUtils.expandGlob("~/Backup/couchdb*.tar.gz");
-
 		for (File f : opts.files)
 		{
 			chain.addFile (f);
