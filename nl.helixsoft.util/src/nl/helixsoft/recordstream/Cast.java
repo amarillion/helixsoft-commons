@@ -91,7 +91,10 @@ public class Cast extends AbstractRecordStream
 		Map<Integer, Object> values = new HashMap<Integer, Object>();
 		
 		@Override
-		public Object getValue(int i) {
+		public Object getValue(int i) { return get (i); }
+		
+		@Override
+		public Object get(int i) {
 			return values.get(i);
 		}
 		
@@ -101,7 +104,10 @@ public class Cast extends AbstractRecordStream
 		}
 
 		@Override
-		public Object getValue(String s) 
+		public Object getValue(String s) { return get(s); } 
+
+		@Override
+		public Object get(String s) 
 		{
 			return values.get(Cast.this.outColIdx.get(s));
 		}

@@ -6,9 +6,12 @@ public class DefaultRecord implements Record
 	private final Object[] fields;
 	
 	public DefaultRecord (RecordMetaData _metaData, Object fields[]) { this.metaData = _metaData; this.fields = fields; }
-	
-	public Object getValue(int i) { return fields[i]; }
-	public Object getValue(String s) { return fields[metaData.getColumnIndex(s)]; }
+
+	public Object get(int i) { return fields[i]; }
+	public Object get(String s) { return fields[metaData.getColumnIndex(s)]; }
+
+	@Override @Deprecated public Object getValue(int i) { return get(i); }
+	@Override @Deprecated public Object getValue(String s) { return get(s); }
 	
 	@Override
 	public String toString()
