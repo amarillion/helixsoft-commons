@@ -117,7 +117,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			return this;
 		}
 		
-		TsvRecordStream get() throws RecordStreamException
+		public TsvRecordStream get() throws RecordStreamException
 		{
 			if (header == null)
 			{
