@@ -272,7 +272,7 @@ public class FileUtils
 	public static File makeApplicationDir(String name) 
 	{
 		File dirApplication;
-		if (StringUtils.isFileNameSafe(name))
+		if (!StringUtils.isFileNameSafe(name))
 		{
 			throw new IllegalArgumentException (name + " contains illegal characters for a filename");
 		}
