@@ -329,6 +329,11 @@ public class StringUtils
 	{
 		return s.replaceAll("[^a-zA-Z0-9\\-_()\\]\\[}{. ]+", "-");
 	}
+	
+	public static boolean isFileNameSafe (String s)
+	{
+		return !s.matches("[^a-zA-Z0-9\\-_()\\]\\[}{. ]");
+	}
 
 	/**
 	 * Make sure a string stays within a certain length, by cutting a bit from the middle.

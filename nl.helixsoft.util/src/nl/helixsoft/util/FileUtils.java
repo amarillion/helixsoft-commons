@@ -107,27 +107,6 @@ public class FileUtils
 			return fname + string;
 		}
 	}
-
-	/**
-	 * Get suitable directory to store application data in a cross-platform way.
-	 * On *NIX: $HOME
-	 * On Windows: %APPDATA%
-	 */
-	public static File getApplicationDir() 
-	{
-		File dirApplication = null;
-		
-		String os = System.getProperty("os.name");
-		if	(os.startsWith("Win"))
-		{
-			dirApplication = new File(System.getenv("APPDATA"));
-		} 
-		else 
-		{ //All other OS
-			dirApplication = new File(System.getProperty("user.home"));
-		}
-		return dirApplication;
-	}
 	
 	/**
 	 * Expand a unix GLOB, such as '~' or '*.java' into a list of files.
@@ -281,4 +260,57 @@ public class FileUtils
 			return getLocalMatches(glob, base);
 		}
 	}
+	
+	/**
+	 * Get suitable directory to store application data in a cross-platform way.
+	 * On *NIX: $HOME
+	 * On Windows: %APPDATA%
+	 * Then create a subdirectiory in that based on name.
+	 * Create it if it doesn't yet exist.
+	 * Use a staring period on *NIX, not on windows.
+	 */
+	public static File makeApplicationDir(String name) 
+	{
+		File dirApplication;
+		if (StringUtils.isFileNameSafe(name))
+		{
+			throw new IllegalArgumentException (name + " contains illegal characters for a filename");
+		}
+		
+		//Windows specific directory configuration
+		String os = System.getProperty("os.name");
+		if	(os.startsWith("Win"))
+		{
+			dirApplication = new File(System.getenv("APPDATA"), name);
+		} 
+		else 
+		{ 
+			//All other OS
+			dirApplication = new File(System.getProperty("user.home"), "." + name);
+		}
+		if (!dirApplication.exists()) dirApplication.mkdir();
+		return dirApplication;
+	}
+
+	/**
+	 * Get suitable directory to store application data in a cross-platform way.
+	 * On *NIX: $HOME
+	 * On Windows: %APPDATA%
+	 */
+	public static File getApplicationDir() 
+	{
+		File dirApplication = null;
+		
+		String os = System.getProperty("os.name");
+		if	(os.startsWith("Win"))
+		{
+			dirApplication = new File(System.getenv("APPDATA"));
+		} 
+		else 
+		{ //All other OS
+			dirApplication = new File(System.getProperty("user.home"));
+		}
+		return dirApplication;
+	}
+
 }
