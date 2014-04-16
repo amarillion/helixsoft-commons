@@ -3,7 +3,6 @@ package nl.helixsoft.graph;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -72,8 +71,13 @@ public class GraphHelper
 		}
 	}
 
-	//TODO: merge logic with MarrsProject
 	public void appendBackbone(RecordStream rs)
+	{
+		appendBackbone (rs, false);
+	}
+	
+	//TODO: merge logic with MarrsProject
+	public void appendBackbone(RecordStream rs, boolean mergeEdges)
 	{
 		for (Record r : rs)
 		{
@@ -91,8 +95,12 @@ public class GraphHelper
 			net.addVertex(dest);
 			nodeAttr.put (dest, "label", dest);
 			
-			Edge e = new EdgeImpl(null);
-			net.addEdge(e, src, dest);
+			Edge e = net.findEdge(src, dest);
+			if (e == null || !mergeEdges)
+			{
+				e = new EdgeImpl(null);
+				net.addEdge(e, src, dest);
+			}
 			
 			for (int i = 0; i < r.getMetaData().getNumCols(); ++i)
 			{
@@ -215,6 +223,16 @@ public class GraphHelper
 		private EdgeSelection (Collection<Edge> value)
 		{
 			selection = new ArrayList<Edge>(value);
+		}
+
+		public List<String> attribute(String key)
+		{
+			List<String> result = new ArrayList<String>();
+			for (Edge edge : selection)
+			{
+				result.add (StringUtils.safeToString(edgeAttr.get(edge, key)));
+			}
+			return result;
 		}
 
 		public RecordStream getRecords(List<String> srcFields, List<String> edgeFields, List<String> destFields)

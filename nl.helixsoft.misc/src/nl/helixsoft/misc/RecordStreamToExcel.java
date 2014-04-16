@@ -9,6 +9,7 @@ import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
 import nl.helixsoft.util.StringUtils;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -36,7 +37,9 @@ public class RecordStreamToExcel
 			xrow = xsheet.createRow(irow++);
 			for (int col = 0; col < rmd.getNumCols(); ++col)
 			{
-				xrow.createCell(col).setCellValue(StringUtils.safeToString(r.getValue(col)));
+				HSSFCell cell = xrow.createCell(col);
+				String val = StringUtils.safeToString(r.get(col));
+				cell.setCellValue(val);
 			}
 		}
 	}
