@@ -362,4 +362,19 @@ public class StringUtils
 		return result;
 	}
 	
+	/**
+	 * //TODO: this is bioinformatics, may be moved to a different class
+	 * 
+	 *  Shorten a scientific species name.
+	 *  Takes the first capital letter of the first word, plus the second word.
+	 *  Homo sapiens -> Hsapiens
+	 */
+	public static String scientificShort(String species)
+	{
+		Pattern pat = Pattern.compile ("^([A-Z])[a-z]+ ([a-z]+)");
+		Matcher mat = pat.matcher(species);
+		if (!mat.matches()) throw new IllegalArgumentException (species + " is not a valid scientific name."); 
+		return mat.group(1) + mat.group(2);
+	}
+	
 }
