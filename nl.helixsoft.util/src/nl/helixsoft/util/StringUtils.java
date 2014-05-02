@@ -2,15 +2,110 @@ package nl.helixsoft.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils 
 {
+	/**
+	 * Efficiently parses strings like:
+	 * 
+	 * a, b, c <br>
+	 * 
+	 * a,"b", c <br>
+	 * 
+	 * a,"b,b", c <br>
+	 */
+	public static List<String> quotedCommaSplit(String input)
+	{
+		List<String> result = new ArrayList<String>();
+		final int BOUNDARY = 0;
+		final int CONTENT = 1;
+		final int QUOTED = 2;
+		final int END_QUOTE = 3;
+		
+		int state = 0;
+		int pos = 0;
+		int start = 0;
+		while (pos < input.length())
+		{
+			char c = input.charAt(pos);
+			
+			switch (state)
+			{
+			case BOUNDARY:
+				if (c == '"')
+				{
+					state = QUOTED;
+					start = pos + 1;
+				}
+				else if (c == ' ')
+				{
+					// ignore opening whitespace
+				}
+				else if (c == ',')
+				{
+					result.add ("");
+				}
+				else
+				{
+					start = pos;
+					state  = CONTENT;
+				}
+				break;
+			case CONTENT:
+				if (c == ',')
+				{
+					state = BOUNDARY;
+					result.add (input.substring (start, pos));
+				}
+				break;
+			case QUOTED:
+				if (c == '"')
+				{
+					result.add (input.substring (start, pos));
+					state = END_QUOTE;
+				}
+				break;
+			case END_QUOTE:
+				if (c == ',')
+				{
+					state = BOUNDARY;
+				}
+				else if (c == ' ')
+				{
+					// skip whitespace
+				}
+				else
+				{
+					throw new IllegalArgumentException("Illegal character after closing quote: " + input);
+				}
+				break;
+			}
+			
+			pos++;
+			
+		}
+		
+		// close up
+		if (state == QUOTED)
+		{
+			throw new IllegalArgumentException("Missing closing quote: " + input);
+		}
+		else if (state == CONTENT)
+		{
+			result.add (input.substring (start, pos));
+		}
+		
+		return result;
+	}
+
 	/** default ascii-betical null-safe string comparator implementation */
 	public static class StringComparator implements Comparator<String> 
 	{

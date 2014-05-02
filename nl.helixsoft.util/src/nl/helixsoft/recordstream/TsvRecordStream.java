@@ -39,7 +39,12 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		return new TsvRecordStreamBuilder(_reader);	
 	}
-	
+
+	public static TsvRecordStreamBuilder open (InputStream _is)
+	{
+		return new TsvRecordStreamBuilder(_is);	
+	}
+
 	public static TsvRecordStreamBuilder open (File _file) throws FileNotFoundException
 	{
 		return new TsvRecordStreamBuilder(_file);	
@@ -87,6 +92,7 @@ public class TsvRecordStream extends AbstractRecordStream
 
 		public TsvRecordStreamBuilder removeOptionalQuotes()
 		{
+			//TODO: for the combination of commaSeparated and removeOptionalQuotes, use the function StringUtils.quotedCommaSplit, to deal correctly with comma's inside quotes
 			flags |= REMOVING_OPTIONAL_QUOTES;
 			return this;
 		}
@@ -259,8 +265,16 @@ public class TsvRecordStream extends AbstractRecordStream
 					col++;
 					if (col == rmd.getNumCols()) 
 					{
-						System.err.println ("Warning: found extra column in TSV file");
-						break; // ignoring extra column
+						// there are extra columns at the end. Check if they are empty or if they contain data.
+						for (int i = col; i < split.length; ++i)
+						{
+							if (!split[col].equals(""))
+							{
+								System.err.println ("Warning: found extra non-empty columns in TSV file");
+								break; // ignoring extra column
+							}
+						}
+						break;
 					}
 				}
 			}
