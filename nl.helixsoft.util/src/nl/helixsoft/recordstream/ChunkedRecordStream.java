@@ -29,7 +29,7 @@ public class ChunkedRecordStream extends AbstractStream<List<Record>> implements
 	public List<Record> getNext() throws RecordStreamException
 	{
 		if (next == null) return null; // eof.
-		String currentKey = StringUtils.safeToString(next.getValue(key));
+		Object currentKey = next.get(key);
 		List<Record> result = new ArrayList<Record>();
 		
 		do
@@ -38,7 +38,7 @@ public class ChunkedRecordStream extends AbstractStream<List<Record>> implements
 			next = parent.getNext();
 			if (next == null) break;
 		} 
-		while (next != null && ObjectUtils.safeEquals(currentKey, next.getValue(key)));
+		while (next != null && ObjectUtils.safeEquals(currentKey, next.get(key)));
 		return result;
 	}
 

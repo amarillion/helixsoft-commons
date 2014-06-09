@@ -52,9 +52,9 @@ public class Adjuster extends AbstractRecordStream
 		{
 			String colName = rmd.getColumnName(col);
 			if (adjust.containsKey(colName))
-				fields[col] = adjust.get(colName).apply(r.getValue(col));
+				fields[col] = adjust.get(colName).apply(r.get(col));
 			else
-				fields[col] = r.getValue(col);
+				fields[col] = r.get(col);
 		}
 		return new DefaultRecord(rmd, fields);
 	}

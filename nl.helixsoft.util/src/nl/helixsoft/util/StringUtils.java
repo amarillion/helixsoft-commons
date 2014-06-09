@@ -472,4 +472,28 @@ public class StringUtils
 		return mat.group(1) + mat.group(2);
 	}
 	
+	/**
+	 * Applies escaping as described in MySQL documentation here: https://dev.mysql.com/doc/refman/5.0/en/string-literals.html
+	 * Note that this applies escapes for a literal enclosed by single quotes, not double quotes!
+	 */
+	public static String escapeMysqlLiteral(String literal)
+	{
+		StringBuilder result = new StringBuilder();
+		for (char c : literal.toCharArray())
+		{
+			switch (c)
+			{
+			case '\'': case '\\': result.append ('\\'); result.append(c); break;
+			case 0: result.append ("\\0"); break;
+			case '\b': result.append ("\\b"); break;
+			case '\n': result.append ("\\n"); break;
+			case '\r': result.append ("\\r"); break;
+			case '\t': result.append ("\\t"); break;
+			case 26: result.append ("\\Z"); break;
+			default: result.append (c); break;
+			}
+		}
+		return result.toString();
+	}
+	
 }
