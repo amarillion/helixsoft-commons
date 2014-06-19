@@ -15,16 +15,29 @@ public class ParseBuffer extends InputStream
 	int fill = 0;
 	boolean eof = false;
 	
+	String charset = null;
+	
 	public ParseBuffer (InputStream parent)
 	{
-		this (parent, BUFFER_SIZE);
+		this (parent, BUFFER_SIZE, "UTF-8");
 	}
 
-	public ParseBuffer(InputStream parent, int size) 
+	public ParseBuffer (InputStream parent, String charsetName)
+	{
+		this (parent, BUFFER_SIZE, charsetName);
+	}
+
+	public ParseBuffer (InputStream parent, int size)
+	{
+		this (parent, size, "UTF-8");
+	}
+
+	public ParseBuffer(InputStream parent, int size, String charsetName) 
 	{
 		this.parent = parent;
 		buf = new byte[size];
 		this.size = size;
+		this.charset = charsetName;
 	}
 
 	@Override
@@ -45,7 +58,10 @@ public class ParseBuffer extends InputStream
 			fillNext();
 			if (pos == fill && eof) return -1;
 		}
-		return buf[pos];
+		int result = buf[pos];
+		// check for characters above 127
+		if (result < 0) throw new IllegalStateException ("ParseBuffer does not yet support anything non-ascii!");
+		return result;
 	}
 	
 	private void fillNext() throws IOException
