@@ -332,6 +332,42 @@ public class StringUtils
 		return result.toString();
 	}
 	
+	public static String decodeEntities (String s)
+	{
+		// now replace http entities
+		StringBuffer buf = new StringBuffer();
+		Matcher m = Pattern.compile("&(\\w+|#x?[0-9a-fA-F]+);").matcher(s);
+		while (m.find()) 
+		{
+			String entity = m.group(1);
+			Matcher m2 = Pattern.compile ("#x([0-9a-fA-F]+)").matcher(entity); 
+			if (m2.matches())
+			{
+				m.appendReplacement(buf, "" + (char)Integer.parseInt(m2.group(1), 16));
+			}
+			else if (Pattern.compile ("#\\d+").matcher(entity).matches())
+			{
+				m.appendReplacement(buf, "" + (char)Integer.parseInt(entity.substring(1)));
+			}
+			else
+			{
+				String r = httpEntities.get(entity);
+				if (r != null) {
+					m.appendReplacement(buf, r);
+				}
+				else
+				{
+					// put original back
+					m.appendReplacement(buf, m.group(0));
+					System.err.println ("Failed to look up " + m.group(1));
+				}
+			}
+		}
+		m.appendTail(buf);
+
+		return buf.toString();
+	}
+	
 	/**
 	 * Strips html tags and http entities.
 	 * Http entities such as '&amp;amp;' are replaced with '&amp;'
@@ -345,27 +381,9 @@ public class StringUtils
 		s = s.replaceAll("<[^>]+>", "");
 		// reduce double whitespace that may have been left as a result from previous step.
 		s = s.replaceAll(" +", " ");			
-		// replace some common entities
-
-		// now replace http entities
-		StringBuffer buf = new StringBuffer();
-		Matcher m = Pattern.compile("&(\\w+);").matcher(s);
-		while (m.find()) 
-		{
-			String r = httpEntities.get(m.group(1));
-			if (r != null) {
-				m.appendReplacement(buf, r);
-			}
-			else
-			{
-				// put original back
-				m.appendReplacement(buf, m.group(0));
-				System.err.println ("Failed to look up " + m.group(1));
-			}
-		}
-		m.appendTail(buf);
-
-		return buf.toString();
+		
+		// replace http entities like &amp;
+		return decodeEntities (s);
 	}
 	
 	public static String escapeHtml(String s)

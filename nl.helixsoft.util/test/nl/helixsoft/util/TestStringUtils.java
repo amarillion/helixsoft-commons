@@ -15,6 +15,12 @@ public class TestStringUtils extends TestCase
 		assertEquals ("abc", StringUtils.stripTags("abc"));
 	}
 	
+	public void testDecodeEntities()
+	{
+		assertEquals ("ab\u00cfc", StringUtils.decodeEntities("ab&#x00cf;c"));
+		assertEquals ("ab\u00ebc", StringUtils.decodeEntities("ab&#0235;c"));
+	}
+	
 	public void testQuotedCommaSplit()
 	{
 		assertEquals (
