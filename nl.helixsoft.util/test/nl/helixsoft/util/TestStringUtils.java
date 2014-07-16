@@ -21,6 +21,14 @@ public class TestStringUtils extends TestCase
 		assertEquals ("ab\u00ebc", StringUtils.decodeEntities("ab&#0235;c"));
 	}
 	
+	public void testCamelCase()
+	{
+		assertEquals ("SmallMolecule", StringUtils.toCamelCase("Small molecule"));		
+		assertEquals ("ShowMeYourID!", StringUtils.toCamelCase("Show me your ID!"));
+		assertEquals ("TwoSpaces", StringUtils.toCamelCase("Two  spaces"));
+		assertEquals ("Surrounded", StringUtils.toCamelCase(" surrounded "));
+	}
+	
 	public void testQuotedCommaSplit()
 	{
 		assertEquals (

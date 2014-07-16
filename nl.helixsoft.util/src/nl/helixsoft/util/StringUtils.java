@@ -468,11 +468,32 @@ public class StringUtils
 	
 	/**
 	 * Make the first character in the String uppercase.
+	 * Leave the remaining characters unchanged.
 	 */
 	public static String initialUpper (String input)
 	{
 		String result = input.substring(0, 1).toUpperCase() + input.substring (1);
 		return result;
+	}
+	
+	/**
+	 * Remove spaces, make each word start with uppercase.
+	 * CamelCase is a method for removing spaces from a phrase while maintaining leglibility.
+	 *  
+	 * For example "Small molecule" -> "SmallMolecule"
+	 * "Show me your ID!" -> "ShowMeYourID!"
+	 * "Two  spaces" -> "TwoSpaces"
+	 * " surrounded " -> "Surrounded"
+	 */
+	public static String toCamelCase(String value)
+	{
+		StringBuilder result = new StringBuilder();
+		for (String word : value.trim().split (" +"))
+		{
+			result.append (word.substring (0, 1).toUpperCase());
+			result.append (word.substring (1));
+		}
+		return result.toString();
 	}
 	
 	/**
