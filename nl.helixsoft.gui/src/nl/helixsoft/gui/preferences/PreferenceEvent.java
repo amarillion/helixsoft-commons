@@ -13,14 +13,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.pathvisio.core.preferences;
+package nl.helixsoft.gui.preferences;
 
 /**
- * Implement this if you want to be notified of changes to preferences set via the PreferenceManager.
+ * This event notifies listeners of changes to preferences set via the PreferenceManager.
  *
  * @author Mark Woon
  */
-public interface PreferenceListener {
+public class PreferenceEvent {
+	private Preference preference;
 
-	void preferenceModified(PreferenceEvent event);
+
+	public PreferenceEvent(Preference pref) {
+		if (pref == null) {
+			throw new IllegalArgumentException("preference cannot be null");
+		}
+		preference = pref;
+	}
+
+
+	public boolean isModified(Preference pref) {
+		return preference == pref;
+	}
 }

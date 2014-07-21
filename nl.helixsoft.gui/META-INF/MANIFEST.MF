@@ -4,9 +4,9 @@ Bundle-Name: Gui
 Bundle-SymbolicName: nl.helixsoft.gui
 Bundle-Version: 1.0.0.qualifier
 Export-Package: nl.helixsoft.gui,
+ nl.helixsoft.gui.preferences,
  nl.helixsoft.gui.table,
  nl.helixsoft.param,
- org.pathvisio.core.preferences,
  org.pathvisio.desktop,
  org.pathvisio.desktop.parameter,
  org.pathvisio.desktop.util,

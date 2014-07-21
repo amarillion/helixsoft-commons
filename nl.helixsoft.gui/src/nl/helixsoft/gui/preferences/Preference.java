@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.preferences;
+package nl.helixsoft.gui.preferences;
 
 /**
  * A preference must have at least two things:

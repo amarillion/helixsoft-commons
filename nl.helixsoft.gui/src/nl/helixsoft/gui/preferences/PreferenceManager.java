@@ -1,4 +1,4 @@
-package nl.helixsoft.gui;
+package nl.helixsoft.gui.preferences;
 
 import java.awt.Color;
 import java.io.File;
@@ -10,9 +10,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.pathvisio.core.preferences.Preference;
-import org.pathvisio.core.preferences.PreferenceEvent;
-import org.pathvisio.core.preferences.PreferenceListener;
 
 import nl.helixsoft.gui.ColorConverter;
 
@@ -132,6 +129,11 @@ public class PreferenceManager
 		}
 	}
 
+	public PreferenceEntry getEntry (Preference p)
+	{
+		return new PreferenceEntryImpl(this, p);
+	}
+	
 	public int getInt (Preference p)
 	{
 		return Integer.parseInt (get(p));

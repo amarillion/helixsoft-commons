@@ -26,6 +26,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import nl.helixsoft.gui.preferences.PreferenceManager;
+
 /** 
  * A re-usable main application window. 
  * The window has a menu, toolbar and status bar.

@@ -1,6 +1,6 @@
 package nl.helixsoft.gui;
 
-import org.pathvisio.core.preferences.Preference;
+import nl.helixsoft.gui.preferences.Preference;
 
 
 /**

@@ -42,8 +42,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import nl.helixsoft.gui.ColorConverter;
+import nl.helixsoft.gui.preferences.Preference;
+import nl.helixsoft.gui.preferences.PreferenceManager;
 
-import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.desktop.PreferencePanel;
 
 /**
