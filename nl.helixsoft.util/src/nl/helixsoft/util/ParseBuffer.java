@@ -61,6 +61,7 @@ public class ParseBuffer extends InputStream
 		int result = buf[pos];
 		// check for characters above 127
 		if (result < 0) throw new IllegalStateException ("ParseBuffer does not yet support anything non-ascii!");
+		//TODO: solve with http://docs.oracle.com/javase/6/docs/api/java/nio/charset/CharsetEncoder.html
 		return result;
 	}
 	
