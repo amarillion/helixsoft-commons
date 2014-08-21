@@ -1,6 +1,9 @@
 package nl.helixsoft.recordstream;
 
-public class RecordStreamException extends Exception
+import java.io.IOException;
+
+/** @Deprecated use more generic StreamException instead */ 
+public class RecordStreamException extends IOException
 {
 	public RecordStreamException(Throwable cause) { super (cause); }
 }

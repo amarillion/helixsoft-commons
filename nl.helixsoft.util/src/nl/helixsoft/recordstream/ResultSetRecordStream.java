@@ -32,7 +32,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		try {
 			if (closed)
@@ -51,7 +51,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 			}
 			return new DefaultRecord(rmd, data);
 		} catch (SQLException ex) {
-			throw new RecordStreamException(ex);
+			throw new StreamException(ex);
 		}
 	}
 

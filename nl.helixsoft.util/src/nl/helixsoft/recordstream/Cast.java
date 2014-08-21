@@ -122,7 +122,7 @@ public class Cast extends AbstractRecordStream
 	private IndexedRecord nextResult;
 	private Record next;
 
-	private void loadNextRecord() throws RecordStreamException
+	private void loadNextRecord() throws StreamException
 	{	
 		if (next == null)
 		{
@@ -134,14 +134,14 @@ public class Cast extends AbstractRecordStream
 		String[] currentGroup = new String[groupIdx.length];
 		for (int i = 0; i < groupIdx.length; ++i)
 		{
-			currentGroup[i] = "" + next.getValue(groupIdx[i]);
+			currentGroup[i] = "" + next.get(groupIdx[i]);
 			nextResult.putValue (i, currentGroup[i]);
 		}
 
 		while (true)
 		{
-			String col = "" + next.getValue(columnIdx);
-			Object val = next.getValue(valueIdx);
+			String col = "" + next.get(columnIdx);
+			Object val = next.get(valueIdx);
 			
 			if (!outColIdx.containsKey(col))
 			{
@@ -162,7 +162,7 @@ public class Cast extends AbstractRecordStream
 	{
 		for (int i = 0; i < groupIdx.length; ++i)
 		{
-			if (!currentGroup[i].equals ("" + next.getValue(groupIdx[i])))
+			if (!currentGroup[i].equals ("" + next.get(groupIdx[i])))
 			{
 				return false;
 			}
@@ -172,7 +172,7 @@ public class Cast extends AbstractRecordStream
 	
 	
 	@Override
-	public Record getNext() throws RecordStreamException {
+	public Record getNext() throws StreamException {
 		Record result = nextResult;
 		loadNextRecord();
 		return result;

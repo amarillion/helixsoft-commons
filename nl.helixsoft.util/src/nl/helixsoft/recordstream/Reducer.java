@@ -39,7 +39,7 @@ public class Reducer extends AbstractRecordStream
 		idxGroupVar = parent.getMetaData().getColumnIndex(groupVar);
 		
 		row = parent.getNext();
-		prevValue = row.getValue(idxGroupVar);
+		prevValue = row.get(idxGroupVar);
 		// Reset the accumulator at start
 		resetAccumulator();
 		rmd = new DefaultRecordMetaData(outHeaders);
@@ -75,7 +75,7 @@ public class Reducer extends AbstractRecordStream
 	}
 	
 	@Override
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		if (row == null) return null; // nothing more to return
 		

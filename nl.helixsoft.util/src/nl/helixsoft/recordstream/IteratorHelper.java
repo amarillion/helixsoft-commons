@@ -5,12 +5,12 @@ import java.util.Iterator;
 /**
  * Helper class to generate an Iterator for a class that implements NextUntilNull.
  */
-class IteratorHelper <T> implements Iterator<T>
+public class IteratorHelper <T> implements Iterator<T>
 {
 	private T next;
 	private final NextUntilNull<T> parent;
 	
-	IteratorHelper (NextUntilNull<T> parent)
+	public IteratorHelper (NextUntilNull<T> parent)
 	{
 		this.parent = parent;
 		try {

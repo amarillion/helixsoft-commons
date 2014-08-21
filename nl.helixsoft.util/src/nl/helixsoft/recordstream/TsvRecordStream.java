@@ -227,7 +227,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		try 
 		{
@@ -282,7 +282,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		} 
 		catch (IOException e) 
 		{
-			throw new RecordStreamException(e);
+			throw new StreamException(e);
 		}
 	}
 

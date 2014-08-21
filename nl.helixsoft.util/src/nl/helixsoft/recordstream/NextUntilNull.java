@@ -1,10 +1,11 @@
 package nl.helixsoft.recordstream;
 
-/*
+/**
  * Helper interface for stream-like objects.
  * Call getNext() repeatedly until null is returned. Null indicates the end of stream.
+ * Especially usefull in combination with IteratorHelper
  */
-interface NextUntilNull <T>
+public interface NextUntilNull <T>
 {
-	T getNext() throws RecordStreamException;
+	T getNext() throws StreamException;
 }

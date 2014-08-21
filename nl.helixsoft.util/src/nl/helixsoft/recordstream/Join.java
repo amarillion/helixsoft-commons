@@ -23,7 +23,7 @@ public class Join extends AbstractRecordStream
 	}
 	
 	@Override
-	public Record getNext() throws RecordStreamException {
+	public Record getNext() throws StreamException {
 		// TODO Auto-generated method stub
 		return null;
 	}

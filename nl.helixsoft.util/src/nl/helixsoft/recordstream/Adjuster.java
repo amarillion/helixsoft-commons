@@ -41,7 +41,7 @@ public class Adjuster extends AbstractRecordStream
 	 * Pull the next record from this record stream. 
 	 * Adjustment functions are applied just before returning.
 	 */
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		int colNum = rmd.getNumCols();
 		Object[] fields = new Object[colNum];

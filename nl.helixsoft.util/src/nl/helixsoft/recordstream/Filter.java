@@ -88,7 +88,7 @@ public class Filter extends AbstractRecordStream
 	}
 	
 	@Override
-	public Record getNext() throws RecordStreamException
+	public Record getNext() throws StreamException
 	{
 		while (true)
 		{

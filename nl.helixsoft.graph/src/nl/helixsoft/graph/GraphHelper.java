@@ -13,7 +13,7 @@ import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
-import nl.helixsoft.recordstream.RecordStreamException;
+import nl.helixsoft.recordstream.StreamException;
 import nl.helixsoft.util.AttributesTable;
 import nl.helixsoft.util.StringUtils;
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -154,7 +154,7 @@ public class GraphHelper
 		}
 		
 		@Override
-		public Record getNext() throws RecordStreamException 
+		public Record getNext() throws StreamException 
 		{
 			if (pos >= data.size()) return null;
 			return data.get(pos++);

@@ -2,17 +2,17 @@ package nl.helixsoft.misc;
 
 import java.io.File;
 
-import org.odftoolkit.simple.SpreadsheetDocument;
-import org.odftoolkit.simple.table.Row;
-import org.odftoolkit.simple.table.Table;
-
 import nl.helixsoft.recordstream.AbstractRecordStream;
 import nl.helixsoft.recordstream.DefaultRecord;
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
-import nl.helixsoft.recordstream.RecordStreamException;
+import nl.helixsoft.recordstream.StreamException;
+
+import org.odftoolkit.simple.SpreadsheetDocument;
+import org.odftoolkit.simple.table.Row;
+import org.odftoolkit.simple.table.Table;
 
 public class ODSRecordStream extends AbstractRecordStream 
 {
@@ -53,7 +53,7 @@ public class ODSRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		if (rowIndex >= t1.getRowCount()) return  null;
 		

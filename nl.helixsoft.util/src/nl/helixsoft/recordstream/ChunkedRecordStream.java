@@ -26,7 +26,7 @@ public class ChunkedRecordStream extends AbstractStream<List<Record>> implements
 		this.key = key;
 	}
 	
-	public List<Record> getNext() throws RecordStreamException
+	public List<Record> getNext() throws StreamException
 	{
 		if (next == null) return null; // eof.
 		Object currentKey = next.get(key);

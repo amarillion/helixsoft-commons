@@ -2,7 +2,6 @@ package nl.helixsoft.misc;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import nl.helixsoft.recordstream.AbstractRecordStream;
@@ -10,8 +9,7 @@ import nl.helixsoft.recordstream.DefaultRecord;
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
-import nl.helixsoft.recordstream.RecordStream;
-import nl.helixsoft.recordstream.RecordStreamException;
+import nl.helixsoft.recordstream.StreamException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -50,7 +48,7 @@ public class ExcelRecordStream extends AbstractRecordStream
 	}
 
 	@Override
-	public Record getNext() throws RecordStreamException 
+	public Record getNext() throws StreamException 
 	{
 		if (rowIndex >= sheet.getLastRowNum()) return null;
 		

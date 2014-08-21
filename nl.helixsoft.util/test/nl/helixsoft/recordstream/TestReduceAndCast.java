@@ -29,7 +29,7 @@ public class TestReduceAndCast extends TestCase {
 		int row = 0;
 
 		@Override
-		public Record getNext() throws RecordStreamException {
+		public Record getNext() throws StreamException {
 			if (row >= data.length) return null;
 			return new DefaultRecord(rmd, data[row++]);
 		}
@@ -82,21 +82,21 @@ public class TestReduceAndCast extends TestCase {
 		List<Object> list2;
 		
 		Record r = reducer.getNext();
-		set1 = (Set<Object>)r.getValue("str1_set");
+		set1 = (Set<Object>)r.get("str1_set");
 		assertTrue (set1.size() == 1 && set1.contains ("a"));
-		list2 = (List<Object>)r.getValue("str2_list");
+		list2 = (List<Object>)r.get("str2_list");
 		assertTrue (list2.size() == 2 && list2.get(0).equals("x") && list2.get(1).equals ("y"));
 		
 		r = reducer.getNext();
-		set1 = (Set<Object>)r.getValue("str1_set");
+		set1 = (Set<Object>)r.get("str1_set");
 		assertTrue (set1.size() == 2 && set1.contains ("b") && set1.contains ("c"));
-		list2 = (List<Object>)r.getValue("str2_list");
+		list2 = (List<Object>)r.get("str2_list");
 		assertTrue (list2.size() == 2 && list2.get(0).equals("z") && list2.get(1).equals ("z"));
 
 		r = reducer.getNext();
-		set1 = (Set<Object>)r.getValue("str1_set");
+		set1 = (Set<Object>)r.get("str1_set");
 		assertTrue (set1.size() == 2 && set1.contains ("d") && set1.contains ("e"));
-		list2 = (List<Object>)r.getValue("str2_list");
+		list2 = (List<Object>)r.get("str2_list");
 		assertTrue (list2.size() == 2 && list2.get(0).equals("p") && list2.get(1).equals ("q"));
 
 		r = reducer.getNext();
@@ -132,22 +132,22 @@ public class TestReduceAndCast extends TestCase {
 		
 		Record r;
 		r = reducer.getNext();
-		assertEquals (1, r.getValue(idx.get("groupid")));
-		assertEquals (2, r.getValue(idx.get("count")));
-		assertEquals (1.5f, (Float)r.getValue(idx.get("avg_float")), 0.01f);
-		assertEquals ("abc-def", r.getValue(idx.get("concat_str")));
+		assertEquals (1, r.get(idx.get("groupid")));
+		assertEquals (2, r.get(idx.get("count")));
+		assertEquals (1.5f, (Float)r.get(idx.get("avg_float")), 0.01f);
+		assertEquals ("abc-def", r.get(idx.get("concat_str")));
 		
 		r = reducer.getNext();
-		assertEquals (2, r.getValue(idx.get("groupid")));
-		assertEquals (1, r.getValue(idx.get("count")));
-		assertEquals (3.0f, (Float)r.getValue(idx.get("avg_float")), 0.01f);
-		assertEquals ("ghi", r.getValue(idx.get("concat_str")));
+		assertEquals (2, r.get(idx.get("groupid")));
+		assertEquals (1, r.get(idx.get("count")));
+		assertEquals (3.0f, (Float)r.get(idx.get("avg_float")), 0.01f);
+		assertEquals ("ghi", r.get(idx.get("concat_str")));
 
 		r = reducer.getNext();
-		assertEquals (3, r.getValue(idx.get("groupid")));
-		assertEquals (1, r.getValue(idx.get("count")));
-		assertEquals (4.0f, (Float)r.getValue(idx.get("avg_float")), 0.01f);
-		assertEquals ("jkl", r.getValue(idx.get("concat_str")));
+		assertEquals (3, r.get(idx.get("groupid")));
+		assertEquals (1, r.get(idx.get("count")));
+		assertEquals (4.0f, (Float)r.get(idx.get("avg_float")), 0.01f);
+		assertEquals ("jkl", r.get(idx.get("concat_str")));
 
 		r = reducer.getNext();
 		assertNull (r);
@@ -176,14 +176,14 @@ public class TestReduceAndCast extends TestCase {
 		
 		Record r;
 		r = cast.getNext();
-		assertEquals ("group1", r.getValue(idx.get("group")));
-		assertEquals ("abc", r.getValue(idx.get("col1")));
-		assertEquals ("def", r.getValue(idx.get("col2")));
+		assertEquals ("group1", r.get(idx.get("group")));
+		assertEquals ("abc", r.get(idx.get("col1")));
+		assertEquals ("def", r.get(idx.get("col2")));
 		
 		r = cast.getNext();
-		assertEquals ("group2", r.getValue(idx.get("group")));
-		assertEquals ("ghi", r.getValue(idx.get("col1")));
-		assertEquals ("jkl", r.getValue(idx.get("col2")));
+		assertEquals ("group2", r.get(idx.get("group")));
+		assertEquals ("ghi", r.get(idx.get("col1")));
+		assertEquals ("jkl", r.get(idx.get("col2")));
 
 		r = cast.getNext();
 		assertNull (r);
@@ -213,16 +213,16 @@ public class TestReduceAndCast extends TestCase {
 		
 		Record r;
 		r = cast.getNext();
-		assertEquals ("group0", r.getValue(idx.get("group")));
-		assertEquals ("subgroup1", r.getValue(idx.get("subgroup")));
-		assertEquals ("abc", r.getValue(idx.get("col1")));
-		assertEquals ("def", r.getValue(idx.get("col2")));
+		assertEquals ("group0", r.get(idx.get("group")));
+		assertEquals ("subgroup1", r.get(idx.get("subgroup")));
+		assertEquals ("abc", r.get(idx.get("col1")));
+		assertEquals ("def", r.get(idx.get("col2")));
 		
 		r = cast.getNext();
-		assertEquals ("group0", r.getValue(idx.get("group")));
-		assertEquals ("subgroup2", r.getValue(idx.get("subgroup")));
-		assertEquals ("ghi", r.getValue(idx.get("col1")));
-		assertEquals ("jkl", r.getValue(idx.get("col2")));
+		assertEquals ("group0", r.get(idx.get("group")));
+		assertEquals ("subgroup2", r.get(idx.get("subgroup")));
+		assertEquals ("ghi", r.get(idx.get("col1")));
+		assertEquals ("jkl", r.get(idx.get("col2")));
 
 		r = cast.getNext();
 		assertNull (r);
