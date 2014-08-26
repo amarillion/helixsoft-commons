@@ -2,6 +2,7 @@ package nl.helixsoft.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Html implements HtmlRenderable
 {
@@ -235,5 +236,36 @@ public class Html implements HtmlRenderable
 		}
 		return result;
 	}
+
+	private static Random random = new Random();
 	
+	/**
+	 * Create a div that invokes the switchit function.
+	 * If you make use of this, make sure you include collapseScript in head.
+	 */
+	public static Html collapseDiv (Object title, Object contents)
+	{
+		String id = "item" + random.nextInt(Integer.MAX_VALUE);
+
+		return Html.div (
+				Html.a(title).href("javascript:switchit('" + id + "')").toString(),
+				Html.div().id(id).style("display: none").addChild(contents)
+			);
+	}
+
+	public static Html collapseScript()
+	{
+		return Html.tag("script",			
+				"function switchit(list) " +
+				"{ " +
+				"  var listElementStyle = document.getElementById(list).style;" +
+				"  if (listElementStyle.display == 'none') " +
+				"  {" +
+				"    listElementStyle.display = 'block';" +
+				"  } else {" +
+				"    listElementStyle.display = 'none';" +
+				"  }" +
+				"}");
+	}
+
 }
