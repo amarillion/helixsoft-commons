@@ -248,8 +248,8 @@ public class Html implements HtmlRenderable
 		String id = "item" + random.nextInt(Integer.MAX_VALUE);
 
 		return Html.div (
-				Html.a(title).href("javascript:switchit('" + id + "')").toString(),
-				Html.div().id(id).style("display: none").addChild(contents)
+				Html.div().attr("class", "switchit_toggle").addChild(Html.a(title).href("javascript:switchit('" + id + "')")),
+				Html.div().id(id).style("display: none").attr ("class", "switchit_detail").addChild(contents)
 			);
 	}
 
