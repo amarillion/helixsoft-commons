@@ -42,5 +42,10 @@ public class MathUtils
 	{
 		return (Math.min (high, Math.max (x, low)));
 	}
+	
+	public static double safeDivide (double above, double below, double ifDivideByZero)
+	{
+		return below == 0 ? ifDivideByZero : (above / below);
+	}	
 
 }
