@@ -1,9 +1,40 @@
 package nl.helixsoft.recordstream;
 
 import java.io.PrintStream;
+import java.util.Vector;
 
-public class RecordStreamFormatter {
-	
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+public class RecordStreamFormatter 
+{
+
+	/** Format as a TableModel */
+	public static TableModel asTableModel(RecordStream rs)
+			throws RecordStreamException 
+	{
+		Vector<Vector<String>> data = new Vector<Vector<String>>();
+		Vector<String> colnames = new Vector<String>();
+
+		int colNum = rs.getMetaData().getNumCols();
+
+		for (int col = 0; col < colNum; ++col) {
+			colnames.add(rs.getMetaData().getColumnName(col));
+		}
+
+		Record rec;
+		while ((rec = rs.getNext()) != null) {
+			Vector<String> row = new Vector<String>();
+			for (int col = 0; col < colNum; ++col) {
+				row.add("" + rec.get(col));
+			}
+			data.add(row);
+		}
+
+		DefaultTableModel model = new DefaultTableModel(data, colnames);
+		return model;
+	}
+
 	/**
 	 * 
 	 * @param out
@@ -35,7 +66,7 @@ public class RecordStreamFormatter {
 			for (int col = 0; col < colNum; ++col)
 			{
 				out.print (sep);
-				out.print (row.getValue(col));
+				out.print (row.get(col));
 				sep = "\t";
 			}
 			out.println();
