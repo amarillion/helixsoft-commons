@@ -41,11 +41,10 @@ public class DownloadUtils
 		FTPClient client = new FTPClient();
 	    client.connect(url.getHost());
 	    
-        String password = System.getProperty("user.name")+ "@" + FileUtils.safeMachineName("unknown");	    
+        String password = System.getProperty("user.name")+ "@" + FileUtils.safeMachineName("unknown");
         client.login("anonymous", password);
 
 	    int reply = client.getReplyCode();
-
         if (!FTPReply.isPositiveCompletion(reply))
         {
             client.disconnect();
@@ -57,6 +56,11 @@ public class DownloadUtils
         //TODO - how to determine correct file type?
         client.setFileType(FTPClient.BINARY_FILE_TYPE);
         
+        // passive mode is more robust
+        // see http://www.jscape.com/blog/bid/80512/Active-v-s-Passive-FTP-Simplified
+        // TODO - according to some, both active and passive should be tried in turns...
+        client.enterLocalPassiveMode();
+
      	FTPFile[] stat = client.listFiles(url.getPath());
      	
      	long size;
