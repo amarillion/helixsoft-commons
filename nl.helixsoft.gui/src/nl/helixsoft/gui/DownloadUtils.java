@@ -59,13 +59,18 @@ public class DownloadUtils
         
      	FTPFile[] stat = client.listFiles(url.getPath());
      	
+     	long size;
      	if (stat.length != 1) 
      	{
-     		client.disconnect();
-     		throw new IOException ("Could not stat " + url);
+//     		client.disconnect();
+//     		throw new IOException ("Could not stat " + url);
+     		System.err.println ("WARNING: could not stat " + url + "\nlength: " + stat.length + "\nreply: " + client.getReplyString());
+     		size = -1;
      	}
-     	
-     	long size = stat[0].getSize();
+     	else
+     	{
+     		size = stat[0].getSize();
+     	}
 	    InputStream inputStream = client.retrieveFileStream(url.getPath());
 	    downloadFile (inputStream, dest, url, size);
 //	    
