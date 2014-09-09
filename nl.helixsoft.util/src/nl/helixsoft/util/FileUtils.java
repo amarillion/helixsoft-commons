@@ -5,12 +5,15 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class FileUtils 
+public abstract class FileUtils 
 {
+	private FileUtils() { /* no instantiation of util class */ }
+	
 	//TODO: copied from pathvisio
 	/**
 	 * Get all files in a directory
@@ -311,6 +314,36 @@ public class FileUtils
 			dirApplication = new File(System.getProperty("user.home"));
 		}
 		return dirApplication;
+	}
+
+	/**
+	 * 
+	 * The standard java way of getting the machine name, using InetAddress.getLocalHost().getHostName(), 
+	 * could lead to a reverse dns lookup with all kinds of failure modes.
+	 * <p>
+	 * This method simply wraps that call in a try/catch handler, and returns a reasonable default otherwise   
+	 */
+	public static String safeMachineName()
+	{	
+		return safeMachineName("could not determine machine name");
+	}
+	
+	/**
+	 * 
+	 * Same, but specify the default if no machine name was specified.   
+	 */
+	public static String safeMachineName(String defaultMachineName)
+	{	
+		String machineName;
+	    try
+		{
+			machineName = InetAddress.getLocalHost().getHostName();
+		}
+		catch (java.net.UnknownHostException e)
+		{
+			machineName = defaultMachineName;
+		}
+	    return machineName;
 	}
 
 }

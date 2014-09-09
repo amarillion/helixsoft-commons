@@ -7,6 +7,9 @@
 	  <fileset dir="lib">
 		<include name="*.jar"/>
 	  </fileset>
+	  <fileset dir="..">
+		<include name="nl.helixsoft.util.jar"/>
+	  </fileset>
 	</path>
 
 	<path id="test.class.path"/>

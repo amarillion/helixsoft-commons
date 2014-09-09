@@ -3,4 +3,8 @@
   <publications>
     <artifact name="nl.helixsoft.gui" ext="jar" type="jar"/>
   </publications>
+  <dependencies>
+    <dependency org="commons-net" name="commons-net" rev="3.3"/>
+    <dependency org="jgoodies-forms" name="jgoodies-forms" rev="1.2.0"/>
+  </dependencies>
 </ivy-module>

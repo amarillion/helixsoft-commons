@@ -9,19 +9,76 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Locale;
 
 import javax.swing.ProgressMonitorInputStream;
+
+import nl.helixsoft.util.FileUtils;
+
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 
 public class DownloadUtils 
 {
 	//TODO: add option for silent downloading, or for a CLI progress monitor.
 	public static void downloadFile(URL url, File dest) throws IOException
 	{
-		URLConnection conn = url.openConnection();
-		downloadFile (conn, dest);
+		// use apache client for FTP to work around 2G size limit in java.
+		// https://community.oracle.com/thread/1144802?start=0&tstart=0
+		if ("ftp".equals (url.getProtocol()))
+		{
+			downloadFtp (url, dest);
+		}
+		else
+		{
+			URLConnection conn = url.openConnection();
+			downloadFile (conn, dest);
+		}
 	}
 
+	public static void downloadFtp(URL url, File dest) throws IOException
+	{
+		FTPClient client = new FTPClient();
+	    client.connect(url.getHost());
+	    
+        String password = System.getProperty("user.name")+ "@" + FileUtils.safeMachineName("unknown");	    
+        client.login("anonymous", password);
+
+	    int reply = client.getReplyCode();
+
+        if (!FTPReply.isPositiveCompletion(reply))
+        {
+            client.disconnect();
+            throw new IOException ("FTP server refused connection with code: " + reply);
+        }
+        
+//	    fos = new FileOutputStream(dest);
+        
+        //TODO - how to determine correct file type?
+        client.setFileType(FTPClient.BINARY_FILE_TYPE);
+        
+     	FTPFile[] stat = client.listFiles(url.getPath());
+     	
+     	if (stat.length != 1) 
+     	{
+     		client.disconnect();
+     		throw new IOException ("Could not stat " + url);
+     	}
+     	
+     	long size = stat[0].getSize();
+	    InputStream inputStream = client.retrieveFileStream(url.getPath());
+	    downloadFile (inputStream, dest, url, size);
+//	    
+//	    client.retrieveFile("/" + url.getPath(), fos);
+//	    fos.close();
+	    client.disconnect();
+	}
+
+	public static void downloadStream (URLConnection conn, OutputStream out) throws IOException
+	{
+		downloadStream (conn.getInputStream(), out, conn.getURL(), conn.getContentLength());
+	}
+	
 	//TODO: add option for silent downloading, or for a CLI progress monitor.
 	/**
 	 * Download from URLconnection to an output stream.
@@ -30,22 +87,20 @@ public class DownloadUtils
 	 * @param out
 	 * @throws IOException
 	 */
-	public static void downloadStream (URLConnection conn, OutputStream out) throws IOException
+	public static void downloadStream (InputStream in, OutputStream out, URL url, long contentLength) throws IOException
 	{
-		System.out.println ("Please wait while downloading file from " + conn.getURL());
-		
-		InputStream in = conn.getInputStream();
+		System.out.println ("Please wait while downloading file from " + url);
 		
 		InputStream xin;
 		if (!GraphicsEnvironment.isHeadless())
 		{
 			ProgressMonitorInputStream pin = new ProgressMonitorInputStream(
 					null,
-					"Downloading " + conn.getURL(),
+					"Downloading " + url,
 					in
 			);
 			pin.getProgressMonitor().setMillisToDecideToPopup(0);
-			pin.getProgressMonitor().setMaximum(conn.getContentLength());
+			pin.getProgressMonitor().setMaximum((int)contentLength); //TODO - potential for int overflow
 			xin = pin;
 		}
 		else
@@ -65,6 +120,11 @@ public class DownloadUtils
 		in.close();
 		out.flush();	
 	}
+
+	public static void downloadFile(URLConnection conn, File dest) throws IOException
+	{		
+		downloadFile (conn.getInputStream(), dest, conn.getURL(), conn.getContentLengthLong());
+	}
 	
 	//TODO: add option for silent downloading, or for a CLI progress monitor.
 	/**
@@ -74,7 +134,7 @@ public class DownloadUtils
 	 *  
 	 * The URLConnection form allows setting extra request headers, such as for HTTP Basic Authentication etc.
 	 */
-	public static void downloadFile(URLConnection conn, File dest) throws IOException
+	public static void downloadFile(InputStream in, File dest, URL url, long contentLength) throws IOException
 	{		
 		if (dest.exists()) throw new IOException ("File " + dest + " already exists");
 		File temp = File.createTempFile(dest.getName(), ".tmp", dest.getParentFile());	
@@ -82,7 +142,7 @@ public class DownloadUtils
 		{
 			OutputStream out = new BufferedOutputStream(
 					new FileOutputStream(temp));
-			downloadStream (conn, out);
+			downloadStream (in, out, url, contentLength);
 						
 			out.close();
 			if (!temp.renameTo(dest))
