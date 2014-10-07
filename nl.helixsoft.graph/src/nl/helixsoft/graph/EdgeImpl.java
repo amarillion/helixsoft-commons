@@ -40,7 +40,7 @@ public class EdgeImpl implements Edge
 	@Override
 	public String toString()
 	{
-		if (src == null || dest == null) return "Edge null";
+		if (src == null || dest == null) return predicate;
 		return  "Edge: " + src.getId() + " " + predicate + " " + dest.getId();
 	}
 

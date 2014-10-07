@@ -66,10 +66,9 @@ public class DownloadUtils
      	long size;
      	if (stat.length != 1) 
      	{
-//     		client.disconnect();
-//     		throw new IOException ("Could not stat " + url);
-     		System.err.println ("WARNING: could not stat " + url + "\nlength: " + stat.length + "\nreply: " + client.getReplyString());
-     		size = -1;
+     		client.disconnect();
+     		System.err.println ("could not stat " + url + "\nlength: " + stat.length + "\nreply: " + client.getReplyString());
+     		throw new IOException ("Could not stat " + url);
      	}
      	else
      	{

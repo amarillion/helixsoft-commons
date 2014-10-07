@@ -203,6 +203,9 @@ public class StringUtils
 		return builder.toString();
 	}
 
+	/**
+	 * Create a string by repeating a given base a number of times. 
+	 */
 	public static String rep (String base, int count)
 	{
 		StringBuilder builder = new StringBuilder();
@@ -211,7 +214,6 @@ public class StringUtils
 			builder.append (base);
 		}
 		return builder.toString();
-		
 	}
 
 	private static final Map<String, String> httpEntities;

@@ -15,6 +15,11 @@ import org.apache.commons.collections15.BidiMap;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import edu.uci.ics.jung.graph.DirectedGraph;
 
+/**
+ * Note that the node attribute "label" will be used as the node identifier during GML import in Cytoscape.
+ * The Node id itself will be converted to an integer.
+ * The formatter will warn if you try to supply label as an attribute. 
+ */
 public final class GmlFormat 
 {
 	/** tool class should never be instantiated */
@@ -73,8 +78,17 @@ public final class GmlFormat
 			gml.startList("edge");
 			gml.intLiteral("source", idx.get(s));
 			gml.intLiteral("target", idx.get(t));
+			
+			gml.stringLiteral ("interaction", e.toString());
+			
 			for (Map.Entry<String, Object> entry : edgeAttr.getAttributes(e))
 			{
+				if ("interaction".equals (entry.getKey()))
+				{
+					System.err.println ("WARNING, ignoring reserved attribute " + entry.getKey() + " from attribute table");
+					continue;
+				}
+				
 				Object val = entry.getValue();
 				if (val instanceof Number)
 				{
@@ -110,8 +124,18 @@ public final class GmlFormat
 		{
 			gml.startList("node");
 			gml.intLiteral("id", idx.get(v));
+			
+			// label will be used as ID during import in Cytoscape.  
+			gml.stringLiteral ("label", v.toString());
+			
 			for (Map.Entry<String, Object> entry : nodeAttr.getAttributes(v))
 			{
+				if ("label".equals(entry.getKey()) || "id".equals (entry.getKey()))
+				{
+					System.err.println ("WARNING, ignoring reserved attribute " + entry.getKey() + " from attribute table");
+					continue;
+				}
+				
 				Object val = entry.getValue();
 				if (val instanceof Number)
 				{
