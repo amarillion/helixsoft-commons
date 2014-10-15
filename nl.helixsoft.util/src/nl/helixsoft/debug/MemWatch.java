@@ -1,4 +1,4 @@
-package org.pathvisio.core.debug;
+package nl.helixsoft.debug;
 
 /**
  * Copied from org.pathvisio.desktop/test/org.pathvisio.desktop.debug.TestAndMeasure
