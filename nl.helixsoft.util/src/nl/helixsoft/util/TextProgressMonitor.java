@@ -61,11 +61,11 @@ public class TextProgressMonitor
 			default: spinner = "\\"; break;
 			}
 			
-			System.out.printf("%40s [%20s] %3.0f%% (%d / %d) %s\r", taskText, progressFormatted, pct, i, max, spinner);
+			System.out.printf("\r%40s [%20s] %3.0f%% (%d / %d) %s", taskText, progressFormatted, pct, i, max, spinner);
 		}
 		else
 		{
-			System.out.printf("%40s: %s\r", taskText, NumberFormatter.thousandsSeparatedFormat(i, ',', 12));
+			System.out.printf("\r%40s: %s", taskText, NumberFormatter.thousandsSeparatedFormat(i, ',', 12));
 		}
 	}
 				
