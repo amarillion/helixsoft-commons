@@ -20,7 +20,7 @@ public class TempFile
 	private boolean isGzip;
 	private File temp;
 	
-	TempFile(File out)
+	public TempFile(File out)
 	{
 		this.out = out;
 	}
