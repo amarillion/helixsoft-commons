@@ -141,7 +141,7 @@ public class DownloadUtils
 
 	public static void downloadFile(URLConnection conn, File dest, boolean overwrite) throws IOException
 	{
-		downloadFile (conn.getInputStream(), dest, conn.getURL(), conn.getContentLength() /* from java 1.7: getContentLengthLong() */ );
+		downloadFile (conn.getInputStream(), dest, conn.getURL(), conn.getContentLength() /* from java 1.7: getContentLengthLong() */, overwrite );
 	}
 	
 	public static void downloadFile(URLConnection conn, File dest) throws IOException
