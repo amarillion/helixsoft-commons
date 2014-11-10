@@ -20,23 +20,33 @@ import org.apache.commons.net.ftp.FTPReply;
 
 public class DownloadUtils 
 {
-	//TODO: add option for silent downloading, or for a CLI progress monitor.
 	public static void downloadFile(URL url, File dest) throws IOException
+	{
+		downloadFile(url, dest, false);
+	}
+	
+	//TODO: add option for silent downloading, or for a CLI progress monitor.
+	public static void downloadFile(URL url, File dest, boolean overwrite) throws IOException
 	{
 		// use apache client for FTP to work around 2G size limit in java.
 		// https://community.oracle.com/thread/1144802?start=0&tstart=0
 		if ("ftp".equals (url.getProtocol()))
 		{
-			downloadFtp (url, dest);
+			downloadFtp (url, dest, overwrite);
 		}
 		else
 		{
 			URLConnection conn = url.openConnection();
-			downloadFile (conn, dest);
+			downloadFile (conn, dest, overwrite);
 		}
 	}
 
 	public static void downloadFtp(URL url, File dest) throws IOException
+	{
+		downloadFtp(url, dest, false);
+	}
+	
+	public static void downloadFtp(URL url, File dest, boolean overwrite) throws IOException
 	{
 		FTPClient client = new FTPClient();
 	    client.connect(url.getHost());
@@ -75,7 +85,7 @@ public class DownloadUtils
      		size = stat[0].getSize();
      	}
 	    InputStream inputStream = client.retrieveFileStream(url.getPath());
-	    downloadFile (inputStream, dest, url, size);
+	    downloadFile (inputStream, dest, url, size, overwrite);
 //	    
 //	    client.retrieveFile("/" + url.getPath(), fos);
 //	    fos.close();
@@ -129,12 +139,16 @@ public class DownloadUtils
 		out.flush();	
 	}
 
-	public static void downloadFile(URLConnection conn, File dest) throws IOException
-	{		
+	public static void downloadFile(URLConnection conn, File dest, boolean overwrite) throws IOException
+	{
 		downloadFile (conn.getInputStream(), dest, conn.getURL(), conn.getContentLength() /* from java 1.7: getContentLengthLong() */ );
 	}
 	
-	//TODO: add option for silent downloading, or for a CLI progress monitor.
+	public static void downloadFile(URLConnection conn, File dest) throws IOException
+	{
+		downloadFile(conn, dest, false);
+	}
+	
 	/**
 	 * Download from URLConnection into a File.
 	 * If the destination file already exists, an exception is thrown.
@@ -144,7 +158,21 @@ public class DownloadUtils
 	 */
 	public static void downloadFile(InputStream in, File dest, URL url, long contentLength) throws IOException
 	{		
-		if (dest.exists()) throw new IOException ("File " + dest + " already exists");
+		downloadFile(in, dest, url, contentLength, false);
+	}
+
+	//TODO: add option for silent downloading, or for a CLI progress monitor.
+	/**
+	 * Download from URLConnection into a File.
+	 * This function uses a temporary intermediate file, so if there is an error during download, no file is created.
+	 *  
+	 * The URLConnection form allows setting extra request headers, such as for HTTP Basic Authentication etc.
+	 * 
+	 * @param overwrite if false, will throw an exception if destination file exists. If true, will delete destination file if it exists.
+	 */
+	public static void downloadFile(InputStream in, File dest, URL url, long contentLength, boolean overwrite) throws IOException
+	{		
+		if (!overwrite && dest.exists()) throw new IOException ("File " + dest + " already exists");
 		File temp = File.createTempFile(dest.getName(), ".tmp", dest.getParentFile());	
 		try
 		{
@@ -153,6 +181,11 @@ public class DownloadUtils
 			downloadStream (in, out, url, contentLength);
 						
 			out.close();
+			if (dest.exists()) 
+			{
+				if (!dest.delete())
+					throw new IOException ("Could not remove existing version of  " + dest);
+			}
 			if (!temp.renameTo(dest))
 			{
 				throw new IOException ("Could not rename " + temp + " to " + dest);
@@ -163,7 +196,6 @@ public class DownloadUtils
 			temp.delete();
 		}
 	}
-
 	public static boolean isHeadLess()
 	{
 		return GraphicsEnvironment.isHeadless();
