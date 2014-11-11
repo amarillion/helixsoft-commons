@@ -64,7 +64,7 @@ public class URLParser
 	}
 
 	/**
-	 * @param the name of the parameter, for example "query"
+	 * @param key the name of the parameter, for example "query"
 	 * @return the value of the given parameter, or null if it wasn't present.
 	 * Any URL-encoded characters such as '%20' will be decoded, in this case to a space character.
 	 */

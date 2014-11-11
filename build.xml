@@ -32,4 +32,24 @@
 
 	<target name="all" depends="jar" description="Compile all versions of this project" />
 
+	<target name="doc">
+		<mkdir dir="apidoc"/>
+		<tstamp /> <!-- set ${TODAY} and ${TSTAMP} -->
+		
+		<exec executable="git" outputproperty="githash" failifexecutionfails="false">
+			<arg line="log -1 --format='%H'"/>
+		</exec>
+		
+		<javadoc destdir="apidoc"
+				doctitle="Helixsoft-commons"
+				header="Git hash ${githash}"
+				footer="Generated ${TODAY}">
+			<package name="nl.helixsoft.util"/>
+			<package name="nl.helixsoft.recordstream"/>
+			<sourcepath>
+				<pathelement location="nl.helixsoft.util/src"/>
+			</sourcepath>
+		</javadoc>
+	</target> 
+
 </project>

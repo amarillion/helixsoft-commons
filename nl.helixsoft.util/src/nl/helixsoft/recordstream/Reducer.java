@@ -6,15 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * I implemented this utility method because the SPARQL GROUP BY implementation of virtuoso sucks.
  * (AVG and SUM cast double to int, CONCAT just takes the first value, etc...)
  * Instead, just do the query without a group clause, but with output sorted on the grouping variable.
  * Then pass the result to this function to aggregate the results by group.
- * @throws SQLException 
- * @throws IllegalAccessException 
- * @throws InstantiationException 
  */
 public class Reducer extends AbstractRecordStream
 {

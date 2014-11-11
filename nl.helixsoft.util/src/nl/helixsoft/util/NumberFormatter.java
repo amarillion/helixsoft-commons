@@ -7,7 +7,7 @@ public class NumberFormatter
 	/** 
 	 * format a long number using a thousands separator 
 	 * 
-	 * @param l number to format
+	 * @param val number to format
 	 * @param sep thousands separator to use, for example ',' in UK.
 	 * @param min the minimum length of the resulting string, useful for alignment purposes
 	 **/

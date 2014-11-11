@@ -19,8 +19,8 @@ public class Adjuster extends AbstractRecordStream
 	/**
 	 * Wraps a recordstream, modifies it on the fly by applying one or more adjustment functions.
 	 * <p>
-	 * @param parent: the RecordStream to adjust
-	 * @param adjust: a map of fieldname / AdjustFunc pairs. The given field will be adjusted by the AdjustFunc. 
+	 * @param parent the RecordStream to adjust
+	 * @param adjust a map of fieldname / AdjustFunc pairs. The given field will be adjusted by the AdjustFunc. 
 	 * Any field not in this map will be passed through unharmed.
 	 */
 	public Adjuster (RecordStream parent, Map<String, AdjustFunc> adjust)
