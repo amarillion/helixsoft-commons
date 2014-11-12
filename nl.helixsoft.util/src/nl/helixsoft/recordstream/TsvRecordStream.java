@@ -143,10 +143,12 @@ public class TsvRecordStream extends AbstractRecordStream
 
 		/**
 		 * If a field is surrounded by '"' quotes, remove them. Particularly useful for CSV files.
+		 * 
+		 * for the combination of commaSeparated and removeOptionalQuotes, use the function StringUtils.quotedCommaSplit, to deal correctly with comma's inside quotes
+		 * //TODO: currently doesn't handle newlines within quotes, as per the semi-official specification: https://en.wikipedia.org/wiki/Comma-separated_values
 		 */
 		public Builder removeOptionalQuotes()
 		{
-			//TODO: for the combination of commaSeparated and removeOptionalQuotes, use the function StringUtils.quotedCommaSplit, to deal correctly with comma's inside quotes
 			flags |= REMOVING_OPTIONAL_QUOTES;
 			return this;
 		}

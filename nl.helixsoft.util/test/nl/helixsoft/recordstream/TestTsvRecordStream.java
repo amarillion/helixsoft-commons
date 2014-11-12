@@ -70,7 +70,7 @@ public class TestTsvRecordStream extends TestCase
 
 	public void testComma() throws StreamException
 	{
-		Reader reader = new StringReader ("\"x\",\"y\",\"z\"\n1,2,3\n\"Hello, World\",Hello World,Goodbye World");
+		Reader reader = new StringReader ("\"x\",\"y\",\"z\"\n1,2,3\n\"Hello, World\",\"\"\"Hello World\"\"\",Goodbye World");
 		TsvRecordStream rs = TsvRecordStream.open(reader).removeOptionalQuotes().commaSeparated().get();
 		
 		Record r;
@@ -81,7 +81,7 @@ public class TestTsvRecordStream extends TestCase
 		assertEquals("3", r.get("z"));
 		r = rs.getNext();
 		assertEquals("Hello, World", r.get("x"));
-		assertEquals("Hello World", r.get("y"));
+		assertEquals("\"Hello World\"", r.get("y"));
 		assertEquals("Goodbye World", r.get("z"));
 		r = rs.getNext();
 		assertNull(r);

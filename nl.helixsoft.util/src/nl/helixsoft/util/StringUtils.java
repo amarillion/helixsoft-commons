@@ -21,6 +21,12 @@ public class StringUtils
 	 * a,"b", c <br>
 	 * 
 	 * a,"b,b", c <br>
+	 * 
+	 * a,"b""b", c <br>
+	 * 
+	 * Also handles newline characters between quotes, assuming a multi-line string is passed as argument.
+	 * 
+	 * @see https://en.wikipedia.org/wiki/Comma-separated_values
 	 */
 	public static List<String> quotedCommaSplit(String input)
 	{
@@ -28,11 +34,13 @@ public class StringUtils
 		final int BOUNDARY = 0;
 		final int CONTENT = 1;
 		final int QUOTED = 2;
-		final int END_QUOTE = 3;
+		final int QUOTE_AFTER_QUOTE = 3;
 		
 		int state = 0;
 		int pos = 0;
 		int start = 0;
+		StringBuilder current = null;
+		
 		while (pos < input.length())
 		{
 			char c = input.charAt(pos);
@@ -40,6 +48,7 @@ public class StringUtils
 			switch (state)
 			{
 			case BOUNDARY:
+				current = new StringBuilder();
 				if (c == '"')
 				{
 					state = QUOTED;
@@ -56,7 +65,7 @@ public class StringUtils
 				else
 				{
 					start = pos;
-					state  = CONTENT;
+					state = CONTENT;
 				}
 				break;
 			case CONTENT:
@@ -65,17 +74,29 @@ public class StringUtils
 					state = BOUNDARY;
 					result.add (input.substring (start, pos));
 				}
+				else if (c == '"')
+				{
+					throw new IllegalArgumentException("Found quote in middle of field: " + input);
+				}
 				break;
 			case QUOTED:
 				if (c == '"')
-				{
-					result.add (input.substring (start, pos));
-					state = END_QUOTE;
+				{	
+					state = QUOTE_AFTER_QUOTE;
 				}
 				break;
-			case END_QUOTE:
-				if (c == ',')
+			case QUOTE_AFTER_QUOTE:
+				if (c == '"')
 				{
+					// double quote, go back to quoted state.
+					current.append (input.substring (start, pos-1));
+					start = pos;
+					state = QUOTED;
+				}
+				else if (c == ',')
+				{
+					current.append (input.substring (start, pos-1));
+					result.add (current.toString());
 					state = BOUNDARY;
 				}
 				else if (c == ' ')
@@ -101,6 +122,11 @@ public class StringUtils
 		else if (state == CONTENT)
 		{
 			result.add (input.substring (start, pos));
+		}
+		else if (state == QUOTE_AFTER_QUOTE)
+		{
+			current.append (input.substring (start, pos-1));
+			result.add (current.toString());
 		}
 		
 		return result;

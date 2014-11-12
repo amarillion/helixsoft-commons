@@ -65,6 +65,34 @@ public class TestStringUtils extends TestCase
 				StringUtils.quotedCommaSplit("a ,b ,c")
 			);
 
+		assertEquals (
+				Arrays.asList(new String[] { "quote-at-end\"", "\"quote-at-start", "quote\"in\"middle"}),
+				StringUtils.quotedCommaSplit("\"quote-at-end\"\"\", \"\"\"quote-at-start\", \"quote\"\"in\"\"middle\"")
+			);
+
+		assertEquals (
+				Arrays.asList(new String[] { "new\nline", "within", "quotes"}),
+				StringUtils.quotedCommaSplit("\"new\nline\", within, quotes")
+			);
+
+		try {
+			StringUtils.quotedCommaSplit("unbalanced\"quote");
+			fail();
+		}
+		catch (IllegalArgumentException e)
+		{
+			// expected exception
+		}
+		
+		try {
+			StringUtils.quotedCommaSplit("\"quote not closed");
+			fail();
+		}
+		catch (IllegalArgumentException e)
+		{
+			// expected exception
+		}
+
 	}
 
 }
