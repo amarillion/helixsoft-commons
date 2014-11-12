@@ -11,6 +11,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.helixsoft.util.StringUtils;
+
 //TODO: rename to FileRecordStream
 /**
  * Turn a stream of delimited values into a record stream.
@@ -191,7 +193,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			return this;
 		}
 		
-		public TsvRecordStream get() throws RecordStreamException
+		public TsvRecordStream get() throws StreamException
 		{
 			if (header == null)
 			{
@@ -205,11 +207,35 @@ public class TsvRecordStream extends AbstractRecordStream
 
 	}
 	
+	private String[] splitLine(String line)
+	{
+		String[] result;
+		
+		if ((flags & (REMOVING_OPTIONAL_QUOTES | COMMA_DELIMITED)) > 0)
+		{
+			result = StringUtils.quotedCommaSplit(line).toArray(new String[] {});
+		}
+		else
+		{
+			result = line.split(delimiter, -1);
+			if ((flags & (REMOVING_OPTIONAL_QUOTES)) > 0)
+			{
+				for (int i = 0; i < result.length; ++i)
+				{
+					result[i] = removeOptionalQuotes(result[i]);
+				}
+			}
+			
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Don't use, use open() instead.
 	 * //TODO make private
 	 */
-	public TsvRecordStream (Reader _reader, String _delimiter, String[] _header, int flags) throws RecordStreamException
+	public TsvRecordStream (Reader _reader, String _delimiter, String[] _header, int flags) throws StreamException
 	{
 		this.flags = flags;
 		if ((flags & COMMA_DELIMITED) > 0)
@@ -226,7 +252,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	}
 	
 	@Deprecated
-	public TsvRecordStream (Reader _reader, String[] _header) throws RecordStreamException
+	public TsvRecordStream (Reader _reader, String[] _header) throws StreamException
 	{
 		this (_reader, "\t", _header, 0);
 	}
@@ -236,13 +262,13 @@ public class TsvRecordStream extends AbstractRecordStream
 	 * Don't use, use open() instead.
 	 * //TODO make private
 	 */
-	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws RecordStreamException
+	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws StreamException
 	{
 		this (_reader, "\t", _header, flags);
 	}
 
 	@Deprecated
-	public TsvRecordStream (Reader _reader) throws RecordStreamException
+	public TsvRecordStream (Reader _reader) throws StreamException
 	{
 		this (_reader, "\t", 0);
 	}
@@ -258,7 +284,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	}
 
 	@Deprecated
-	public TsvRecordStream (Reader _reader, int flags) throws RecordStreamException
+	public TsvRecordStream (Reader _reader, int flags) throws StreamException
 	{
 		this (_reader, "\t", flags);
 	}
@@ -268,7 +294,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	 * Don't use, use open() instead.
 	 * //TODO make private
 	 */
-	public TsvRecordStream (Reader _reader, String _delimiter, int flags) throws RecordStreamException
+	public TsvRecordStream (Reader _reader, String _delimiter, int flags) throws StreamException
 	{
 		this.flags = flags;
 		if ((flags & COMMA_DELIMITED) > 0)
@@ -287,14 +313,9 @@ public class TsvRecordStream extends AbstractRecordStream
 			List<String> header = new ArrayList<String>();
 			if (headerLine != null) // empty file has no header
 			{
-				for (String h : headerLine.split(delimiter))
+				for (String h : splitLine(headerLine))
 				{
-					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
-					{
-						header.add (removeOptionalQuotes(h));
-					}
-					else
-						header.add (h);
+					header.add (h);
 				}
 			}
 			
@@ -302,7 +323,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		} 
 		catch (IOException e) 
 		{
-			throw new RecordStreamException(e);
+			throw new StreamException(e);
 		}
 	}
 
@@ -320,19 +341,12 @@ public class TsvRecordStream extends AbstractRecordStream
 			line = getNextNonCommentLine();
 			if (line == null) return null;
 			
-			String[] split = line.split(delimiter, -1);
+			String[] split = splitLine(line);
 			
 			String[] fields;
 			if (split.length == rmd.getNumCols())
 			{
 				fields = split;
-				if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
-				{
-					for (int col = 0; col < rmd.getNumCols(); ++col)
-					{
-						fields[col] = removeOptionalQuotes(fields[col]);
-					}
-				}
 			}
 			else
 			{
@@ -341,10 +355,7 @@ public class TsvRecordStream extends AbstractRecordStream
 				int col = 0;
 				for (String field : split)
 				{
-					if ((flags & REMOVING_OPTIONAL_QUOTES) > 0)
-						fields[col] = removeOptionalQuotes(field);
-					else
-						fields[col] = field;
+					fields[col] = field;
 					
 					col++;
 					if (col == rmd.getNumCols()) 
