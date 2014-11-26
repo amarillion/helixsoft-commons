@@ -13,6 +13,31 @@ import java.util.regex.Pattern;
 
 public class StringUtils 
 {
+	public static List<String> quotedCommaSplit(String input)
+	{
+		return quotedSplit(input, '"', ',');
+	}
+
+	/**
+	 * To better deal with newline characters in CSV files,
+	 * 
+	 * The idea is that a line is parsed in multiple invocations like this:
+	 * 
+	 * List<String> row = new ArrayList<String>();
+	 * boolean continued = false;  
+	 * do
+	 * {
+	 *     String line = readLine();
+	 *     if (line == null) break; // reached end-of-file.
+	 *     continued = quotedSplit (line, '"', ',', continued, row);	
+	 * } while (continued)
+	 */
+	public static boolean quotedSplit (String input, char quoteChar, char separatorChar, boolean continued, List<String> previouslist)
+	{
+		//TODO: implement
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
 	/**
 	 * Efficiently parses strings like:
 	 * 
@@ -28,8 +53,10 @@ public class StringUtils
 	 * 
 	 * @see https://en.wikipedia.org/wiki/Comma-separated_values
 	 */
-	public static List<String> quotedCommaSplit(String input)
+	public static List<String> quotedSplit(String input, char quoteChar, char separatorChar)
 	{
+		assert quoteChar != separatorChar;
+		
 		List<String> result = new ArrayList<String>();
 		final int BOUNDARY = 0;
 		final int CONTENT = 1;
@@ -49,7 +76,7 @@ public class StringUtils
 			{
 			case BOUNDARY:
 				current = new StringBuilder();
-				if (c == '"')
+				if (c == quoteChar)
 				{
 					state = QUOTED;
 					start = pos + 1;
@@ -58,7 +85,7 @@ public class StringUtils
 				{
 					// ignore opening whitespace
 				}
-				else if (c == ',')
+				else if (c == separatorChar)
 				{
 					result.add ("");
 				}
@@ -69,31 +96,31 @@ public class StringUtils
 				}
 				break;
 			case CONTENT:
-				if (c == ',')
+				if (c == separatorChar)
 				{
 					state = BOUNDARY;
 					result.add (input.substring (start, pos));
 				}
-				else if (c == '"')
+				else if (c == quoteChar)
 				{
 					throw new IllegalArgumentException("Found quote in middle of field: " + input);
 				}
 				break;
 			case QUOTED:
-				if (c == '"')
+				if (c == quoteChar)
 				{	
 					state = QUOTE_AFTER_QUOTE;
 				}
 				break;
 			case QUOTE_AFTER_QUOTE:
-				if (c == '"')
+				if (c == quoteChar)
 				{
 					// double quote, go back to quoted state.
 					current.append (input.substring (start, pos-1));
 					start = pos;
 					state = QUOTED;
 				}
-				else if (c == ',')
+				else if (c == separatorChar)
 				{
 					current.append (input.substring (start, pos-1));
 					result.add (current.toString());

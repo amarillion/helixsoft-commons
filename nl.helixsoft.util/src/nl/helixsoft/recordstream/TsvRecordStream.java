@@ -44,8 +44,6 @@ public class TsvRecordStream extends AbstractRecordStream
 	
 	/** If this flag is on, check for each header and row field if it is enclosed in double quotes, and remove them */
 	private static int REMOVING_OPTIONAL_QUOTES = 0x400;
-
-	@Deprecated
 	private static int COMMA_DELIMITED = 0x800;
 
 	private int flags = 0;
@@ -213,7 +211,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		String[] result;
 		
-		if ((flags & (REMOVING_OPTIONAL_QUOTES | COMMA_DELIMITED)) > 0)
+		if ((flags & REMOVING_OPTIONAL_QUOTES) > 0 && (flags & COMMA_DELIMITED) > 0)
 		{
 			result = StringUtils.quotedCommaSplit(line).toArray(new String[] {});
 		}

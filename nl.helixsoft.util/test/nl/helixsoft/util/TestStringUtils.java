@@ -29,6 +29,14 @@ public class TestStringUtils extends TestCase
 		assertEquals ("Surrounded", StringUtils.toCamelCase(" surrounded "));
 	}
 	
+	public void testQuotedSplit()
+	{
+		assertEquals (
+				Arrays.asList(new String[] { "Run", "Sample Characteristics[Organism]" }),
+				StringUtils.quotedSplit ("\"Run\"\t\"Sample Characteristics[Organism]\"", '"', '\t')
+			);
+	}
+	
 	public void testQuotedCommaSplit()
 	{
 		assertEquals (
@@ -73,7 +81,7 @@ public class TestStringUtils extends TestCase
 		assertEquals (
 				Arrays.asList(new String[] { "new\nline", "within", "quotes"}),
 				StringUtils.quotedCommaSplit("\"new\nline\", within, quotes")
-			);
+			);				
 
 		try {
 			StringUtils.quotedCommaSplit("unbalanced\"quote");
