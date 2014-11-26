@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import nl.helixsoft.util.ObjectUtils;
-import nl.helixsoft.util.StringUtils;
 
 /**
  * A chunked record stream groups subsequent records that share the value for one
@@ -19,7 +18,7 @@ public class ChunkedRecordStream extends AbstractStream<List<Record>> implements
 	private final String key;
 	private Record next;
 	
-	public ChunkedRecordStream (String key, RecordStream parent) throws RecordStreamException
+	public ChunkedRecordStream (String key, RecordStream parent) throws StreamException
 	{
 		this.parent = parent;
 		next = parent.getNext();
