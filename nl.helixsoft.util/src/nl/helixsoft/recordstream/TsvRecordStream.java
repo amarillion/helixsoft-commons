@@ -211,7 +211,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		String[] result;
 		
-		if ((flags & REMOVING_OPTIONAL_QUOTES) > 0 && (flags & COMMA_DELIMITED) > 0)
+		if ((flags & REMOVING_OPTIONAL_QUOTES) > 0 && (",".equals(delimiter)))
 		{
 			result = StringUtils.quotedCommaSplit(line).toArray(new String[] {});
 		}
