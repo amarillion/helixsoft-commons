@@ -42,7 +42,7 @@ public class DefaultRecordMetaData implements RecordMetaData
 	public int getColumnIndex(String name)
 	{
 		if (!index.containsKey(name))
-			throw new IllegalArgumentException("Column '" + name + "' doesn't exist, options are [" + StringUtils.join (",", columns) + "]");
+			throw new IllegalArgumentException("Column '" + name + "' doesn't exist, there are " + columns.length + " options [" + StringUtils.join (",", columns) + "]");
 		return index.get(name);
 	}
 
