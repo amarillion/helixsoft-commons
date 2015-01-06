@@ -25,7 +25,7 @@ public class ExcelRecordStream extends AbstractRecordStream
 	
 	public ExcelRecordStream (File xlsFile, String sheetTitle) throws IOException
 	{
-		HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream (new File ("/home/martijn/prg/doenz/scripts/TODO.xls")));
+		HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream (xlsFile));
 		sheet = wb.getSheet(sheetTitle);
 
 		HSSFRow headerRow = sheet.getRow(0);
@@ -53,6 +53,9 @@ public class ExcelRecordStream extends AbstractRecordStream
 		if (rowIndex >= sheet.getLastRowNum()) return null;
 		
 		HSSFRow row = sheet.getRow(rowIndex++);
+		
+		if (row == null) return null; // empty row. block has ended.
+		
 		Object[] fields = new Object[rmd.getNumCols()];
 		
 		int fieldNum = Math.min (rmd.getNumCols(), row.getLastCellNum());
@@ -84,8 +87,11 @@ public class ExcelRecordStream extends AbstractRecordStream
 			case HSSFCell.CELL_TYPE_STRING:
 				fields[col] = cell.getStringCellValue();
 				break;
+			case HSSFCell.CELL_TYPE_ERROR:
+				fields[col] = cell.getErrorCellValue();
+				break;
 			default:
-				 throw new IllegalStateException ("Unknown type " + cell.getCellType());
+				throw new IllegalStateException ("Unknown type " + cellType);
 			}
 		}
 		
