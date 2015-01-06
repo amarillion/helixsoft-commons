@@ -1,12 +1,17 @@
 package nl.helixsoft.util;
 
 import java.util.Arrays;
-import java.util.List;
 
 import junit.framework.TestCase;
 
 public class TestStringUtils extends TestCase 
 {
+	public void testFilenameSafe()
+	{
+		assertFalse (StringUtils.isFileNameSafe("hello?.txt"));
+		assertTrue (StringUtils.isFileNameSafe("hello.txt"));	
+	}
+	
 	public void testStripTags()
 	{
 		assertEquals ("abc", StringUtils.stripTags("abc"));

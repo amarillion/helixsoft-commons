@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -500,9 +502,35 @@ public class StringUtils
 	
 	public static boolean isFileNameSafe (String s)
 	{
-		return !s.matches("[^a-zA-Z0-9\\-_()\\]\\[}{. ]");
+		return !s.matches(".*[^a-zA-Z0-9\\-_()\\]\\[}{. ].*");
 	}
 
+	/**
+	 * Check if the string contains only allowed characters .
+	 * @returns null if ok, or an error message otherwise.
+	 */
+	public static String checkForIllegalCharacter (String haystack, String allowedCharacters)
+	{	
+		Set<Character> allowedSet = new HashSet<Character>();
+		for (char c : allowedCharacters.toCharArray())
+		{
+			allowedSet.add(c);
+		}
+		
+		int pos = 0;
+		for (char hay : haystack.toCharArray())
+		{
+			if (!allowedSet.contains(hay)) 
+			{
+				return "contains illegal character '" + hay + "' at position " + pos;
+			}
+			
+			pos++;
+		}
+		
+		return null; // no problem found
+	}
+	
 	/**
 	 * Make sure a string stays within a certain length, by cutting a bit from the middle.
 	 */
