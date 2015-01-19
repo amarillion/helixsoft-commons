@@ -3,6 +3,7 @@ package nl.helixsoft.stats;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -268,6 +269,13 @@ public class DefaultDataFrame extends AbstractDataFrame
 		result.records = newRecords;
 		result.rmd = newRmd;
 		return result;
+	}
+
+	
+	@Override
+	public Iterable<Record> asRecordIterable() 
+	{
+		return records;
 	}
 	
 }
