@@ -3,16 +3,18 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Gui
 Bundle-SymbolicName: nl.helixsoft.gui
 Bundle-Version: 1.0.0.qualifier
-Export-Package: nl.helixsoft.gui,
+Export-Package: nl.helixsoft.docking,
+ nl.helixsoft.gui,
  nl.helixsoft.gui.preferences,
  nl.helixsoft.gui.table,
  nl.helixsoft.param,
  org.pathvisio.desktop,
  org.pathvisio.desktop.parameter,
  org.pathvisio.desktop.util,
- org.pathvisio.gui.dialogs
+ org.pathvisio.gui.dialogs,
+ nl.helixsoft.docking
 Require-Bundle: org.pathvisio.jgoodies.forms;bundle-version="1.2.0"
 Import-Package: junit.framework;resolution:=optional,
  nl.helixsoft.util,
- org.apache.commons.net.ftp;version="3.3.0",
- org.apache.commons.net;version="3.3.0"
+ org.apache.commons.net;version="3.3.0",
+ org.apache.commons.net.ftp;version="3.3.0"

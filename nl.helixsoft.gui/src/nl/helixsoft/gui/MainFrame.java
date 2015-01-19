@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +15,14 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import nl.helixsoft.docking.DockingDesktop;
 import nl.helixsoft.gui.preferences.PreferenceManager;
 
 /** 
@@ -37,13 +34,12 @@ import nl.helixsoft.gui.preferences.PreferenceManager;
 public class MainFrame extends JFrame
 {
 	private final PreferenceManager preferenceManager;
-	private final JSplitPane taskSplitPane;
-	private final JSplitPane subSplitPane; 		
 	protected final PreferencesDlg preferencesDlg;
 	private Map<String, JMenu> menuMap = new HashMap<String, JMenu>();
 	private Map<Action, JMenuItem> menuActionMap = new HashMap<Action, JMenuItem>();
 	private JLabel statusBar;
-	
+	private DockingDesktop desk = new DockingDesktop();
+
 	public void addMenuItem(String menu, Action a)
 	{
 		JMenu m = menuMap.get(menu);
@@ -89,17 +85,10 @@ public class MainFrame extends JFrame
 	public MainFrame(PreferenceManager _preferenceManager)
 	{				
 		this.preferenceManager = _preferenceManager;
-				
-		subSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        subSplitPane.setDividerLocation(450);
-        
-		taskSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		taskSplitPane.setRightComponent(subSplitPane);        
-		taskSplitPane.setOneTouchExpandable(true);
-        taskSplitPane.setDividerLocation(150);
-        
+       
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
-        getContentPane().add(taskSplitPane, BorderLayout.CENTER);
+		
+        getContentPane().add (desk, BorderLayout.CENTER);
 		
         statusBar = new JLabel();
         statusBar.setPreferredSize(new Dimension(100, 20));
@@ -123,16 +112,6 @@ public class MainFrame extends JFrame
 		MAIN, SIDEBAR, BOTTOMBAR
 	}
 
-	public void setPanel (JComponent comp, PanelPosition pos)
-	{
-		switch (pos)
-		{
-		case SIDEBAR: taskSplitPane.setLeftComponent(comp); break;
-		case MAIN: subSplitPane.setTopComponent(comp); break;
-		case BOTTOMBAR: subSplitPane.setBottomComponent(comp); break;
-		}
-	}
-	
 	private JToolBar toolbar;
 	
 	private JToolBar createToolBar()
@@ -225,5 +204,10 @@ public class MainFrame extends JFrame
 		JMenu menu = menuMap.get(key);
 		menu.remove(item);
 	}
+
+	public DockingDesktop getDockingDesktop() {
+		return desk;
+	}
+
 
 }
