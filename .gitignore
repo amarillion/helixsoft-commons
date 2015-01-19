@@ -5,3 +5,5 @@
 nl.helixsoft.*.jar
 /nl.helixsoft.*/lib/
 .gradle/
+ivysettings.xml
+bin/
