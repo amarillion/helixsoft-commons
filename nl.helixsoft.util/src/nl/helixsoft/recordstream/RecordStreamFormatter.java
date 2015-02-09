@@ -11,7 +11,7 @@ public class RecordStreamFormatter
 
 	/** Format as a TableModel */
 	public static TableModel asTableModel(RecordStream rs)
-			throws RecordStreamException 
+			throws StreamException 
 	{
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
 		Vector<String> colnames = new Vector<String>();
