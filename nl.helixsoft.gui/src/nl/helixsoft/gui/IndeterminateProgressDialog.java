@@ -6,19 +6,25 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 public class IndeterminateProgressDialog implements PropertyChangeListener
 {
 	private JDialog dialog;
-
+	private JLabel note = new JLabel();
+	
 	public void propertyChange(PropertyChangeEvent event) 
 	{
 		if ("state".equals(event.getPropertyName())
 				&& SwingWorker.StateValue.DONE == event.getNewValue()) {
 			dialog.setVisible(false);
 			dialog.dispose();
+		}
+		else if ("note".equals(event.getPropertyName()))
+		{
+			note.setText ("" + event.getNewValue());
 		}
 	}
 
@@ -45,6 +51,7 @@ public class IndeterminateProgressDialog implements PropertyChangeListener
 		final JProgressBar jpb = new JProgressBar(0, 100);
 		jpb.setIndeterminate(true);
 		dialog.getContentPane().add(jpb, BorderLayout.NORTH);
+		dialog.getContentPane().add(note, BorderLayout.SOUTH);
 
 		//			JButton btnCancel = new JButton("Cancel");
 		//

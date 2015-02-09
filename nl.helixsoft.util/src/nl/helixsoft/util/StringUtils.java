@@ -21,6 +21,15 @@ public class StringUtils
 	}
 
 	/**
+	 * Permissive version of quotedCommaSplit that prints warnings instead of throwing exceptions
+	 * in certain cases that don't adhere to the spec but are recoverable.
+	 */
+	public static List<String> permissiveQuotedCommaSplit(String input)
+	{
+		return quotedSplit(input, '"', ',', false);
+	}
+	
+	/**
 	 * To better deal with newline characters in CSV files,
 	 * 
 	 * The idea is that a line is parsed in multiple invocations like this:
@@ -39,6 +48,11 @@ public class StringUtils
 		//TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
+
+	public static List<String> quotedSplit(String input, char quoteChar, char separatorChar)
+	{
+		return quotedSplit(input, quoteChar, separatorChar, true);
+	}
 	
 	/**
 	 * Efficiently parses strings like:
@@ -53,9 +67,10 @@ public class StringUtils
 	 * 
 	 * Also handles newline characters between quotes, assuming a multi-line string is passed as argument.
 	 * 
+	 * @param strictValidation if you pass true, may throw an exception if the line doesn't adhere to CSV spec. If false, merely print a warning to STDERR.
 	 * @see https://en.wikipedia.org/wiki/Comma-separated_values
 	 */
-	public static List<String> quotedSplit(String input, char quoteChar, char separatorChar)
+	public static List<String> quotedSplit(String input, char quoteChar, char separatorChar, boolean strictValidation)
 	{
 		assert quoteChar != separatorChar;
 		
@@ -105,7 +120,14 @@ public class StringUtils
 				}
 				else if (c == quoteChar)
 				{
-					throw new IllegalArgumentException("Found quote in middle of field: " + input);
+					if (strictValidation)
+					{
+						throw new IllegalArgumentException("Found quote in middle of field: " + input);
+					}
+					else
+					{
+						System.err.println ("WARNING: Found quote in middle of field: " + input + " which is against CSV spec");
+					}
 				}
 				break;
 			case QUOTED:
