@@ -21,7 +21,7 @@ public class Reducer extends AbstractRecordStream
 	private int idxGroupVar;
 	private final RecordMetaData rmd;
 	
-	public Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws RecordStreamException
+	public Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws StreamException
 	{
 		this.parent = parent;
 		this.accumulator = accumulator; //TODO: should really make a defensive copy

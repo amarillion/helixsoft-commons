@@ -9,7 +9,7 @@ import nl.helixsoft.recordstream.Filter.FieldEquals;
 public class TestFilter extends TestCase
 {
 	
-	public void testFieldEquals() throws RecordStreamException
+	public void testFieldEquals() throws StreamException
 	{
 		Reader reader = new StringReader (
 				"a\tb\n" +
@@ -21,7 +21,7 @@ public class TestFilter extends TestCase
 		Record r;
 		
 		r = rs.getNext();
-		assertEquals("4", r.getValue("b"));
+		assertEquals("4", r.get("b"));
 		r = rs.getNext();
 		assertNull(r);
 	}

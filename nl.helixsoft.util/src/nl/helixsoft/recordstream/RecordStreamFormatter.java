@@ -42,7 +42,7 @@ public class RecordStreamFormatter
 	 * @param progress may be null.
 	 * @throws RecordStreamException 
 	 */
-	public static void asTsv(PrintStream out, RecordStream rs, PrintStream progress, boolean addHeader) throws RecordStreamException
+	public static void asTsv(PrintStream out, RecordStream rs, PrintStream progress, boolean addHeader) throws StreamException
 	{
 		int colNum = rs.getMetaData().getNumCols();
 		

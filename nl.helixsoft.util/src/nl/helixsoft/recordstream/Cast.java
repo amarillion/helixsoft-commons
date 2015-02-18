@@ -51,7 +51,7 @@ public class Cast extends AbstractRecordStream
 	 * @param _groupVar
 	 * @throws RecordStreamException 
 	 */	
-	public Cast (RecordStream parent, String[] _groupVar, String columnVar, String valueVar) throws RecordStreamException
+	public Cast (RecordStream parent, String[] _groupVar, String columnVar, String valueVar) throws StreamException
 	{
 		Map<String, Integer> idx = new HashMap<String, Integer>();
 		for (int i = 0; i < parent.getMetaData().getNumCols(); ++i)
@@ -81,7 +81,7 @@ public class Cast extends AbstractRecordStream
 		rmd = new DefaultRecordMetaData(colNames);
 	}
 
-	public Cast (RecordStream parent, String groupVar, String columnVar, String valueVar) throws RecordStreamException
+	public Cast (RecordStream parent, String groupVar, String columnVar, String valueVar) throws StreamException
 	{
 		this (parent, new String[] { groupVar }, columnVar, valueVar);
 	}

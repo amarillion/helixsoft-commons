@@ -11,7 +11,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 	private boolean closed = false;
 	private final RecordMetaData rmd;
 	
-	public ResultSetRecordStream(ResultSet wrapped) throws RecordStreamException 
+	public ResultSetRecordStream(ResultSet wrapped) throws StreamException 
 	{ 
 		this.rs = wrapped;
 		try {
@@ -27,7 +27,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 		}
 		catch (SQLException ex)
 		{
-			throw new RecordStreamException(ex);
+			throw new StreamException(ex);
 		}
 	}
 

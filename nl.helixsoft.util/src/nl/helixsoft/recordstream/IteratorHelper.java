@@ -35,7 +35,7 @@ public class IteratorHelper <T> implements Iterator<T>
 		try {
 			next = parent.getNext();
 		} 
-		catch (RecordStreamException e) 
+		catch (StreamException e) 
 		{
 			throw new RuntimeException(e);
 		}

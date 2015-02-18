@@ -46,7 +46,7 @@ public class TestReduceAndCast extends TestCase {
 	 * Test Reduce, and in particular the AsSet and AsList functions
 	 */
 	@SuppressWarnings("unchecked")
-	public void testReduceSet() throws RecordStreamException
+	public void testReduceSet() throws StreamException
 	{
 		Map<String, GroupFunc> map = new HashMap<String, GroupFunc>();
 		map.put ("str1_set", new Reducer.AsSet("str1"));
@@ -103,7 +103,7 @@ public class TestReduceAndCast extends TestCase {
 		assertNull (r);
 	}
 	
-	public void testReduce() throws RecordStreamException
+	public void testReduce() throws StreamException
 	{
 		Map<String, GroupFunc> map = new HashMap<String, GroupFunc>();
 		map.put ("count", new Count());
@@ -153,7 +153,7 @@ public class TestReduceAndCast extends TestCase {
 		assertNull (r);
 	}
 
-	public void testCast() throws RecordStreamException
+	public void testCast() throws StreamException
 	{
 		RecordStream rs = new MockRecordStream (
 				new String[] { "group", "col", "var" },
@@ -189,7 +189,7 @@ public class TestReduceAndCast extends TestCase {
 		assertNull (r);
 	}
 
-	public void testCastMultiKey() throws RecordStreamException
+	public void testCastMultiKey() throws StreamException
 	{
 		RecordStream rs = new MockRecordStream (
 				new String[] { "group", "subgroup", "col", "var" },
