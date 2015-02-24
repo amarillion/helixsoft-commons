@@ -5,9 +5,9 @@
 		<ivy:buildlist reference="build-path">
 			<fileset dir=".">
 				<include name="nl.helixsoft.util/build.xml"/>
+				<include name="nl.helixsoft.xml/build.xml"/>
 			<!--
 				<include name="nl.helixsoft.gui/build.xml"/>
-				<include name="nl.helixsoft.xml/build.xml"/>
 				<include name="nl.helixsoft.graph/build.xml"/>
 				<include name="nl.helixsoft.misc/build.xml"/>
 			-->
