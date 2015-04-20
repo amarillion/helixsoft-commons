@@ -2,9 +2,12 @@ package nl.helixsoft.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -235,7 +238,7 @@ public class StringUtils
 	}
 
 	/**
-	 * Join collection into and appent to a StringBuilder, with a separator between.
+	 * Join collection into and append to a StringBuilder, with a separator between.
 	 * Useful if you want to join strings and append to an existing StringBuilder.
 	 * @param builder StringBuilder you want to append to. This variable will be modified.
 	 * @param sep Separator between strings
@@ -574,13 +577,33 @@ public class StringUtils
 	/**
 	 * Make the first character in the String uppercase.
 	 * Leave the remaining characters unchanged.
+	 * Null-Safe: If the input value is null, this returns null;
 	 */
 	public static String initialUpper (String input)
 	{
+		if (input == null) return null;
 		String result = input.substring(0, 1).toUpperCase() + input.substring (1);
 		return result;
 	}
 	
+	/**
+	 * Null-Safe version of String.toLowerCase;
+	 */
+	public static String toLowerCase (String input)
+	{
+		if (input == null) return null;
+		return input.toLowerCase();
+	}
+
+	/**
+	 * Null-Safe version of String.toLowerCase;
+	 */
+	public static String toUpperCase (String input)
+	{
+		if (input == null) return null;
+		return input.toUpperCase();
+	}
+
 	/**
 	 * Remove spaces, make each word start with uppercase.
 	 * CamelCase is a method for removing spaces from a phrase while maintaining leglibility.
@@ -589,9 +612,12 @@ public class StringUtils
 	 * "Show me your ID!" -> "ShowMeYourID!"
 	 * "Two  spaces" -> "TwoSpaces"
 	 * " surrounded " -> "Surrounded"
+	 * Null-Safe: returns null if input is null;
 	 */
 	public static String toCamelCase(String value)
 	{
+		if (value == null) return null;
+		
 		StringBuilder result = new StringBuilder();
 		for (String word : value.trim().split (" +"))
 		{
@@ -639,5 +665,6 @@ public class StringUtils
 		}
 		return result.toString();
 	}
+
 	
 }
