@@ -42,7 +42,7 @@ public class RecordStreamFormatter
 	 * @param progress may be null.
 	 * @throws RecordStreamException 
 	 */
-	public static void asTsv(PrintStream out, RecordStream rs, PrintStream progress, boolean addHeader) throws StreamException
+	public static long asTsv(PrintStream out, RecordStream rs, PrintStream progress, boolean addHeader) throws StreamException
 	{
 		int colNum = rs.getMetaData().getNumCols();
 		
@@ -58,7 +58,7 @@ public class RecordStreamFormatter
 			out.println();
 		}
 		
-		int crow = 0;
+		long crow = 0;
 		Record row;
 		while ((row = rs.getNext()) != null)
 		{
@@ -73,6 +73,7 @@ public class RecordStreamFormatter
 			crow++;
 			if (progress != null && (crow % 1000 == 0)) progress.println("Row " + crow);
 		}
+		return crow;
 	}
 
 }
