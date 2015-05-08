@@ -94,7 +94,7 @@ public class DownloadUtils
 
 	public static void downloadStream (URLConnection conn, OutputStream out) throws IOException
 	{
-		downloadStream (conn.getInputStream(), out, conn.getURL(), conn.getContentLength() /* from java 1.7: getContentLengthLong() */ );
+		downloadStream (conn.getInputStream(), out, conn.getURL(), conn.getContentLength() /* TODO from java 1.7: getContentLengthLong() */ );
 	}
 	
 	//TODO: add option for silent downloading, or for a CLI progress monitor.

@@ -6,7 +6,10 @@ import java.util.List;
 
 import javax.swing.table.TableModel;
 
+import com.google.common.collect.Multimap;
+
 import nl.helixsoft.recordstream.Record;
+import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
 
 /**
@@ -31,6 +34,17 @@ import nl.helixsoft.recordstream.RecordStream;
  */
 public interface DataFrame extends TableModel 
 {
+	public void putFactor(String factorName, Multimap<Object, Integer> factor);
+	public Multimap<Object, Integer> getFactor(String factorName);
+	
+	public Record getRow(int rowIdx);
+	
+	/* get a name for each row, may return null */ 
+	public List<String> getRowNames();
+	public String getRowName (int rowIx);
+	
+	public RecordMetaData getMetaData();
+	
 	/**
 	 * Extract specified colums by index
 	 * returns a new DataFrame object.
@@ -38,14 +52,26 @@ public interface DataFrame extends TableModel
 	public DataFrame cut (int... columnIdx);
 	
 	/**
+	 * Extract specified rows by index
+	 * returns a new DataFrame object.
+	 */
+	public DataFrame select (int... rowIdx);	
+	
+	/**
 	 * Performs a merge (a.k.a. JOIN in SQL terms) with another table.
 	 * returns a new DataFrame object.
 	 * This is a FULL JOIN - Rows where the primary key doesn't exists in either this or the other, are filled with null values.
+	 * 
+	 * @deprecated : use DataFrameOperation instead
+	 * 
 	 */
 	public DataFrame merge (DataFrame that, int onThisColumn, int onThatColumn);
 	
-	/** shortCut in cases where the column name is the same */
-	public DataFrame merge (DataFrame that, String onColumn);
+	/** shortCut in cases where the column name is the same
+	 * 	 
+	 * @deprecated : use DataFrameOperation instead
+	 */
+	@Deprecated public DataFrame merge (DataFrame that, String onColumn);
 	
 	/**
 	 * return column names as list
@@ -63,9 +89,12 @@ public interface DataFrame extends TableModel
 
 	/** 
 	 * Add a column
-	 * @return 
+	 * @return a new dataframe // TODO - or modify in place?
 	 */
 	public <T> DataFrame cbind(List<T> column);
+	
+	//TODO: current implementation modifies in place and returns copy of this, unlike cbind which creates a copy.
+	public DataFrame rbind(Object... row);
 	
 	//TODO: these are very similar... do we need both???
 	//asRecordStream returns a copy of the data in the current implementation, but that is very inefficient.

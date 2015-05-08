@@ -3,12 +3,9 @@ package nl.helixsoft.stats;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.event.TableModelListener;
 
 import nl.helixsoft.recordstream.DefaultRecord;
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
@@ -20,8 +17,9 @@ import nl.helixsoft.recordstream.RecordStream;
 /**
  * Simple implementation of DataFrame, not very optimized.
  * 
- * //TODO cut and merge implementation would be much faster with col-based rather than row-based storage... 
- */
+ * //TODO cut and merge implementation would be much faster with col-based rather than row-based storage...
+ * //TODO: rename to something more explicit like e.g. rowBoundDataFrame  
+ */ 
 public class DefaultDataFrame extends AbstractDataFrame 
 {
 	private List<Record> records;
@@ -37,6 +35,32 @@ public class DefaultDataFrame extends AbstractDataFrame
 		df.records = new ArrayList<Record>();
 		input.into(df.records);
 		return df;
+	}
+
+	/**
+	 * Creates an empty DataFrame with given header.
+	 */
+	public static DataFrame createWithHeader (String... header)
+	{
+		DefaultDataFrame df = new DefaultDataFrame();
+		df.rmd = new DefaultRecordMetaData(header);
+		df.records = new ArrayList<Record>();
+		return df;
+	}
+	
+	/** @inheritDocs */
+	@Override
+	public DataFrame select(int... rowIdx)
+	{
+		DefaultDataFrame result = new DefaultDataFrame();
+		
+		for (int i = 0; i < rowIdx.length; ++i)
+		{
+			result.records.add(records.get(i));
+		}
+		
+		result.rmd = rmd;		
+		return result;
 	}
 
 	/** @inheritDocs */
@@ -220,16 +244,6 @@ public class DefaultDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public void addTableModelListener(TableModelListener l) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
-	}
-
-	@Override
-	public void removeTableModelListener(TableModelListener l) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
-	}
-
-	@Override
 	public <T> DataFrame cbind(List<T> column) 
 	{
 		if (column.size() != records.size()) throw new IllegalArgumentException ("DataFrame has " + records.size() + " rows but trying to add column of size " + column.size());
@@ -277,5 +291,41 @@ public class DefaultDataFrame extends AbstractDataFrame
 	{
 		return records;
 	}
+
+	@Override
+	public Record getRow(int rowIdx) 
+	{
+		return records.get(rowIdx);
+	}
+
+	@Override
+	public RecordMetaData getMetaData() 
+	{
+		return rmd;
+	}
+
+	@Override
+	public DataFrame rbind(Object... row)
+	{
+		if (row.length != rmd.getNumCols()) throw new IllegalArgumentException ("DataFrame has " + rmd.getNumCols() + " columns but trying to add row of size " + row.length);
+
+		Record r = new DefaultRecord(rmd, row);
+		records.add(r);
+		
+		return this;
+	}
+
+	@Override
+	public List<String> getRowNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getRowName(int rowIx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+
 }
