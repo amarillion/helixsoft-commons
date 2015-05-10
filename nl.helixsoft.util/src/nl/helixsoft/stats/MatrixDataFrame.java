@@ -1,5 +1,7 @@
 package nl.helixsoft.stats;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
@@ -10,18 +12,26 @@ import nl.helixsoft.recordstream.RecordStream;
 public class MatrixDataFrame extends AbstractDataFrame 
 {
 	private Matrix<?> matrix;
-	private List<String> columnNames;
+	private Header columnHeader;
 	private RecordMetaData rmd;
 	private List<String> rowNames;
+	private List<String> columnNames;
 	
-	public static MatrixDataFrame fromMatrix(Matrix<?> in, List<String> columnNames, List<String> rowNames)
+	public static MatrixDataFrame fromMatrix(Matrix<?> in, Header columnHeader, List<String> rowNames)
 	{
 		MatrixDataFrame result = new MatrixDataFrame();
 		result.matrix = in;
-		assert (columnNames.size() == in.getWidth());
+		assert (columnHeader.size() == in.getWidth());
 		assert (rowNames.size() == in.getHeight());
-		result.columnNames = columnNames; 
-		result.rmd = new DefaultRecordMetaData(columnNames);
+		result.columnHeader = columnHeader;
+		
+		result.columnNames = new ArrayList<String>();
+		for (int i = 0; i < columnHeader.size(); ++i)
+		{
+			result.columnNames.add(columnHeader.getColumnName(i));
+		}
+		
+		result.rmd = new DefaultRecordMetaData(result.columnNames);
 		result.rowNames = rowNames;
 		return result;
 	}
@@ -82,16 +92,38 @@ public class MatrixDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public Iterable<Record> asRecordIterable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<?> getColumnClass(int arg0) 
+	public Iterable<Record> asRecordIterable() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterable<Record>() 
+		{
+			
+			@Override
+			public Iterator<Record> iterator() 
+			{
+				
+				return new Iterator<Record>() 
+						{
+							int pos = 0;
+
+							@Override
+							public boolean hasNext() 
+							{
+								return pos < matrix.getHeight();
+							}
+
+							@Override
+							public Record next() {
+								return getRow(pos++);
+							}
+
+							@Override
+							public void remove() 
+							{
+								throw new UnsupportedOperationException("Can't remove from a MatrixDataFrame");
+							}
+				};
+			}
+		};
 	}
 
 	@Override
@@ -119,13 +151,6 @@ public class MatrixDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public boolean isCellEditable(int arg0, int arg1) 
-	{
-		return true;
-	}
-
-
-	@Override
 	public void setValueAt(Object value, int row, int col) 
 	{
 		matrix.set(row, col, value);
@@ -141,6 +166,18 @@ public class MatrixDataFrame extends AbstractDataFrame
 	public String getRowName(int rowIx) 
 	{
 		return rowNames.get(rowIx);
+	}
+
+	@Override
+	public Object getColumnHeader(int colIx) 
+	{
+		return columnHeader.get(colIx);
+	}
+
+	@Override
+	public Header getColumnHeader() 
+	{
+		return columnHeader;
 	}
 
 }

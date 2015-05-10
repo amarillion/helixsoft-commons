@@ -1,12 +1,18 @@
 package nl.helixsoft.stats;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.helixsoft.recordstream.Record;
+import nl.helixsoft.recordstream.BiFunction;
+import nl.helixsoft.recordstream.ReduceFunctions;
+import nl.helixsoft.stats.DataFrameOperation.WideFormatBuilder;
 
 public abstract class DataFrameOperation 
 {
@@ -40,6 +46,7 @@ public abstract class DataFrameOperation
 		private String rowNameField;
 		private String colNameField;
 		private String value; //TODO: option for aggregate functions...
+		private BiFunction<Object, Object, Object> reduce;
 		
 		public WideFormatBuilder(DataFrame a) 
 		{
@@ -73,13 +80,21 @@ public abstract class DataFrameOperation
 		public WideFormatBuilder withValue(String string) 
 		{
 			value = string;
+			reduce = ReduceFunctions.FIRST;
 			return this;
 		}
 
-		static class CompoundKey implements Comparable<CompoundKey>
+		public WideFormatBuilder reduce(String string, BiFunction<Object, Object, Object> func) 
+		{
+			value = string;
+			reduce = func;
+			return this;
+		}
+
+		public static class CompoundKey implements Comparable<CompoundKey>
 		{
 			final String[] data;
-			
+						
 			public CompoundKey(int length)
 			{
 				data = new String[length];
@@ -160,8 +175,13 @@ public abstract class DataFrameOperation
 				result.append ("]");
 				
 				return result.toString();
+//				return data[0];
 			}
 			
+			public String get(int ix)
+			{
+				return data [ix];
+			}
 		}
 		
 		public DataFrame get() 
@@ -188,11 +208,11 @@ public abstract class DataFrameOperation
 			}
 			
 			i = 0;
-			List<String> colNames = new ArrayList<String>();
+			List<Object> colNames = new ArrayList<Object>();
 			for (Map.Entry<CompoundKey, Integer> e : columnFactors.entrySet())
 			{
 				e.setValue(i++);
-				colNames.add("" + e.getKey());
+				colNames.add(e.getKey());
 			}
 				
 			Matrix<Double> m = new Matrix<Double>(columnFactors.size(), rowFactors.size());
@@ -202,15 +222,18 @@ public abstract class DataFrameOperation
 				CompoundKey rowKey = selectFields(r, rows);
 				CompoundKey colKey = selectFields(r, columns);
 				
-				Double v = (Double)r.get(value);
+				Object v = r.get(value);
 				int row = rowFactors.get(rowKey);
 				int col = columnFactors.get(colKey);
-				m.set(row, col, v);
+				
+				Object value = m.get(row, col);
+				Object reduced = reduce.apply(value, v);
+				m.set(row, col, reduced);
 				rowNames.set(row, "" + r.get(rowNameField));
-				colNames.set(col, "" + r.get(colNameField));
-			}		
+//				colNames.set(col, "" + r.get(colNameField));
+			}
 			
-			return MatrixDataFrame.fromMatrix(m, colNames, rowNames);
+			return MatrixDataFrame.fromMatrix(m, new DefaultHeader(colNames, columns.length), rowNames);
 		}
 
 		private CompoundKey selectFields(Record r, String[] selectedFields) 
@@ -222,6 +245,7 @@ public abstract class DataFrameOperation
 			}
 			return rowKey;
 		}
+
 	
 	}
 
@@ -237,4 +261,56 @@ public abstract class DataFrameOperation
 		return null;
 	}
 
+	public static DataFrame columnSort(DataFrame in)
+	{
+		return columnSort(in, new Comparator<ColumnView<?>>() {
+
+			@Override
+			public int compare(ColumnView<?> o1, ColumnView<?> o2) 
+			{
+				Comparable a1 = (Comparable)o1.getHeader();
+				Comparable a2 = (Comparable)o2.getHeader();
+				
+				if (a1 == null && a2 == null) return 0;
+				if (a1 == null) return 1;
+				if (a2 == null) return -1;
+				return a1.compareTo(a2);
+			}
+		});
+	}
+	
+	public static DataFrame columnSort(DataFrame in, Comparator<ColumnView<?>> comparator)
+	{
+		List<ColumnView<?>> views = new ArrayList<ColumnView<?>>();
+		for (int i = 0; i < in.getColumnCount(); ++i)
+		{
+			views.add (new DefaultColumnView(in, i));
+		}
+		
+		Collections.sort (views, comparator);
+		
+		return new ColumnBoundDataFrame (views, in);
+	}
+
+	public static void toTsv(PrintStream out, DataFrame wide) 
+	{
+		for (int col = 0; col < wide.getColumnCount(); ++col)
+		{
+			out.print ("\t");
+			out.print (wide.getColumnHeader(col).toString());
+		}
+		out.println();
+		for (int row = 0; row < wide.getRowCount(); ++row)
+		{
+			out.print (wide.getRowName(row));
+			for (int col = 0; col < wide.getColumnCount(); ++col)
+			{
+				out.print ("\t");
+				out.print (wide.getValueAt(row, col));
+			}
+			out.println();
+		}
+	
+	}
+	
 }

@@ -31,6 +31,7 @@ public class DefaultRecord implements Record
 		builder.append ("}");
 		return builder.toString();
 	}
+	
 	@Override
 	public RecordMetaData getMetaData() 
 	{

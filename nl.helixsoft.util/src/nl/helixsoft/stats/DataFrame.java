@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.swing.table.TableModel;
 
-import com.google.common.collect.Multimap;
-
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
@@ -29,20 +27,20 @@ import nl.helixsoft.recordstream.RecordStream;
  * <p>
  * Operations like cut() ... return a copy of the DataFrame object.
  * 
- * NOTE: implementing both TableModel and Iterable<Record> turned out not to be so hot because groovy inserts its own iterator() method in TableModels. Not sure if there is a way around that.
- * For now, just implementing TableModel. If you want a Iterable<Record>, see @link{DataFrame.asRecordIterable}
+ * NOTE: implementing both TableModel and Iterable<Record> turned out not to be so hot because groovy inserts its own iterator() method in TableModels. 
+ * Currently implementing neither. 
+ * If you want a Iterable<Record>, see @link{DataFrame.asRecordIterable}
+ * If you want a TableModel, use asTableModel (TODO)
  */
-public interface DataFrame extends TableModel 
-{
-	public void putFactor(String factorName, Multimap<Object, Integer> factor);
-	public Multimap<Object, Integer> getFactor(String factorName);
-	
+public interface DataFrame
+{	
 	public Record getRow(int rowIdx);
 	
 	/* get a name for each row, may return null */ 
 	public List<String> getRowNames();
 	public String getRowName (int rowIx);
 	
+	@Deprecated // use ColumnHeader instead
 	public RecordMetaData getMetaData();
 	
 	/**
@@ -75,8 +73,13 @@ public interface DataFrame extends TableModel
 	
 	/**
 	 * return column names as list
+	 * ... use getColumnHeader instead...
 	 */
+	@Deprecated
 	List<String> getColumnNames();
+	
+	public Object getColumnHeader(int colIx);
+	public Header getColumnHeader();
 	
 	/**
 	 * Turn an array of column names into an array of column indices 
@@ -100,7 +103,16 @@ public interface DataFrame extends TableModel
 	//asRecordStream returns a copy of the data in the current implementation, but that is very inefficient.
 	public RecordStream asRecordStream();
 	public Iterable<Record> asRecordIterable();
-	
+
+	public int getColumnCount();
+	public int getRowCount();
+
+	public Object getValueAt(int rowIndex, int columnIndex);
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex);
+
+	@Deprecated /** use getColumnHeader.toString() instead */
+	public String getColumnName(int columnIndex); 
+
 	/**
 	 * Ideas:
 	 * 

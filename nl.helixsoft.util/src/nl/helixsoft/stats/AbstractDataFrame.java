@@ -3,12 +3,10 @@ package nl.helixsoft.stats;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.TableModelListener;
-
-import com.google.common.collect.Multimap;
 
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordStreamFormatter;
@@ -51,29 +49,17 @@ public abstract class AbstractDataFrame implements DataFrame
 	{
 		return merge(that, this.getColumnIndex(onColumn), that.getColumnIndex(onColumn));
 	}
-	
-	
+
 	@Override
-	public void addTableModelListener(TableModelListener arg0)
+	public String getColumnName(int columnIndex) 
 	{
-		throw new UnsupportedOperationException("Unimplemented");
-	}
-	
-	@Override
-	public void removeTableModelListener(TableModelListener arg0) 
-	{
-		throw new UnsupportedOperationException("Unimplemented");		
+		return getColumnHeader(columnIndex).toString();
 	}
 
-	Map<String, Multimap<Object, Integer>> factors = new HashMap<String, Multimap<Object, Integer>>();
-	
-	public void putFactor(String factorName, Multimap<Object, Integer> factor)
+	@Override
+	public Object getColumnHeader(int colIx) 
 	{
-		factors.put(factorName, factor);
+		return getColumnHeader().get(colIx);
 	}
-	
-	public Multimap<Object, Integer> getFactor(String factorName)
-	{
-		return factors.get(factorName);
-	}
+
 }

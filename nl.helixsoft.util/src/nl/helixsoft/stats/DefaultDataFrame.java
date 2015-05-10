@@ -24,6 +24,7 @@ public class DefaultDataFrame extends AbstractDataFrame
 {
 	private List<Record> records;
 	private RecordMetaData rmd;
+	private Header header;
 	
 	/**
 	 * static Constructor-like to create a DataFrame by sucking all records from a RecordStream.
@@ -33,6 +34,14 @@ public class DefaultDataFrame extends AbstractDataFrame
 		DefaultDataFrame df = new DefaultDataFrame();
 		df.rmd = input.getMetaData();
 		df.records = new ArrayList<Record>();
+		
+		List<String> header = new ArrayList<String>();
+		for (int i = 0; i < df.rmd.getNumCols(); ++i)
+		{
+			header.add (df.rmd.getColumnName(i));
+		}
+
+		df.header = new DefaultHeader(header);
 		input.into(df.records);
 		return df;
 	}
@@ -222,25 +231,28 @@ public class DefaultDataFrame extends AbstractDataFrame
 	{
 		return rmd.getColumnName(columnIndex);
 	}
-
+	
 	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
+	public Object getColumnHeader(int colIx) 
+	{
+		return header.getColumnName(colIx);
 	}
 
 	@Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
+	public Header getColumnHeader() 
+	{
+		return header;
 	}
 
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
+	public Object getValueAt(int rowIndex, int columnIndex) 
+	{
+		return records.get(rowIndex).get(columnIndex);
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		throw new UnsupportedOperationException("Not yet implemented"); // TODO
+		throw new UnsupportedOperationException("Writing data not supported"); // TODO
 	}
 
 	@Override

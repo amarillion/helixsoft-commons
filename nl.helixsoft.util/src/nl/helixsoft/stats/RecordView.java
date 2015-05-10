@@ -51,5 +51,24 @@ public class RecordView implements Record
 	{
 		return parent.getMetaData();
 	}
-	
+
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append ("RecordView{");
+		for (int i = 0; i < getMetaData().getNumCols(); ++i)
+		{
+			if (i != 0) builder.append (", ");
+			builder.append ("'");
+			builder.append (getMetaData().getColumnName(i));
+			builder.append ("':'");
+			builder.append (get(i));
+			builder.append ("'");
+			
+		}
+		builder.append ("}");
+		return builder.toString();
+	}
+
 }

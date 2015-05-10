@@ -121,6 +121,8 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { count = 0; sum = 0; }
 	}
 
+	//TODO: replace with "Reduce". // requires splitting Accumulator...
+	
 	public interface GroupFunc
 	{
 		public void accumulate(Record val);

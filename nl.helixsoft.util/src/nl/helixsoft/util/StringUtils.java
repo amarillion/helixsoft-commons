@@ -506,6 +506,21 @@ public class StringUtils
 		}
 	}
 	
+	public static Integer safeParseInt(String val) 
+	{
+		if (val == null) return null;
+		try
+		{
+			Integer result = Integer.parseInt(val);
+			return result;
+		}
+		catch (NumberFormatException e)
+		{
+			return null;
+		}
+	}
+
+	
 	/**
 	 * Safely convert an object to null;
 	 * If the input is null, the result is null as well.
@@ -665,6 +680,7 @@ public class StringUtils
 		}
 		return result.toString();
 	}
+
 
 	
 }
