@@ -229,8 +229,9 @@ public abstract class DataFrameOperation
 				Object value = m.get(row, col);
 				Object reduced = reduce.apply(value, v);
 				m.set(row, col, reduced);
-				rowNames.set(row, "" + r.get(rowNameField));
-//				colNames.set(col, "" + r.get(colNameField));
+				
+				if (rowNameField != null) rowNames.set(row, "" + r.get(rowNameField));
+				if (colNameField != null) colNames.set(col, "" + r.get(colNameField));
 			}
 			
 			return MatrixDataFrame.fromMatrix(m, new DefaultHeader(colNames, columns.length), rowNames);
