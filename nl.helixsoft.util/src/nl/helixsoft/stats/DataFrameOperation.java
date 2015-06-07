@@ -293,25 +293,56 @@ public abstract class DataFrameOperation
 		return new ColumnBoundDataFrame (views, in);
 	}
 
-	public static void toTsv(PrintStream out, DataFrame wide) 
+	public static void toTsv(PrintStream out, DataFrame df) 
 	{
-		for (int col = 0; col < wide.getColumnCount(); ++col)
+		for (int col = 0; col < df.getColumnCount(); ++col)
 		{
 			out.print ("\t");
-			out.print (wide.getColumnHeader(col).toString());
+			out.print (df.getColumnHeader(col).toString());
 		}
 		out.println();
-		for (int row = 0; row < wide.getRowCount(); ++row)
+		for (int row = 0; row < df.getRowCount(); ++row)
 		{
-			out.print (wide.getRowName(row));
-			for (int col = 0; col < wide.getColumnCount(); ++col)
+			out.print (df.getRowName(row));
+			for (int col = 0; col < df.getColumnCount(); ++col)
 			{
 				out.print ("\t");
-				out.print (wide.getValueAt(row, col));
+				out.print (df.getValueAt(row, col));
 			}
 			out.println();
-		}
+		}	
+	}
 	
+	/**
+	 * Render DataFrame as html.
+	 * Excludes the <table> tag.
+	 */
+	public static void toHtml(PrintStream out, DataFrame df)
+	{
+		out.println ("<thead>");
+		for (int h = 0; h < df.getColumnHeader().getSubHeaderCount(); ++h)
+		{
+			out.println ("<tr><th></th>");
+			for (int c = 0; c < df.getColumnCount(); ++c)
+			{
+				Object o = df.getColumnHeader().get(c);
+				String hstr = o.toString(); 
+				out.print("<th>" + hstr + "</th>");
+			}
+			out.println ("</tr>");
+		}
+		out.println ("</thead>");
+		
+		
+		for (int r = 0; r < df.getRowCount(); ++r)
+		{
+			out.println ("<tr><th>" + df.getRowName(r) + "</th>");
+			for (int c = 0; c < df.getColumnCount(); ++c)
+			{
+				out.print("<td>" + df.getValueAt(r, c) + "</td>");		
+			}
+			out.println ("</tr>");
+		}
 	}
 	
 }
