@@ -21,5 +21,9 @@ public interface RecordStream extends Stream<Record>
 	
 	// Specific to RecordStreams - Not found in java 1.8 streams
 	public RecordStream adjust (Map<String, AdjustFunc> adjustMap);
+	
+	/** close underlying file or stream */
+	public void close();
+	
 
 }

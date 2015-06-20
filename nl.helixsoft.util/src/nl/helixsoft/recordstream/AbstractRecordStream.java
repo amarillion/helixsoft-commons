@@ -24,4 +24,5 @@ public abstract class AbstractRecordStream extends AbstractStream<Record> implem
 	{
 		return new IteratorHelper<Record>(this);
 	}
+	
 }

@@ -40,6 +40,10 @@ public class TestReduceAndCast extends TestCase {
 		{
 			return rmd;
 		}
+
+
+		@Override
+		public void close() { }
 	}
 
 	/*

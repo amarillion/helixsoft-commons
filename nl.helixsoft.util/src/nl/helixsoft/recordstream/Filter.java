@@ -105,4 +105,7 @@ public class Filter extends AbstractRecordStream
 	{
 		return parent.getMetaData();
 	}
+
+	@Override
+	public void close()	{ parent.close(); }
 }

@@ -51,6 +51,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	private final RecordMetaData rmd;
 	private String delimiter = "\t";
 	
+	
 	/**
 	 * Turn a {@link Reader} object into a {@link RecordStream}. 
 	 * @return a builder object, on which configuration settings can be chained.
@@ -339,7 +340,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			String line;
 			// fetch next line that doesn't start with "#"
 			line = getNextNonCommentLine();
-			if (line == null) return null;
+			if (line == null) {	return null; }
 			
 			String[] split = splitLine(line);
 			
@@ -402,5 +403,16 @@ public class TsvRecordStream extends AbstractRecordStream
 	public RecordMetaData getMetaData() 
 	{
 		return rmd;
+	}
+
+	@Override
+	public void close() 
+	{
+		try {
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

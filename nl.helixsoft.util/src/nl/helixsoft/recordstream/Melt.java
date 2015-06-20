@@ -6,12 +6,18 @@ public class Melt extends AbstractRecordStream {
 	@Override
 	public Record getNext() throws StreamException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public RecordMetaData getMetaData() 
 	{
 		return null;
+	}
+	
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
 	}
 }

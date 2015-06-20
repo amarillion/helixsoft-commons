@@ -6,14 +6,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import nl.helixsoft.recordstream.AbstractRecordStream;
 import nl.helixsoft.recordstream.DefaultRecord;
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
+import nl.helixsoft.recordstream.MemoryRecordStream;
 import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
-import nl.helixsoft.recordstream.StreamException;
 import nl.helixsoft.util.AttributesTable;
 import nl.helixsoft.util.StringUtils;
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -131,40 +130,6 @@ public class GraphHelper
 	NodeSelection selectAllNodes()
 	{
 		return new NodeSelection(net.getVertices());
-	}
-	
-	//TODO: examine possible merging with 2DArray, TableModel, ...
-	public class MemoryRecordStream extends AbstractRecordStream
-	{
-		private final List<Record> data;
-		private final RecordMetaData rmd;
-		int pos = 0;
-		
-		public MemoryRecordStream (List<Record> data)
-		{
-			this.data = data;
-			if (data.size() > 0)
-			{
-				rmd = data.get(0).getMetaData();
-			}
-			else
-			{
-				rmd = new DefaultRecordMetaData(new String[] {});
-			}
-		}
-		
-		@Override
-		public Record getNext() throws StreamException 
-		{
-			if (pos >= data.size()) return null;
-			return data.get(pos++);
-		}
-
-		@Override
-		public RecordMetaData getMetaData() 
-		{
-			return rmd;
-		}
 	}
 	
 	public class NodeSelection 

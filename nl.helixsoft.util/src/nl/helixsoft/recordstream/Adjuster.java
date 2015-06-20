@@ -82,4 +82,7 @@ public class Adjuster extends AbstractRecordStream
 		return rmd;
 	}
 
+	@Override
+	public void close()	{ parent.close(); }
+
 }

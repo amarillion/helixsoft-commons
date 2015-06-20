@@ -2,12 +2,9 @@ package nl.helixsoft.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -681,6 +678,4 @@ public class StringUtils
 		return result.toString();
 	}
 
-
-	
 }

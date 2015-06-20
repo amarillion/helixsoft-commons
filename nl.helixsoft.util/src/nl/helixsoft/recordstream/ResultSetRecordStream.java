@@ -55,10 +55,15 @@ public class ResultSetRecordStream extends AbstractRecordStream
 		}
 	}
 
-	private void close() throws SQLException 
+	@Override public void close() 
 	{
 		closed = true;
-		rs.close();
+		try {
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

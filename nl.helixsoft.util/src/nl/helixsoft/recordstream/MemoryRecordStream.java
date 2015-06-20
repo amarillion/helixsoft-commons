@@ -34,4 +34,7 @@ public class MemoryRecordStream extends AbstractRecordStream
 	{
 		return rmd;
 	}
+
+	@Override
+	public void close() { }
 }

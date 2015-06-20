@@ -1,7 +1,7 @@
 package nl.helixsoft.recordstream;
 
 public abstract class ReduceFunctions 
-{
+{	
 	public static final BiFunction<Object, Object, Object> FIRST = new BiFunction<Object, Object, Object>() {
 
 		@Override
@@ -36,5 +36,5 @@ public abstract class ReduceFunctions
 		}
 	
 	};
-		
+
 }

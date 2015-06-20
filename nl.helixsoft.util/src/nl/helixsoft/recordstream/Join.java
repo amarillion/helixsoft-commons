@@ -25,7 +25,7 @@ public class Join extends AbstractRecordStream
 	@Override
 	public Record getNext() throws StreamException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -33,4 +33,12 @@ public class Join extends AbstractRecordStream
 	{
 		return null;
 	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }

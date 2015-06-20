@@ -97,6 +97,9 @@ public class ExcelRecordStream extends AbstractRecordStream
 		
 		return new DefaultRecord (rmd, fields);
 	}
+
+	@Override
+	public void close() { }
 	
 	
 	
