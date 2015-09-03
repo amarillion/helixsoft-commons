@@ -55,6 +55,12 @@ public class MatrixDataFrame extends AbstractDataFrame
 	}
 
 	@Override
+	public DataFrame select(List<Integer> rowIdx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public DataFrame merge(DataFrame that, int onThisColumn, int onThatColumn) {
 		// TODO Auto-generated method stub
 		return null;

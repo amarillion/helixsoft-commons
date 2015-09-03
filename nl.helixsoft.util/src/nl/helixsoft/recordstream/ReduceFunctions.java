@@ -37,4 +37,21 @@ public abstract class ReduceFunctions
 	
 	};
 
+	public static BiFunction<Long, Long, Long> LONG_SUM = new BiFunction<Long, Long, Long>() {
+
+		@Override
+		public Long apply(Long chain, Long more) 
+		{
+			if (chain == null)
+			{
+				return more;
+			}
+			if (more == null)
+			{
+				return chain;
+			}
+			return chain + more;
+		}
+	
+	};
 }

@@ -9,5 +9,6 @@ Require-Bundle: org.kohsuke.args4j;bundle-version="2.0.21",
  poi;bundle-version="3.9.0",
  simple-odf;bundle-version="0.6.1",
  odfdom-java;bundle-version="0.6.1",
- org.apache.xerces;bundle-version="2.9.0"
+ org.apache.xerces;bundle-version="2.9.0",
+ poi-ooxml;bundle-version="3.9.0"
 Export-Package: nl.helixsoft.misc

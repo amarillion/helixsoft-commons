@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.helixsoft.recordstream.Record;
+import javax.swing.table.TableModel;
+
 import nl.helixsoft.recordstream.BiFunction;
+import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.ReduceFunctions;
-import nl.helixsoft.stats.DataFrameOperation.WideFormatBuilder;
 
 public abstract class DataFrameOperation 
 {
@@ -264,10 +265,10 @@ public abstract class DataFrameOperation
 
 	public static DataFrame columnSort(DataFrame in)
 	{
-		return columnSort(in, new Comparator<ColumnView<?>>() {
+		return columnSort(in, new Comparator<Column<?>>() {
 
 			@Override
-			public int compare(ColumnView<?> o1, ColumnView<?> o2) 
+			public int compare(Column<?> o1, Column<?> o2) 
 			{
 				Comparable a1 = (Comparable)o1.getHeader();
 				Comparable a2 = (Comparable)o2.getHeader();
@@ -280,9 +281,9 @@ public abstract class DataFrameOperation
 		});
 	}
 	
-	public static DataFrame columnSort(DataFrame in, Comparator<ColumnView<?>> comparator)
+	public static DataFrame columnSort(DataFrame in, Comparator<Column<?>> comparator)
 	{
-		List<ColumnView<?>> views = new ArrayList<ColumnView<?>>();
+		List<Column<?>> views = new ArrayList<Column<?>>();
 		for (int i = 0; i < in.getColumnCount(); ++i)
 		{
 			views.add (new DefaultColumnView(in, i));
@@ -343,6 +344,11 @@ public abstract class DataFrameOperation
 			}
 			out.println ("</tr>");
 		}
+	}
+
+	public static TableModel asTableModel(DataFrame df) 
+	{
+		return new DataFrameTableModel (df, false);
 	}
 	
 }

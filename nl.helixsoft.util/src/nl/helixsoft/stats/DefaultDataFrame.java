@@ -62,6 +62,9 @@ public class DefaultDataFrame extends AbstractDataFrame
 	public DataFrame select(int... rowIdx)
 	{
 		DefaultDataFrame result = new DefaultDataFrame();
+		result.records = new ArrayList<Record>();
+		result.header = header;
+		result.rmd = rmd;
 		
 		for (int i = 0; i < rowIdx.length; ++i)
 		{
@@ -72,6 +75,24 @@ public class DefaultDataFrame extends AbstractDataFrame
 		return result;
 	}
 
+	/** @inheritDocs */
+	@Override
+	public DataFrame select(List<Integer> rowIndexes)
+	{
+		DefaultDataFrame result = new DefaultDataFrame();
+		result.records = new ArrayList<Record>();
+		result.header = header;
+		result.rmd = rmd;
+				
+		for (Integer i : rowIndexes)
+		{
+			result.records.add(records.get(i));
+		}
+		
+		result.rmd = rmd;
+		return result;
+	}
+	
 	/** @inheritDocs */
 	@Override
 	public DataFrame cut(int... columnIdx) 
@@ -337,7 +358,6 @@ public class DefaultDataFrame extends AbstractDataFrame
 	public String getRowName(int rowIx) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
+	}	
 
 }

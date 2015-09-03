@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.swing.table.TableModel;
-
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
@@ -30,7 +28,7 @@ import nl.helixsoft.recordstream.RecordStream;
  * NOTE: implementing both TableModel and Iterable<Record> turned out not to be so hot because groovy inserts its own iterator() method in TableModels. 
  * Currently implementing neither. 
  * If you want a Iterable<Record>, see @link{DataFrame.asRecordIterable}
- * If you want a TableModel, use asTableModel (TODO)
+ * If you want a TableModel, use DataFrameOperation.asTableModel (df, editable)
  */
 public interface DataFrame
 {	
@@ -53,8 +51,10 @@ public interface DataFrame
 	 * Extract specified rows by index
 	 * returns a new DataFrame object.
 	 */
-	public DataFrame select (int... rowIdx);	
+	public DataFrame select (int... rowIdx);
 	
+	public DataFrame select (List<Integer> rowIdx);
+
 	/**
 	 * Performs a merge (a.k.a. JOIN in SQL terms) with another table.
 	 * returns a new DataFrame object.
@@ -113,6 +113,10 @@ public interface DataFrame
 	@Deprecated /** use getColumnHeader.toString() instead */
 	public String getColumnName(int columnIndex); 
 
+	public <T> Column<T> getColumn(Class<T> clazz, int columnIndex);
+	public <T> Factor<T> getColumnAsFactor(Class<T> clazz, int columnIndex);
+	
+	public DataFrame sort (int columnIndex);
 	/**
 	 * Ideas:
 	 * 

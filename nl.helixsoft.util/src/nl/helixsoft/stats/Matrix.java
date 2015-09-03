@@ -3,6 +3,7 @@ package nl.helixsoft.stats;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: replace with Google.collect Table.
 public class Matrix<T> 
 {
 	private final int width;

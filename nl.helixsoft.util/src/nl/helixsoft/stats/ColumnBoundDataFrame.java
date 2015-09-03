@@ -8,19 +8,19 @@ import nl.helixsoft.recordstream.RecordStream;
 
 public class ColumnBoundDataFrame extends AbstractDataFrame
 {
-	private List<ColumnView<?>> views;
+	private List<Column<?>> views;
 	private List<String> rowNames;
 	private int rowNum;
 	private int subHeaderCount;
 	
-	public ColumnBoundDataFrame(List<ColumnView<?>> views, DataFrame parent)
+	public ColumnBoundDataFrame(List<Column<?>> views, DataFrame parent)
 	{
 		this.views = views;
 		this.rowNames = parent.getRowNames();
 		this.subHeaderCount = parent.getColumnHeader().getSubHeaderCount();
 		this.rowNum = rowNames.size();
 		
-		for (ColumnView<?> view : views)
+		for (Column<?> view : views)
 		{
 			if (rowNum != view.getSize()) throw new IllegalArgumentException("All columns must have the same length, expected " + rowNum + " found " + view.getSize());
 		}
@@ -155,4 +155,17 @@ public class ColumnBoundDataFrame extends AbstractDataFrame
 			return views.size();
 		}
 	}
+
+	@Override
+	public <T> Column<T> getColumn(Class<T> clazz, int columnIndex)  
+	{
+		return (Column<T>)views.get(columnIndex);
+	}
+
+	@Override
+	public DataFrame select(List<Integer> rowIdx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

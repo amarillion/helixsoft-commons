@@ -1,0 +1,8 @@
+group = 'nl.helixsoft'
+version = '1.0.1'
+
+dependencies {
+    compile group: 'guava', name: 'guava-osgi', version: '11.0.1'
+    testCompile group: 'junit', name: 'junit', version: '3.+'
+}
+
