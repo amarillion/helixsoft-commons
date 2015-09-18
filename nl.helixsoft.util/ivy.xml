@@ -1,9 +1,0 @@
-<ivy-module version="2.0">
-  <info organisation="nl.helixsoft" module="nl.helixsoft.util"/>
-  <publications>
-    <artifact name="nl.helixsoft.util" ext="jar" type="jar"/>
-  </publications>
-  <dependencies>
-    <dependency org="com.googlecode.guava-osgi" name="guava-osgi" rev="11.0.1"/>
-  </dependencies>
-</ivy-module>

@@ -2,7 +2,7 @@
 dependencies {
     compile 'jgoodies-forms:jgoodies-forms:1.2.0',
     	'commons-net:commons-net:3.3',
-    	'nl.helixsoft:nl.helixsoft.util:1.0.1'
+    	project(':nl.helixsoft.util')
     	
     testCompile group: 'junit', name: 'junit', version: '3.+'
 }

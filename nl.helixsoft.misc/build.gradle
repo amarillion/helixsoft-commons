@@ -1,7 +1,7 @@
 
 dependencies {
 
-    compile "nl.helixsoft:nl.helixsoft.util:1.0.1",
+    compile project(":nl.helixsoft.util"),
 		"poi:poi:3.9+",
 		"poi:poi-ooxml-fatjar:3.9+",
 		"joda-time:joda-time:1.5+",

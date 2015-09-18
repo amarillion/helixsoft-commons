@@ -3,7 +3,7 @@
 dependencies {
 
 	compile 'jung:jung-all:2.0+',
-		'nl.helixsoft:nl.helixsoft.util:1+'
+		project (':nl.helixsoft.util')
     	
     testCompile group: 'junit', name: 'junit', version: '3.+'
 }
