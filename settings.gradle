@@ -1,0 +1,1 @@
+include 'nl.helixsoft.util', 'nl.helixsoft.xml', 'nl.helixsoft.gui', 'nl.helixsoft.graph', 'nl.helixsoft.misc'

@@ -1,0 +1,12 @@
+
+dependencies {
+
+    compile "nl.helixsoft:nl.helixsoft.util:1.0.1",
+		"poi:poi:3.9+",
+		"poi:poi-ooxml-fatjar:3.9+",
+		"joda-time:joda-time:1.5+",
+		"org.kohsuke:org.kohsuke.args4j:2.0+"
+		
+    testCompile group: 'junit', name: 'junit', version: '3.+'
+}
+
