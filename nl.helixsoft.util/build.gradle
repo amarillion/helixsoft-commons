@@ -1,8 +1,59 @@
+apply plugin: 'java'
+apply plugin: 'ivy-publish'
+
 group = 'nl.helixsoft'
 version = '1.0.1'
 
+def localRepo = 'file://' + new File(System.getProperty('user.home'), 'prg/bundle-repository2').absolutePath
+
+def githash = "git log -1 --format='%H'".execute().in.readLines()[0];
+def builddate = new Date().format("yyyyMMdd")
+
+repositories {
+
+    ivy {
+    	name "local_bundle_repository"
+    	url localRepo
+    	layout "pattern", {
+            ivy "[organisation]/[module]/[revision]/ivy.xml"
+            artifact "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"
+        }
+    }
+}
+
 dependencies {
-    compile group: 'guava', name: 'guava-osgi', version: '11.0.1'
+    compile group: 'com.googlecode.guava-osgi', name: 'guava-osgi', version: '11.0.1'
     testCompile group: 'junit', name: 'junit', version: '3.+'
+}
+
+jar {
+
+	// TODO: skip this test if git is not installed.
+	try {
+		def gitdiff = "gix diff --exit-code".execute()
+		if (gitdiff.exitcode != 0) throw new GradleException("Cannot create jar, git is not in a clean state")
+	} catch (IOException e) { /* ignore if git is not installed */ }
+	 	
+	manifest {
+		from 'META-INF/MANIFEST.MF'
+		
+		attributes 'Build-Date': builddate,
+			'Git-Hash': githash
+
+	}
+}
+
+publishing {
+
+	publications {
+		ivyJava(IvyPublication) {
+		    from components.java
+		}
+	}
+	
+	repositories {
+		add project.repositories.local_bundle_repository
+	}
+
 }
 
