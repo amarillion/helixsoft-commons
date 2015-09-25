@@ -25,9 +25,8 @@ subprojects {
 		
 	jar {
 
-		// TODO: skip this test if git is not installed.
 		try {
-			def gitdiff = "gix diff --exit-code".execute()
+			def gitdiff = "git diff --exit-code".execute()
 			if (gitdiff.exitcode != 0) throw new GradleException("Cannot create jar, git is not in a clean state")
 		} catch (IOException e) { /* ignore if git is not installed */ }
 		 	
@@ -45,10 +44,6 @@ subprojects {
 		ivy {
 			name "local_bundle_repository"
 			url localRepo
-			layout "pattern", {
-		        ivy "[organisation]/[module]/[revision]/ivy.xml"
-		        artifact "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"
-		    }
 		}
 	}
 
