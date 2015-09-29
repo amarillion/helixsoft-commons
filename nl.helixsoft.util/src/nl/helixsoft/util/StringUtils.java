@@ -488,33 +488,20 @@ public class StringUtils
 	
 	/**
 	 * May return null, but will not throw an exception
+	 * @deprecated use HStringUtils.safeParseDouble
 	 */
 	public static Double safeParseDouble(String val)
 	{
-		if (val == null) return null;
-		try
-		{
-			Double result = Double.parseDouble(val);
-			return result;
-		}
-		catch (NumberFormatException e)
-		{
-			return null;
-		}
+		return HStringUtils.safeParseDouble(val);
 	}
 	
+	/**
+	 * May return null, but will not throw an exception
+	 * @deprecated use HStringUtils.safeParseInt
+	 */
 	public static Integer safeParseInt(String val) 
 	{
-		if (val == null) return null;
-		try
-		{
-			Integer result = Integer.parseInt(val);
-			return result;
-		}
-		catch (NumberFormatException e)
-		{
-			return null;
-		}
+		return HStringUtils.safeParseInt(val);
 	}
 
 	
