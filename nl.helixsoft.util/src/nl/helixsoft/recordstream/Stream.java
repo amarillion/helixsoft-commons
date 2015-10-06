@@ -13,4 +13,11 @@ public interface Stream<T> extends Iterable<T>
 	 * Apply a function to each element of the stream, and wrap the result into another stream.
 	 */
 	public <R> Stream<R> map(Function<? super T,? extends R> mapper);
+	
+	
+	public Stream<T> filter (Predicate<T> predicate);
+	
+	
+	public void close();
+
 }

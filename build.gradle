@@ -57,6 +57,15 @@ subprojects {
 	
 		repositories {
 			add project.repositories.local_bundle_repository
+			
+			ivy {
+				name "old_local_bundle_repository"
+				url 'file://' + new File(System.getProperty('user.home'), 'prg/bundle-repository').absolutePath
+				layout "pattern", {
+				    ivy "[module]-[revision]-ivy.xml"
+				    artifact "[artifact]-[revision].[ext]"
+				}
+			}
 		}
 
 	}

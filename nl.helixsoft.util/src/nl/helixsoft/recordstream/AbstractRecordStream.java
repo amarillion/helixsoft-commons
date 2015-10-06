@@ -7,11 +7,6 @@ import nl.helixsoft.recordstream.Adjuster.AdjustFunc;
 
 public abstract class AbstractRecordStream extends AbstractStream<Record> implements RecordStream, NextUntilNull<Record>
 {
-	@Override
-	public RecordStream filter (Predicate<Record> predicate)
-	{
-		return new Filter (this, predicate);
-	}
 
 	@Override
 	public RecordStream adjust (Map<String, AdjustFunc> adjustMap)

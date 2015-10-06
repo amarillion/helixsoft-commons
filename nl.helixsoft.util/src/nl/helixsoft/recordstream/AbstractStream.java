@@ -6,6 +6,12 @@ import java.util.Iterator;
 public abstract class AbstractStream<T> implements Stream<T>
 {
 	@Override
+	public Stream<T> filter (Predicate<T> predicate)
+	{
+		return new FilterStream (this, predicate);
+	}
+	
+	@Override
 	public <R> Stream<R> map(final Function<? super T,? extends R> mapper)
 	{
 		final Iterator<T> p = this.iterator();
@@ -30,5 +36,8 @@ public abstract class AbstractStream<T> implements Stream<T>
 		}
 		return x;
 	}
+
+	@Override
+	public void close()	{  }
 
 }

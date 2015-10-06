@@ -1,7 +1,17 @@
 
-dependencies {
-    compile group: 'com.googlecode.guava-osgi', name: 'guava-osgi', version: '11.0.1'
-    testCompile group: 'junit', name: 'junit', version: '3.+'
+configurations 
+{
+	provided
 }
 
+dependencies {
+    compile group: 'com.googlecode.guava-osgi', name: 'guava-osgi', version: '11.0.1',
+			group: 'org.slf4j', name:'slf4j-api'
+			 
+    testCompile group: 'junit', name: 'junit', version: '3.+'
+    provided 'org.tukaani:xz:1.5+'
+}
+
+sourceSets.main.compileClasspath += configurations.provided
+sourceSets.test.compileClasspath += configurations.provided
 
