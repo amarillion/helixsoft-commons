@@ -11,6 +11,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.helixsoft.stats.DataFrame;
+import nl.helixsoft.stats.DefaultDataFrame;
 import nl.helixsoft.util.StringUtils;
 
 //TODO: rename to FileRecordStream
@@ -196,6 +198,11 @@ public class TsvRecordStream extends AbstractRecordStream
 		
 		public TsvRecordStream get() throws StreamException
 		{
+			return asRecordStream();
+		}
+
+		public TsvRecordStream asRecordStream() throws StreamException
+		{
 			if (header == null)
 			{
 				return new TsvRecordStream (reader, delimiter, flags);
@@ -203,7 +210,12 @@ public class TsvRecordStream extends AbstractRecordStream
 			else
 			{
 				return new TsvRecordStream (reader, delimiter, header, flags);
-			}
+			}			
+		}
+		
+		public DataFrame asDataFrame() throws StreamException
+		{
+			return DefaultDataFrame.createFromRecordStream(get());
 		}
 
 	}
