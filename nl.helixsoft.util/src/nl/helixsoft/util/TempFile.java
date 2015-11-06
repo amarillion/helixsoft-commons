@@ -24,8 +24,15 @@ public class TempFile
 	{
 		this.out = out;
 	}
-	
+
+	/** use getzStream. Added z clarifies that gzip stream will be used if possible.*/
+	@Deprecated
 	public OutputStream getStream() throws IOException
+	{
+		return getZStream();
+	}
+	
+	public OutputStream getZStream() throws IOException
 	{
 		File dir = out.getAbsoluteFile().getParentFile();
 		if (!dir.exists()) dir.mkdirs();

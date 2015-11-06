@@ -5,7 +5,11 @@ public class DefaultRecord implements Record
 	private final RecordMetaData metaData;
 	private final Object[] fields;
 	
-	public DefaultRecord (RecordMetaData _metaData, Object fields[]) { this.metaData = _metaData; this.fields = fields; }
+	public DefaultRecord (RecordMetaData _metaData, Object fields[]) 
+	{ 
+		this.metaData = _metaData; this.fields = fields;
+		assert (metaData.getNumCols() == fields.length);
+	}
 
 	public Object get(int i) { return fields[i]; }
 	public Object get(String s) { return fields[metaData.getColumnIndex(s)]; }
