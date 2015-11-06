@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import org.tukaani.xz.XZInputStream;
+
 public abstract class HFileUtils 
 {
 	private HFileUtils() { /* no instantiation of util class */ }
@@ -94,8 +96,8 @@ public abstract class HFileUtils
 		}
 		else if (g.getName().endsWith(".xz"))
 		{
-			// optional dependency
-			is = new org.tukaani.xz.XZInputStream(new FileInputStream(g));
+			// TODO: make optional dependency
+			is = new XZInputStream(new FileInputStream(g));
 		}
 		else
 		{
