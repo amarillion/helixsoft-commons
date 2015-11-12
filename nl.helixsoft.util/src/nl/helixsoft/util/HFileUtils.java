@@ -5,12 +5,12 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import org.tukaani.xz.XZInputStream;
 
 public abstract class HFileUtils 
 {
@@ -96,8 +96,18 @@ public abstract class HFileUtils
 		}
 		else if (g.getName().endsWith(".xz"))
 		{
-			// TODO: make optional dependency
-			is = new XZInputStream(new FileInputStream(g));
+			// optional dependency on xz 
+			try {
+				Constructor<?> cl =  
+					Class.forName("org.tukaani.xz.XZInputStream").getConstructor(InputStream.class);
+				is = (InputStream)cl.newInstance(new FileInputStream(g));
+			} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | 
+					InstantiationException | IllegalAccessException | IllegalArgumentException | 
+					InvocationTargetException e) 
+			{	
+				throw new IOException ("Could not create an XZInputStream", e);
+			}
+			
 		}
 		else
 		{
