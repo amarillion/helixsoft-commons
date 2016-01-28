@@ -146,12 +146,13 @@ public class PreferenceManager
 
 	public File getFile (Preference p)
 	{
-		return new File (get (p));
+		String result = get (p);
+		return result == null ? null : new File (result);
 	}
 
 	public void setFile (Preference p, File val)
 	{
-		set (p, "" + val);
+		set (p, val == null ? null : val.toString());
 	}
 
 	public Color getColor (Preference p)
