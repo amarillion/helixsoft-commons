@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import nl.helixsoft.stats.DataFrame;
@@ -41,14 +42,14 @@ import nl.helixsoft.util.StringUtils;
  */
 public class TsvRecordStream extends AbstractRecordStream
 {
-	private static int FILTER_COMMENTS = 0x100;
-	private static int NO_HEADER = 0x200;
+	private enum Flags { 
+		FILTER_COMMENTS,
+		NO_HEADER,
+		REMOVING_OPTIONAL_QUOTES,
+		COMMA_DELIMITED
+	};
 	
-	/** If this flag is on, check for each header and row field if it is enclosed in double quotes, and remove them */
-	private static int REMOVING_OPTIONAL_QUOTES = 0x400;
-	private static int COMMA_DELIMITED = 0x800;
-
-	private int flags = 0;
+	private EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
 	private final BufferedReader reader;
 	private final RecordMetaData rmd;
 	private String delimiter = "\t";
@@ -93,7 +94,7 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		private final Reader reader;
 		private String delimiter = "\t";
-		private int flags;
+		private EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
 		private String[] header = null;
 		
 		Builder(Reader _reader)
@@ -150,7 +151,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		 */
 		public Builder removeOptionalQuotes()
 		{
-			flags |= REMOVING_OPTIONAL_QUOTES;
+			flags.add(Flags.REMOVING_OPTIONAL_QUOTES);
 			return this;
 		}
 
@@ -159,7 +160,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		 */
 		public Builder firstLineIsHeader()
 		{
-			if ((flags & NO_HEADER) > 0) flags -= NO_HEADER;
+			flags.remove(Flags.NO_HEADER);
 			return this;
 		}
 		
@@ -171,7 +172,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		public Builder setHeader(String[] header)
 		{
 			this.header = header;
-			flags |= NO_HEADER;
+			flags.add(Flags.NO_HEADER);
 			return this;
 		}
 
@@ -183,16 +184,16 @@ public class TsvRecordStream extends AbstractRecordStream
 		public Builder setHeader(List<String> header)
 		{
 			this.header = header.toArray(new String[header.size()]);
-			flags |= NO_HEADER;
+			flags.add(Flags.NO_HEADER);
 			return this;
 		}
-
+		
 		/**
 		 * Filter out any lines that start with a '#' comment marker.
 		 */
 		public Builder filterComments()
 		{
-			flags |= FILTER_COMMENTS;
+			flags.add(Flags.FILTER_COMMENTS);
 			return this;
 		}
 		
@@ -224,14 +225,14 @@ public class TsvRecordStream extends AbstractRecordStream
 	{
 		String[] result;
 		
-		if ((flags & REMOVING_OPTIONAL_QUOTES) > 0 && (",".equals(delimiter)))
+		if (flags.contains(Flags.REMOVING_OPTIONAL_QUOTES) && (",".equals(delimiter)))
 		{
 			result = StringUtils.quotedCommaSplit(line).toArray(new String[] {});
 		}
 		else
 		{
 			result = line.split(delimiter, -1);
-			if ((flags & (REMOVING_OPTIONAL_QUOTES)) > 0)
+			if (flags.contains(Flags.REMOVING_OPTIONAL_QUOTES))
 			{
 				for (int i = 0; i < result.length; ++i)
 				{
@@ -246,12 +247,11 @@ public class TsvRecordStream extends AbstractRecordStream
 	
 	/**
 	 * Don't use, use open() instead.
-	 * //TODO make private
 	 */
-	public TsvRecordStream (Reader _reader, String _delimiter, String[] _header, int flags) throws StreamException
+	private TsvRecordStream (Reader _reader, String _delimiter, String[] _header, EnumSet<Flags> flags) throws StreamException
 	{
 		this.flags = flags;
-		if ((flags & COMMA_DELIMITED) > 0)
+		if (flags.contains(Flags.COMMA_DELIMITED))
 		{
 			delimiter = ",";
 		}
@@ -264,29 +264,8 @@ public class TsvRecordStream extends AbstractRecordStream
 		rmd = new DefaultRecordMetaData (_header);		
 	}
 	
-	@Deprecated
-	public TsvRecordStream (Reader _reader, String[] _header) throws StreamException
-	{
-		this (_reader, "\t", _header, 0);
-	}
-
-	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, int)   
-	/**
-	 * Don't use, use open() instead.
-	 * //TODO make private
-	 */
-	public TsvRecordStream (Reader _reader, String[] _header, int flags) throws StreamException
-	{
-		this (_reader, "\t", _header, flags);
-	}
-
-	@Deprecated
-	public TsvRecordStream (Reader _reader) throws StreamException
-	{
-		this (_reader, "\t", 0);
-	}
-
-	private String removeOptionalQuotes(String in)
+	//TODO: move to stringutils
+	private static String removeOptionalQuotes(String in)
 	{
 		if (in.startsWith("\"") && in.endsWith("\""))
 		{
@@ -295,22 +274,15 @@ public class TsvRecordStream extends AbstractRecordStream
 		else
 			return in;
 	}
-
-	@Deprecated
-	public TsvRecordStream (Reader _reader, int flags) throws StreamException
-	{
-		this (_reader, "\t", flags);
-	}
 	
-	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, String[], int)
+	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, String[], EnumSet)
 	/**
 	 * Don't use, use open() instead.
-	 * //TODO make private
 	 */
-	public TsvRecordStream (Reader _reader, String _delimiter, int flags) throws StreamException
+	private TsvRecordStream (Reader _reader, String _delimiter, EnumSet<Flags> flags) throws StreamException
 	{
 		this.flags = flags;
-		if ((flags & COMMA_DELIMITED) > 0)
+		if (flags.contains(Flags.COMMA_DELIMITED))
 		{
 			delimiter = ",";
 		}
@@ -396,7 +368,7 @@ public class TsvRecordStream extends AbstractRecordStream
 
 	private String getNextNonCommentLine() throws IOException 
 	{
-		if  ((flags | FILTER_COMMENTS) == 0) return reader.readLine();
+		if  (!flags.contains(Flags.FILTER_COMMENTS)) return reader.readLine();
 		
 		String line;
 		do {

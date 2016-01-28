@@ -17,7 +17,7 @@ public class TestFilter extends TestCase
 				"1\t2\n" +
 				"3\t4\n");
 		
-		Iterator<Record> rs = new TsvRecordStream(reader).filter (new FieldEquals ("a", "3")).iterator();
+		Iterator<Record> rs = TsvRecordStream.open(reader).get().filter (new FieldEquals ("a", "3")).iterator();
 		
 		Record r;
 		
