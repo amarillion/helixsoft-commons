@@ -1,8 +1,49 @@
 package nl.helixsoft.util;
 
-public class HStringUtils 
-{
+import java.util.Collection;
+import java.util.List;
 
+public abstract class HStringUtils 
+{
+	private HStringUtils() {} // instantiation forbidden
+	
+	/**
+	 * Concat a prefix and suffix to each element in a list, and join with a separator.
+	 * For example, turn the list a b c into {a};{b};{c}
+	 * 
+	 * Equivalent to the following groovy code:
+	 * 
+	 * <pre>data.collect{ prefix + it + suffix }.join(sep)</pre>
+	 * 
+	 * @param sep separator between list elements
+	 * @param data list of strings
+	 * @param prefix prefix concatenated before each element in the list
+	 * @param suffix suffix concatenated after each element in the list 
+	 */
+	public static String concatAndJoin (String sep, List<String> data, String prefix, String suffix)
+	{
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		
+		for (String str : data)
+		{
+			if (first) 
+			{
+				first = false;
+			}
+			else
+			{
+				builder.append(sep);
+			}
+			
+			builder.append (prefix);
+			builder.append (str);
+			builder.append (suffix);
+		}
+		
+		return builder.toString();
+	}
+	
 	/**
 	 * May return null, but will not throw an exception
 	 */
@@ -52,6 +93,70 @@ public class HStringUtils
 		{
 			return null;
 		}
+	}
+
+	public static String escapeHtml(String s)
+	{
+		//TODO: replace with apache codec?
+		s = s.replaceAll("<", "&lt;");
+		s = s.replaceAll(">", "&gt;");
+		return s;
+	}
+
+	/**
+	 * Join collection into a single string, with a separator between.
+	 */
+	public static String join (String sep, Collection<?> values)
+	{
+		StringBuilder builder = new StringBuilder();
+		join (builder, sep, values);
+		return builder.toString();
+	}
+
+	/**
+	 * Join collection into and append to a StringBuilder, with a separator between.
+	 * Useful if you want to join strings and append to an existing StringBuilder.
+	 * @param builder StringBuilder you want to append to. This variable will be modified.
+	 * @param sep Separator between strings
+	 * @param values collection of strings to join.
+	 */
+	public static void join (StringBuilder builder, String sep, Collection<?> values)
+	{
+		boolean first = true;
+		for (Object o : values)
+		{
+			if (first)
+				first = false;
+			else
+				builder.append (sep);
+			builder.append ("" + o);
+		}
+	}
+
+	/**
+	 * Join an multi value list into a single string, with a separator between.
+	 */
+	public static <T> void join (StringBuilder builder, String sep, T... values)
+	{
+		boolean first = true;
+		for (Object o : values)
+		{
+			if (first)
+				first = false;
+			else
+				builder.append (sep);
+			builder.append ("" + o);
+		}
+	}
+	
+	/**
+	 * Join an multi value list into a single string, with a separator between.
+	 */
+	public static <T> String join (String sep, T... values)
+	{
+		StringBuilder builder = new StringBuilder();
+		join (builder, sep, values);
+		return builder.toString();
 	}
 
 }

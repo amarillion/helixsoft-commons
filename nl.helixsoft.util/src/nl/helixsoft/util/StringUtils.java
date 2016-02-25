@@ -223,10 +223,11 @@ public class StringUtils
 	{
 		return s.replaceAll("<[^>]+>", "");
 	}
-	
+		
 	/**
 	 * Join collection into a single string, with a separator between.
 	 */
+	@Deprecated
 	public static String join (String sep, Collection<?> values)
 	{
 		StringBuilder builder = new StringBuilder();
@@ -241,6 +242,7 @@ public class StringUtils
 	 * @param sep Separator between strings
 	 * @param values collection of strings to join.
 	 */
+	@Deprecated
 	public static void join (StringBuilder builder, String sep, Collection<?> values)
 	{
 		boolean first = true;
@@ -257,6 +259,7 @@ public class StringUtils
 	/**
 	 * Join an multi value list into a single string, with a separator between.
 	 */
+	@Deprecated
 	public static <T> void join (StringBuilder builder, String sep, T... values)
 	{
 		boolean first = true;
@@ -273,6 +276,7 @@ public class StringUtils
 	/**
 	 * Join an multi value list into a single string, with a separator between.
 	 */
+	@Deprecated
 	public static <T> String join (String sep, T... values)
 	{
 		StringBuilder builder = new StringBuilder();
@@ -465,6 +469,7 @@ public class StringUtils
 		return decodeEntities (s);
 	}
 	
+	@Deprecated
 	public static String escapeHtml(String s)
 	{
 		//TODO: replace with apache codec?
