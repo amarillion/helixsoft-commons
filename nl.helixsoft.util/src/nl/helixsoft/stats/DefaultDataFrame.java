@@ -55,6 +55,7 @@ public class DefaultDataFrame extends AbstractDataFrame
 		DefaultDataFrame df = new DefaultDataFrame();
 		df.rmd = new DefaultRecordMetaData(header);
 		df.records = new ArrayList<Record>();
+		df.header = new DefaultHeader (Arrays.asList(header));
 		return df;
 	}
 	
