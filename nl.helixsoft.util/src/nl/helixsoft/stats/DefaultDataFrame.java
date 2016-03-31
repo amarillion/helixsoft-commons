@@ -1,6 +1,7 @@
 package nl.helixsoft.stats;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -208,6 +209,8 @@ public class DefaultDataFrame extends AbstractDataFrame
 		DefaultDataFrame results = new DefaultDataFrame();
 		results.records = newRecords;
 		results.rmd = newRmd;
+		
+		results.header = new DefaultHeader(Arrays.asList(colNames));
 		
 		return results;
 	}
