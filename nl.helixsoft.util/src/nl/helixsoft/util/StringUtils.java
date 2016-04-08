@@ -15,18 +15,16 @@ import java.util.regex.Pattern;
 
 public class StringUtils 
 {
+	@Deprecated
 	public static List<String> quotedCommaSplit(String input)
 	{
-		return quotedSplit(input, '"', ',');
+		return HStringUtils.quotedCommaSplit(input);
 	}
 
-	/**
-	 * Permissive version of quotedCommaSplit that prints warnings instead of throwing exceptions
-	 * in certain cases that don't adhere to the spec but are recoverable.
-	 */
+	@Deprecated
 	public static List<String> permissiveQuotedCommaSplit(String input)
 	{
-		return quotedSplit(input, '"', ',', false);
+		return HStringUtils.permissiveQuotedCommaSplit(input);
 	}
 	
 	/**
@@ -67,6 +65,8 @@ public class StringUtils
 	 * 
 	 * Also handles newline characters between quotes, assuming a multi-line string is passed as argument.
 	 * 
+	 * If input is null, will return an empty list.
+	 * 
 	 * @param strictValidation if you pass true, may throw an exception if the line doesn't adhere to CSV spec. If false, merely print a warning to STDERR.
 	 * @see https://en.wikipedia.org/wiki/Comma-separated_values
 	 */
@@ -75,6 +75,8 @@ public class StringUtils
 		assert quoteChar != separatorChar;
 		
 		List<String> result = new ArrayList<String>();
+		if (input == null) return result;
+		
 		final int BOUNDARY = 0;
 		final int CONTENT = 1;
 		final int QUOTED = 2;
@@ -197,10 +199,11 @@ public class StringUtils
 			return s1.compareTo(s2);
 		}
 	}
-	
+
+	@Deprecated
 	public static boolean emptyOrNull (String s)
 	{
-		return (s == null || s.equals (""));
+		return HStringUtils.emptyOrNull(s);
 	}
 
 	public static String urlEncode(String name) {

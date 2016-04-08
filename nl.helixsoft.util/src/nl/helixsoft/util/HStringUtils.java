@@ -6,7 +6,21 @@ import java.util.List;
 public abstract class HStringUtils 
 {
 	private HStringUtils() {} // instantiation forbidden
+
+	public static List<String> quotedCommaSplit(String input)
+	{
+		return StringUtils.quotedSplit(input, '"', ',');
+	}
 	
+	/**
+	 * Permissive version of quotedCommaSplit that prints warnings instead of throwing exceptions
+	 * in certain cases that don't adhere to the spec but are recoverable.
+	 */
+	public static List<String> permissiveQuotedCommaSplit(String input)
+	{
+		return StringUtils.quotedSplit(input, '"', ',', false);
+	}
+
 	/**
 	 * Concat a prefix and suffix to each element in a list, and join with a separator.
 	 * For example, turn the list a b c into {a};{b};{c}
@@ -157,6 +171,26 @@ public abstract class HStringUtils
 		StringBuilder builder = new StringBuilder();
 		join (builder, sep, values);
 		return builder.toString();
+	}
+
+	/**
+	 * If input string starts with a quote character (") AND ends with the same quote character, both a removed.
+	 * Otherwise the input is returned unchanged.
+	 */
+	public static String removeOptionalQuotes(String in)
+	{
+		if (in == null) return null;
+		if (in.startsWith("\"") && in.endsWith("\""))
+		{
+			return in.substring (1, in.length() - 1);
+		}
+		else
+			return in;
+	}
+
+	public static boolean emptyOrNull (String s)
+	{
+		return (s == null || s.equals (""));
 	}
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import nl.helixsoft.stats.DataFrame;
 import nl.helixsoft.stats.DefaultDataFrame;
-import nl.helixsoft.util.StringUtils;
+import nl.helixsoft.util.HStringUtils;
 
 //TODO: rename to FileRecordStream
 /**
@@ -227,7 +227,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		
 		if (flags.contains(Flags.REMOVING_OPTIONAL_QUOTES) && (",".equals(delimiter)))
 		{
-			result = StringUtils.quotedCommaSplit(line).toArray(new String[] {});
+			result = HStringUtils.quotedCommaSplit(line).toArray(new String[] {});
 		}
 		else
 		{
@@ -236,7 +236,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			{
 				for (int i = 0; i < result.length; ++i)
 				{
-					result[i] = removeOptionalQuotes(result[i]);
+					result[i] = HStringUtils.removeOptionalQuotes(result[i]);
 				}
 			}
 			
@@ -263,18 +263,7 @@ public class TsvRecordStream extends AbstractRecordStream
 		this.reader = new BufferedReader(_reader);
 		rmd = new DefaultRecordMetaData (_header);		
 	}
-	
-	//TODO: move to stringutils
-	private static String removeOptionalQuotes(String in)
-	{
-		if (in.startsWith("\"") && in.endsWith("\""))
-		{
-			return in.substring (1, in.length() - 1);
-		}
-		else
-			return in;
-	}
-	
+		
 	// TODO: this constructor has some redundancy with TsvRecordStream(Reader, String, String[], EnumSet)
 	/**
 	 * Don't use, use open() instead.
