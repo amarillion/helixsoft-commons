@@ -3,6 +3,7 @@ package nl.helixsoft.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -10,7 +11,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.IOUtils;
 
 public abstract class HFileUtils 
 {
@@ -374,6 +380,38 @@ public abstract class HFileUtils
 			machineName = defaultMachineName;
 		}
 	    return machineName;
+	}
+
+	/** Helper function to create a zip file 
+	 * @throws IOException */
+	public static void createArchive(File targetFile, Map<File, String> files) throws IOException
+	{
+		File parentDir = targetFile.getParentFile();
+		if (!parentDir.exists())
+		{
+			boolean result = parentDir.mkdirs();
+			assert result : "Couldn't create directory " + targetFile;
+		}
+		
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(targetFile));
+		
+		// Compress the files
+		for (Map.Entry<File, String> e : files.entrySet())
+		{
+			InputStream ins = HFileUtils.openZipStream(e.getKey());
+		
+			// Add ZIP entry to output stream.
+			out.putNextEntry(new ZipEntry(e.getValue()));
+		
+			IOUtils.copy (ins, out);
+		
+			// Complete the entry
+			out.closeEntry();
+			ins.close();
+		}
+		
+		// Complete the ZIP file
+		out.close();
 	}
 
 }

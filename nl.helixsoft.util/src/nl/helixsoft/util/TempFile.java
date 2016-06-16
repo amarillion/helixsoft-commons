@@ -31,13 +31,13 @@ public class TempFile
 	{
 		return getZStream();
 	}
-	
-	public OutputStream getZStream() throws IOException
+
+	public OutputStream getStream(boolean _isGzip) throws IOException
 	{
+		isGzip = _isGzip;
+				
 		File dir = out.getAbsoluteFile().getParentFile();
 		if (!dir.exists()) dir.mkdirs();
-
-		isGzip = out.getName().endsWith(".gz");
 		
 		try
 		{
@@ -63,9 +63,25 @@ public class TempFile
 		}
 		
 		return decoratedStream;
-
 	}
 	
+	/** 
+	 * Create an output stream to write to this temporary file.
+	 * If the filename ends with .gz, will automatically create a GzipOutputStream. 
+	 */
+	public OutputStream getZStream() throws IOException
+	{
+		return getStream(out.getName().endsWith(".gz"));
+	}
+
+	/**
+	 * Create an output stream that is not a GzipOutputStream, no matter what the file extension
+	 */
+	public OutputStream getNStream() throws IOException
+	{
+		return getStream(false);
+	}
+
 	public void close() throws IOException
 	{
 		decoratedStream.flush();

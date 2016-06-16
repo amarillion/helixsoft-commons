@@ -8,5 +8,6 @@ Export-Package: nl.helixsoft.recordstream,
  nl.helixsoft.chart
 Import-Package: com.google.common.collect;specification-version="11.0.1",
  com.google.common.primitives;specification-version="11.0.1",
- org.tukaani.xz;optional=true,
- org.slf4j
+ org.apache.commons.io;specification-version="1.4.0",
+ org.slf4j,
+ org.tukaani.xz;optional=true
