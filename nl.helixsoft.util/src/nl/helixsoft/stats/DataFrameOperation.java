@@ -17,18 +17,37 @@ import nl.helixsoft.recordstream.ReduceFunctions;
 
 public abstract class DataFrameOperation 
 {
-	public static DataFrame merge(DataFrame a, Map<?, ?> b, String joinColumn) 
+	public enum JoinType { LEFT, RIGHT, FULL, INNER }
+	
+	public static DataFrame merge(DataFrame a, Map<?, ?> b, String onColumn, String valueColumnName) 
 	{
-		return null; // TODO
+		DataFrame dfNew = DefaultDataFrame.createWithHeader(new String[] { onColumn, valueColumnName });
+		
+		for (Map.Entry<?, ?> e : b.entrySet())
+		{
+			dfNew.rbind(e.getKey(), e.getValue());
+		}
+		
+		return a.merge(dfNew, onColumn);
 	}
 	
 	public static DataFrame merge (DataFrame a, DataFrame b, int onThisColumn, int onThatColumn)
+	{
+		return merge (a, b, onThisColumn, onThatColumn, JoinType.FULL);
+	}
+	
+	public static DataFrame merge (DataFrame a, DataFrame b, int onThisColumn, int onThatColumn, JoinType joinType)
 	{
 		// TODO, move implementation accross
 		return a.merge(b, onThisColumn, onThatColumn);
 	}
 
-	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn) 
+	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn)
+	{
+		return merge (a, b, onColumn, JoinType.FULL);
+	}
+	
+	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn, JoinType joinType) 
 	{
 		// TODO, move implementation accross
 		return a.merge(b, onColumn);
@@ -270,7 +289,7 @@ public abstract class DataFrameOperation
 			@Override
 			public int compare(Column<?> o1, Column<?> o2) 
 			{
-				Comparable a1 = (Comparable)o1.getHeader();
+				Comparable<Comparable> a1 = (Comparable<Comparable>)o1.getHeader();
 				Comparable a2 = (Comparable)o2.getHeader();
 				
 				if (a1 == null && a2 == null) return 0;

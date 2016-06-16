@@ -49,6 +49,12 @@ public class MatrixDataFrame extends AbstractDataFrame
 	}
 
 	@Override
+	public DataFrame cut(String... columnIdx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public DataFrame select(int... rowIdx) {
 		// TODO Auto-generated method stub
 		return null;

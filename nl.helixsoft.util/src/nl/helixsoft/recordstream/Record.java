@@ -22,6 +22,9 @@ public interface Record
 	 */
 	public Object get(String s);
 	
+	public void set(String s, Object val);
+	public void set(int i, Object val);
+	
 	/**
 	 * Get value by column index.
 	 */

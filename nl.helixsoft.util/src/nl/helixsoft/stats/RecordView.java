@@ -71,4 +71,14 @@ public class RecordView implements Record
 		return builder.toString();
 	}
 
+	@Override
+	public void set(String s, Object val) {
+		throw new UnsupportedOperationException("Writing not supported on view");
+	}
+
+	@Override
+	public void set(int i, Object val) {
+		throw new UnsupportedOperationException("Writing not supported on view");
+	}
+
 }

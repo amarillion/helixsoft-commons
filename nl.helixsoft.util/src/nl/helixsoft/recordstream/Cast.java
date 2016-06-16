@@ -117,6 +117,18 @@ public class Cast extends AbstractRecordStream
 		{
 			return Cast.this.rmd;
 		}
+
+		@Override
+		public void set(String s, Object val) 
+		{
+			values.put (Cast.this.outColIdx.get(s), val);
+		}
+		
+		@Override
+		public void set(int i, Object val) 
+		{
+			values.put (i, val);
+		}
 	}
 
 	private IndexedRecord nextResult;

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordStreamFormatter;
 
@@ -101,4 +102,17 @@ public abstract class AbstractDataFrame implements DataFrame
 		return select (rowIndexes);
 	}
 
+	public List<Record> filter(Predicate<Record> predicate)
+	{
+		List<Record> result = new ArrayList<Record>();
+		for (Record r : asRecordIterable())
+		{
+			if (predicate.accept(r))
+			{
+				result.add(r);
+			}
+		}
+		return result;
+	}
+	
 }

@@ -94,6 +94,17 @@ public class DefaultDataFrame extends AbstractDataFrame
 		result.rmd = rmd;
 		return result;
 	}
+
+	@Override
+	public DataFrame cut(String... columnName) 
+	{
+		int[] colIdx = new int[columnName.length];
+		for (int i = 0; i < columnName.length; ++i)
+		{
+			colIdx[i] = rmd.getColumnIndex(columnName[i]);
+		}
+		return cut(colIdx);
+	}
 	
 	/** @inheritDocs */
 	@Override
@@ -277,7 +288,7 @@ public class DefaultDataFrame extends AbstractDataFrame
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		throw new UnsupportedOperationException("Writing data not supported"); // TODO
+		records.get(rowIndex).set(columnIndex, aValue);
 	}
 
 	@Override

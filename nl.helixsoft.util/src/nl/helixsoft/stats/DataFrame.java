@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
@@ -46,6 +47,7 @@ public interface DataFrame
 	 * returns a new DataFrame object.
 	 */
 	public DataFrame cut (int... columnIdx);
+	public DataFrame cut (String... columnName);
 	
 	/**
 	 * Extract specified rows by index
@@ -129,7 +131,6 @@ public interface DataFrame
 	 * ...
 	 * any aggregate function
 	 * 
-	 * filter (Predicate)
 	 * 
 	 * toLongFormat
 	 * toWideFormat
@@ -152,4 +153,7 @@ public interface DataFrame
 	 * 
 	 * Change Events...
 	 */
+
+	//TODO: possibly better as Stream<Record> ???
+	public List<Record> filter(Predicate<Record> predicate);
 }

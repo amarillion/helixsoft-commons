@@ -41,4 +41,19 @@ public class DefaultRecord implements Record
 	{
 		return metaData;
 	}
+
+	@Override
+	public void set(String s, Object val) 
+	{
+		fields[metaData.getColumnIndex(s)] = val;
+		
+	}
+
+	@Override
+	public void set(int i, Object val) 
+	{
+		fields[i] = val;
+		
+	}
+
 }
