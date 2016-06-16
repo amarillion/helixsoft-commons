@@ -37,6 +37,42 @@ public abstract class ReduceFunctions
 	
 	};
 
+	public static BiFunction<Integer, Integer, Integer> INT_MAX = new BiFunction<Integer, Integer, Integer>() {
+
+		@Override
+		public Integer apply(Integer chain, Integer more) 
+		{
+			if (chain == null)
+			{
+				return more;
+			}
+			if (more == null)
+			{
+				return chain;
+			}
+			return chain > more ? chain : more;
+		}
+	
+	};
+	
+	public static BiFunction<Integer, Integer, Integer> INT_MIN = new BiFunction<Integer, Integer, Integer>() {
+
+		@Override
+		public Integer apply(Integer chain, Integer more) 
+		{
+			if (chain == null)
+			{
+				return more;
+			}
+			if (more == null)
+			{
+				return chain;
+			}
+			return chain < more ? chain : more;
+		}
+	
+	};
+	
 	public static BiFunction<Long, Long, Long> LONG_SUM = new BiFunction<Long, Long, Long>() {
 
 		@Override

@@ -67,4 +67,11 @@ public class TabularIO
 	{
 		RecordStreamFormatter.asTsv(new PrintStream (os), df.asRecordStream(), null, true);
 	}
+	
+	
+	public static void write (RecordStream rs, OutputStream os) throws StreamException
+	{
+		RecordStreamFormatter.asTsv(new PrintStream (os), rs, null, true);
+	}
+
 }
