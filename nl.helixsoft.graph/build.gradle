@@ -2,9 +2,11 @@
 
 dependencies {
 
-	compile 'jung:jung-all:2.0+',
-		project (':nl.helixsoft.util')
-    	
+  compile 'net.sourceforge.collections:collections-generic:4.01',
+          'net.sf.jung:jung-graph-impl:2.0.1',
+          'net.sf.jung:jung-algorithms:2.0.1',
+          project (':nl.helixsoft.util')
+
     testCompile group: 'junit', name: 'junit', version: '3.+'
 }
 

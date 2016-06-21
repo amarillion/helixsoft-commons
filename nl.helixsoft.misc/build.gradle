@@ -2,11 +2,11 @@
 dependencies {
 
     compile project(":nl.helixsoft.util"),
-		"poi:poi:3.9+",
-		"poi:poi-ooxml-fatjar:3.9+",
-		"joda-time:joda-time:1.5+",
-		"org.kohsuke:org.kohsuke.args4j:2.0+"
-		
+        "org.apache.poi:poi:3.9+",
+        "org.apache.poi:poi-ooxml:3.9+",
+        "joda-time:joda-time:1.5+",
+        "args4j:args4j:2.0+"
+
     testCompile group: 'junit', name: 'junit', version: '3.+'
 }
 

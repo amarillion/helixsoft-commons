@@ -1,16 +1,15 @@
 
-configurations 
+configurations
 {
-	provided
+    provided
 }
 
 dependencies {
     compile 'com.googlecode.guava-osgi:guava-osgi:11.0.1',
-			'org.slf4j:slf4j-api:1+',
-			'org.apache:commons-io:1.4'
-			 
+            'org.slf4j:slf4j-api:1+',
+            'commons-io:commons-io:1.4'
+
     testCompile 'junit:junit:3.+'
-    	
     provided 'org.tukaani:xz:1.5+'
 }
 

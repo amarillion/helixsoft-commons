@@ -1,4 +1,5 @@
 def localRepo = 'file://' + new File(System.getProperty('user.home'), 'prg/bundle-repository').absolutePath
+def relativeRepo = 'file://' + new File('../bundle-repository').absolutePath
 
 group = 'nl.helixsoft'
 version = '1.0.1'
@@ -8,59 +9,65 @@ def builddate = new Date().format("yyyyMMdd")
 
 
 allprojects {
-	apply plugin: 'java'
-	apply plugin: 'ivy-publish'
+    apply plugin: 'java'
+    apply plugin: 'ivy-publish'
 
-	group = 'nl.helixsoft'
-	version = '1.0.1'
+    group = 'nl.helixsoft'
+    version = '1.0.1'
 }
 
 
 subprojects {
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 
-	sourceSets.main.java.srcDirs = ['src']
-	sourceSets.test.java.srcDirs = ['test']
-		
-	jar {
+    sourceSets.main.java.srcDirs = ['src']
+    sourceSets.test.java.srcDirs = ['test']
 
-		try {
-			def gitdiff = "git diff --exit-code".execute()
-			gitdiff.waitFor()
-			assert (gitdiff.exitcode == 0) : "Cannot create jar, git is not in a clean state. First commit your work."
-		} catch (IOException e) { /* ignore if git is not installed */ }
-		 	
-		manifest {
-			from 'META-INF/MANIFEST.MF'
-		
-			attributes 'Build-Date': builddate,
-				'Git-Hash': githash
+    jar {
+        if (!System.getenv('ALLOW_GIT_DIRTY')) {
+            try {
+                def gitdiff = "git diff --exit-code".execute()
+                gitdiff.waitFor()
+                assert (gitdiff.exitcode == 0) : "Cannot create jar, git is not in a clean state. First commit your work."
+            } catch (IOException e) { /* ignore if git is not installed */ }
 
-		}
-	}
+            manifest {
+                from 'META-INF/MANIFEST.MF'
 
-	repositories {
+                attributes 'Build-Date': builddate,
+                    'Git-Hash': githash
+            }
+        }
+    }
 
-		ivy {
-			name "local_bundle_repository"
-			url localRepo
-		}
-	}
+    repositories {
 
-	publishing {
+        ivy {
+            name "local_bundle_repository"
+            url localRepo
+        }
+        ivy {
+            name "relative_bundle_repository"
+            url relativeRepo
+        }
+        mavenCentral()
+    }
 
-		publications {
-			ivyJava(IvyPublication) {
-				from components.java
-			}
-		}
-	
-		repositories {
-			add project.repositories.local_bundle_repository
-		}
+    publishing {
 
-	}
+        publications {
+            ivyJava(IvyPublication) {
+                from components.java
+            }
+        }
+
+        repositories {
+            add project.repositories.local_bundle_repository
+            add project.repositories.relative_bundle_repository
+        }
+
+    }
 
 
 }
