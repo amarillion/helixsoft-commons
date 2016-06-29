@@ -68,7 +68,7 @@ public class StringUtils
 	 * If input is null, will return an empty list.
 	 * 
 	 * @param strictValidation if you pass true, may throw an exception if the line doesn't adhere to CSV spec. If false, merely print a warning to STDERR.
-	 * @see https://en.wikipedia.org/wiki/Comma-separated_values
+	 * @see "https://en.wikipedia.org/wiki/Comma-separated_values"
 	 */
 	public static List<String> quotedSplit(String input, char quoteChar, char separatorChar, boolean strictValidation)
 	{

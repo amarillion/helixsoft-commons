@@ -1,4 +1,4 @@
-package nl.helixsoft.stats;
+package nl.helixsoft.stats.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,9 +8,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import nl.helixsoft.recordstream.AbstractRecordStream;
 import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
+import nl.helixsoft.recordstream.RecordMetaData;
+import nl.helixsoft.recordstream.RecordStream;
 import nl.helixsoft.recordstream.RecordStreamFormatter;
+import nl.helixsoft.recordstream.StreamException;
+import nl.helixsoft.stats.Column;
+import nl.helixsoft.stats.DataFrame;
+import nl.helixsoft.stats.DefaultColumnView;
+import nl.helixsoft.stats.Factor;
+import nl.helixsoft.stats.RecordView;
 
 /**
  * Default implementations of some methods that can be implemented
@@ -26,6 +35,29 @@ public abstract class AbstractDataFrame implements DataFrame
 	{
 		return new RecordView(this, rowIx);
 	}
+	
+	@Override
+	/**
+	 * Basic default implementation, implementing classes can override if there is a more efficient way to provide this.
+	 */
+	public RecordStream asRecordStream() 
+	{
+		return new AbstractRecordStream() {
+			
+			int pos = 0;
+
+			@Override
+			public RecordMetaData getMetaData() {
+				return AbstractDataFrame.this.getMetaData();
+			}
+
+			@Override
+			public Record getNext() throws StreamException {
+				return pos < getRowCount() ? getRow(pos++) : null;
+			}
+		};
+	}
+
 
 	@Override
 	public void toOutputStream(OutputStream os) throws IOException 
@@ -93,6 +125,9 @@ public abstract class AbstractDataFrame implements DataFrame
 				
 				Comparable c1 = (Comparable)getValueAt(o1, columnIndex);
 				Comparable c2 = (Comparable)getValueAt(o2, columnIndex);
+				if (c1 == c2) return 0; // same or both null
+				if (c1 == null) return -1;
+				if (c2 == null) return 1;
 				int result = c1.compareTo(c2);
 				if (result == 0) result = o1.compareTo(o2); // stable sorting...
 				return result;
@@ -102,6 +137,13 @@ public abstract class AbstractDataFrame implements DataFrame
 		return select (rowIndexes);
 	}
 
+	/** @inheritDocs */
+	@Override
+	public DataFrame sort(String columnName)
+	{
+		return sort(getColumnIndex(columnName));
+	}
+	
 	public List<Record> filter(Predicate<Record> predicate)
 	{
 		List<Record> result = new ArrayList<Record>();

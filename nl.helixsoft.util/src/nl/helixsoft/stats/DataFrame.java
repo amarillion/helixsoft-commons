@@ -33,10 +33,15 @@ import nl.helixsoft.recordstream.RecordStream;
  */
 public interface DataFrame
 {	
+	/**
+	 * Get a single row by index.
+	 */
 	public Record getRow(int rowIdx);
 	
-	/* get a name for each row, may return null */ 
+	/** get a name for each row, may return null */ 
 	public List<String> getRowNames();
+	
+	/** get the name of a row by index. */
 	public String getRowName (int rowIx);
 	
 	@Deprecated // use ColumnHeader instead
@@ -47,14 +52,25 @@ public interface DataFrame
 	 * returns a new DataFrame object.
 	 */
 	public DataFrame cut (int... columnIdx);
+	
+	/**
+	 * Extract specified colums by column name.
+	 * returns a new DataFrame object.
+	 */
 	public DataFrame cut (String... columnName);
 	
 	/**
 	 * Extract specified rows by index
+	 * The list of indices may contain duplicate values or re-ordered values.
 	 * returns a new DataFrame object.
 	 */
 	public DataFrame select (int... rowIdx);
 	
+	/**
+	 * Extract specified rows by index.
+	 * The input list may contain duplicate values, may re-order values, or may contain null values.
+	 * returns a new DataFrame object.
+	 */
 	public DataFrame select (List<Integer> rowIdx);
 
 	/**
@@ -119,6 +135,8 @@ public interface DataFrame
 	public <T> Factor<T> getColumnAsFactor(Class<T> clazz, int columnIndex);
 	
 	public DataFrame sort (int columnIndex);
+	public DataFrame sort (String columnName);
+	
 	/**
 	 * Ideas:
 	 * 

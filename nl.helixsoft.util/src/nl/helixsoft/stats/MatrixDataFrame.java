@@ -7,8 +7,11 @@ import java.util.List;
 import nl.helixsoft.recordstream.DefaultRecordMetaData;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
-import nl.helixsoft.recordstream.RecordStream;
+import nl.helixsoft.stats.impl.AbstractDataFrame;
 
+/**
+ * A dataframe wrapper for Matrix, 2D homogeneous collection.
+ */
 public class MatrixDataFrame extends AbstractDataFrame 
 {
 	private Matrix<?> matrix;
@@ -17,6 +20,9 @@ public class MatrixDataFrame extends AbstractDataFrame
 	private List<String> rowNames;
 	private List<String> columnNames;
 	
+	/**
+	 * Create a new dataframe for a given matrix, with a given header and row names
+	 */
 	public static MatrixDataFrame fromMatrix(Matrix<?> in, Header columnHeader, List<String> rowNames)
 	{
 		MatrixDataFrame result = new MatrixDataFrame();
@@ -93,12 +99,6 @@ public class MatrixDataFrame extends AbstractDataFrame
 
 	@Override
 	public DataFrame rbind(Object... row) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RecordStream asRecordStream() {
 		// TODO Auto-generated method stub
 		return null;
 	}

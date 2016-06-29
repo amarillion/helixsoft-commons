@@ -5,6 +5,7 @@ import java.util.List;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
+import nl.helixsoft.stats.impl.AbstractDataFrame;
 
 public class ColumnBoundDataFrame extends AbstractDataFrame
 {

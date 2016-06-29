@@ -4,17 +4,29 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.table.TableModel;
 
+import com.google.common.collect.HashMultimap;
+
 import nl.helixsoft.recordstream.BiFunction;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.ReduceFunctions;
+import nl.helixsoft.util.ObjectUtils;
 
+/**
+ * A collection of static functions to perform complex transformations on DataFrames.
+ * <p>
+ * Examples: join two dataframes (left, right, full join, inner join), 
+ * convert a dataframe from long format to wide format and back (like a pivot table in Excel),
+ * and more.
+ */
 public abstract class DataFrameOperation 
 {
 	public enum JoinType { LEFT, RIGHT, FULL, INNER }
@@ -35,27 +47,265 @@ public abstract class DataFrameOperation
 	{
 		return merge (a, b, onThisColumn, onThatColumn, JoinType.FULL);
 	}
-	
-	public static DataFrame merge (DataFrame a, DataFrame b, int onThisColumn, int onThatColumn, JoinType joinType)
+
+	private static int addLinear(Set<Integer> values, List<Integer> select, List<Integer> nullSelect)
 	{
-		// TODO, move implementation accross
-		return a.merge(b, onThisColumn, onThatColumn);
+		for (int i : values)
+		{
+			select.add(i);
+			nullSelect.add(null);
+		}
+		return values.size();
+	}
+	
+	private static int addCartesian(Set<Integer> leftValues, Set<Integer> rightValues, List<Integer> leftSelect, List<Integer> rightSelect)
+	{
+		for (int left : leftValues)
+		{
+			for (int right : rightValues)
+			{
+				leftSelect.add(left);
+				rightSelect.add(right);
+			}
+		}
+		
+		return leftValues.size() * rightValues.size();
+	}
+	
+	private static int addCombination(Set<Integer> leftValues, Set<Integer> rightValues, JoinType joinType, List<Integer> leftSelect, List<Integer> rightSelect)
+	{
+		switch (joinType)
+		{
+		case FULL:
+			if (leftValues.isEmpty() && rightValues.isEmpty()) return 0;
+			else if (leftValues.isEmpty()) return addLinear (rightValues, rightSelect, leftSelect);
+			else if (rightValues.isEmpty()) return addLinear (leftValues, leftSelect, rightSelect);
+			else return addCartesian (leftValues, rightValues, leftSelect, rightSelect);		
+		case LEFT:
+			if (leftValues.isEmpty()) return 0;
+			else if (rightValues.isEmpty()) return addLinear (leftValues, leftSelect, rightSelect);
+			else return addCartesian (leftValues, rightValues, leftSelect, rightSelect);
+		case RIGHT:
+			if (rightValues.isEmpty()) return 0;
+			else if (leftValues.isEmpty()) return addLinear (rightValues, rightSelect, leftSelect);
+			else return addCartesian (leftValues, rightValues, leftSelect, rightSelect);			
+		case INNER:
+			if (leftValues.isEmpty() || rightValues .isEmpty()) return 0;
+			return addCartesian (leftValues, rightValues, leftSelect, rightSelect);
+		default:
+			throw new IllegalArgumentException ("Invalid value for JoinType");
+		}
+	}
+	
+	public static DataFrame merge (DataFrame left, DataFrame right, int onLeftColumn, int onRightColumn, JoinType joinType)
+	{
+		HashMultimap<Object, Integer> leftIndex = HashMultimap.create();
+		Set<Object> allKeys = new HashSet<Object>();
+		for (int i = 0; i < left.getRowCount(); ++i)
+		{
+			Object key = left.getValueAt(i, onLeftColumn);
+			leftIndex.put (key, i);
+			allKeys.add(key);
+		}
+
+		HashMultimap<Object, Integer> rightIndex = HashMultimap.create();
+		for (int i = 0; i < right.getRowCount(); ++i)
+		{
+			Object key = right.getValueAt(i, onRightColumn);
+			rightIndex.put (key, i);
+			allKeys.add(key);
+		}
+		
+		List<Integer> leftSelect = new ArrayList<Integer>();
+		List<Integer> rightSelect = new ArrayList<Integer>();
+		
+		List<Object> keyColumn = new ArrayList<Object>();
+		
+		for (Object key : allKeys)
+		{
+			Set<Integer> leftValues = leftIndex.get(key);
+			Set<Integer> rightValues = rightIndex.get(key);
+			
+			int numrows = addCombination (leftValues, rightValues, joinType, leftSelect, rightSelect);
+			for (int i = 0; i < numrows; ++i)
+				keyColumn.add(key);
+		}
+		
+		int[] leftColumns = new int[left.getColumnCount()-1];
+		int pos = 0;
+		for (int col = 0; col < left.getColumnCount(); ++col)
+			if (col != onLeftColumn) leftColumns[pos++] = col;
+		
+		pos = 0;
+		int[] rightColumns = new int[right.getColumnCount()-1];
+		for (int col = 0; col < right.getColumnCount(); ++col)
+			if (col != onRightColumn) rightColumns[pos++] = col;
+		
+		
+		return DataFrameOperation.cbind (				
+				new ListColumn(keyColumn, left.getColumnHeader(onLeftColumn).toString()),
+				left.cut(leftColumns).select(leftSelect),
+				right.cut(rightColumns).select(rightSelect)				
+			);
+	}
+
+	public static DataFrame cbind(Object... columnLike)
+	{
+		List<Column<?>> resultColumns = new ArrayList<Column<?>>();
+		
+		for (Object o : columnLike)
+		{
+			if (o instanceof DataFrame)
+			{
+				DataFrame df = (DataFrame)o;
+				for (int i = 0; i < df.getColumnCount(); ++i)
+				{
+					Column<?> col = new DefaultColumnView(df, i);
+
+					resultColumns.add (col);
+				}
+			}
+			else if (o instanceof Matrix)
+			{
+				//TODO
+			}
+			else if (o instanceof Object[])
+			{
+				//TODO
+			}
+			else if (o instanceof Column)
+			{
+				resultColumns.add ((Column<?>)o);
+			}
+			else if (o instanceof List)
+			{
+				resultColumns.add (new ListColumn((List)o, null));
+			}
+			else
+			{
+				throw new IllegalArgumentException("Not a suitable column-like class");
+			}
+			
+		}
+		
+		Integer uniformColumnLength = null;
+		List<String> headers = new ArrayList<String>();
+		for (Column<?> col : resultColumns)
+		{
+			if (uniformColumnLength == null) uniformColumnLength = col.getSize(); 
+			else 
+				if (uniformColumnLength != col.getSize()) 
+					throw new IllegalArgumentException ("Not all input columns have equal size");
+		
+			headers.add((String)col.getHeader());
+		}
+		
+		DataFrame result = DataFrameOperation.createWithHeader(headers.toArray(new String[headers.size()]));
+		for (int row = 0; row < uniformColumnLength; ++row)
+		{
+			Object[] rowObj = new Object[resultColumns.size()];
+			for (int col = 0; col < resultColumns.size(); ++col)
+			{
+				rowObj[col] = resultColumns.get(col).get(row);
+			}
+			result.rbind(rowObj);
+		}
+		
+		return result;
+	}
+	
+	public static DataFrame merge (DataFrame a, DataFrame b, String onThisColumn, String onThatColumn, JoinType joinType)
+	{		
+		return merge (a, b, a.getColumnIndex(onThisColumn), b.getColumnIndex(onThatColumn), joinType);
 	}
 
 	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn)
 	{
-		return merge (a, b, onColumn, JoinType.FULL);
+		return merge (a, b, onColumn, onColumn, JoinType.FULL);
 	}
 	
 	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn, JoinType joinType) 
 	{
-		// TODO, move implementation accross
-		return a.merge(b, onColumn);
+		return merge(a, b, onColumn, onColumn, joinType);
 	}
 
 	public static WideFormatBuilder wideFormat(DataFrame a) 
 	{
 		return new WideFormatBuilder(a);
+	}
+	
+	//TODO: groupBy and wideFormat are somewhat similar - both have grouping functions and grouping columns...
+	public static GroupByBuilder groupBy (DataFrame a, String groupColumn)
+	{
+		return new GroupByBuilder (a, groupColumn);
+	}
+	
+	public static class GroupByBuilder
+	{
+		private static class Aggregate
+		{
+			String col;
+			BiFunction func;
+		}
+		
+		private DataFrame parent;
+		private String groupColumn;
+		private List<Aggregate> aggs = new ArrayList<Aggregate>();
+		List<String> headers = new ArrayList<String>();
+		
+		GroupByBuilder (DataFrame parent, String groupColumn)
+		{
+			this.parent = parent;
+			this.groupColumn = groupColumn;
+			headers.add(groupColumn);
+		}
+		
+		public GroupByBuilder agg(String col, BiFunction<? extends Object, ? extends Object, ? extends Object> func)
+		{
+			Aggregate agg = new Aggregate();
+			agg.col = col;
+			agg.func = func;
+			aggs.add(agg);
+			headers.add(col);
+			return this;
+		}
+		
+		public DataFrame get()
+		{
+			DataFrame sorted = parent.sort(groupColumn);
+			int colNum = headers.size();
+			String[] header = headers.toArray(new String[colNum]); 
+			DataFrame result = DataFrameOperation.createWithHeader(header);
+			Object prev = null;
+			
+			Object[] row = null;			
+			for (Record r : sorted.asRecordIterable())
+			{
+				Object current = r.get(groupColumn);
+				if (row == null)
+				{
+					row = new Object[colNum];
+				}
+				else if (!ObjectUtils.safeEquals(current, prev))
+				{					
+					result.rbind (row);
+					row = new Object[colNum];
+				}
+				
+				row[0] = current;
+				for (int i = 0; i < aggs.size(); ++i)
+				{
+					Aggregate agg = aggs.get(i); 
+					row[i+1] = agg.func.apply(row[i+1], r.get(agg.col));					
+				}
+				prev = current;
+			}
+			
+			if (row != null) result.rbind (row);
+			
+			return result;
+		}
+		
 	}
 	
 	public static class WideFormatBuilder
@@ -270,10 +520,14 @@ public abstract class DataFrameOperation
 	
 	}
 
-	public static DataFrame fromArray(Object[][] objects) 
+	public static DataFrame fromArray(String[] header, Object[][] objects) 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		DataFrame df = DataFrameOperation.createWithHeader(header);
+		for (Object[] row : objects)
+		{
+			df.rbind (row);
+		}			
+		return df;
 	}
 
 	public static DataFrame rbind(DataFrame df1, DataFrame df2) 
@@ -370,4 +624,8 @@ public abstract class DataFrameOperation
 		return new DataFrameTableModel (df, false);
 	}
 	
+	public static DataFrame createWithHeader (String... header)
+	{
+		return DefaultDataFrame.createWithHeader(header);
+	}
 }

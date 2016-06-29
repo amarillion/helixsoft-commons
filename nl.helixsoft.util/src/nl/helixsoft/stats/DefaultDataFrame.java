@@ -14,6 +14,7 @@ import nl.helixsoft.recordstream.MemoryRecordStream;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordMetaData;
 import nl.helixsoft.recordstream.RecordStream;
+import nl.helixsoft.stats.impl.AbstractDataFrame;
 
 /**
  * Simple implementation of DataFrame, not very optimized.
@@ -49,6 +50,7 @@ public class DefaultDataFrame extends AbstractDataFrame
 
 	/**
 	 * Creates an empty DataFrame with given header.
+	 * @deprecated use DataFrameOperation.createWithHeader instead
 	 */
 	public static DataFrame createWithHeader (String... header)
 	{
@@ -70,7 +72,7 @@ public class DefaultDataFrame extends AbstractDataFrame
 		
 		for (int i = 0; i < rowIdx.length; ++i)
 		{
-			result.records.add(records.get(i));
+			result.records.add(records.get(rowIdx[i]));
 		}
 		
 		result.rmd = rmd;		
@@ -88,7 +90,10 @@ public class DefaultDataFrame extends AbstractDataFrame
 				
 		for (Integer i : rowIndexes)
 		{
-			result.records.add(records.get(i));
+			if (i == null) 
+				result.records.add(new DefaultRecord(result.rmd, new Object[header.size()]));
+			else
+				result.records.add(records.get(i));
 		}
 		
 		result.rmd = rmd;
@@ -135,7 +140,8 @@ public class DefaultDataFrame extends AbstractDataFrame
 		DefaultDataFrame newDataFrame = new DefaultDataFrame();
 		newDataFrame.rmd = newRmd;
 		newDataFrame.records = newRecords;
-		
+		newDataFrame.header = new DefaultHeader(Arrays.asList(colNames)); 
+				
 		return newDataFrame;
 	}
 

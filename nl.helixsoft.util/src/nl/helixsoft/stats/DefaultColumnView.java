@@ -1,8 +1,9 @@
 package nl.helixsoft.stats;
 
 import nl.helixsoft.recordstream.BiFunction;
+import nl.helixsoft.stats.impl.AbstractColumn;
 
-public class DefaultColumnView<T> implements Column<T>
+public class DefaultColumnView<T> extends AbstractColumn<T>
 {
 	private final DataFrame delegate;
 	private final int col;
@@ -36,17 +37,5 @@ public class DefaultColumnView<T> implements Column<T>
 	{
 		return delegate.getColumnHeader(col);
 	}
-	
-	@Override
-	public <R> R apply (R start, BiFunction<R, T, R> applyFunc)
-	{
-		R accumulator = start;
-		for (int i = 0; i < getSize(); ++i)
-		{
-			accumulator = applyFunc.apply(accumulator, get(i));
-		}
-		return accumulator;
-	}
-	
 
 }

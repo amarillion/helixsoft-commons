@@ -8,5 +8,8 @@ package nl.helixsoft.recordstream;
  */
 public interface BiFunction<T, U, R> 
 {
+	/**
+	 * calculate a result based on two parameters.
+	 */
 	R apply (T t, U u);
 }

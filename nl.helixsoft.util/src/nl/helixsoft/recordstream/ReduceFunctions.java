@@ -17,8 +17,7 @@ public abstract class ReduceFunctions
 			}
 		}
 	};
-	
-	
+		
 	public static BiFunction<Integer, Integer, Integer> INT_SUM = new BiFunction<Integer, Integer, Integer>() {
 
 		@Override
