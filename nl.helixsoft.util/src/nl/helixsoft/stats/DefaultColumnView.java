@@ -38,4 +38,9 @@ public class DefaultColumnView<T> extends AbstractColumn<T>
 		return delegate.getColumnHeader(col);
 	}
 
+	@Override
+	public void setHeader(String value) {
+		delegate.setColumnHeader(col, value);		
+	}
+
 }

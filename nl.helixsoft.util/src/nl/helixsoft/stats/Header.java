@@ -6,4 +6,5 @@ public interface Header {
 	public Object get(int colIdx);
 	public int getSubHeaderCount();
 	int size();
+	void set(int colIdx, String value);
 }

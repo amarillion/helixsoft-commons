@@ -161,6 +161,11 @@ public class ColumnBoundDataFrame extends AbstractDataFrame
 		{
 			return views.size();
 		}
+
+		@Override
+		public void set(int colIdx, String value) {
+			views.get(colIdx).setHeader(value);
+		}
 	}
 
 	@Override
@@ -173,6 +178,12 @@ public class ColumnBoundDataFrame extends AbstractDataFrame
 	public DataFrame select(List<Integer> rowIdx) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setColumnHeader(int colIx, String value) 
+	{
+		
 	}
 
 }

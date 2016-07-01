@@ -10,4 +10,6 @@ public interface RecordMetaData
 	public int getColumnIndex(String name);
 	
 	public boolean hasColumnName (String name);
+
+	public void setColumnName(int colIx, String value);
 }

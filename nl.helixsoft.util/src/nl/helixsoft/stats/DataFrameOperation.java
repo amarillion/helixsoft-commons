@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 
 import nl.helixsoft.recordstream.BiFunction;
 import nl.helixsoft.recordstream.Record;
+import nl.helixsoft.recordstream.RecordStream;
 import nl.helixsoft.recordstream.ReduceFunctions;
 import nl.helixsoft.util.ObjectUtils;
 
@@ -296,7 +297,9 @@ public abstract class DataFrameOperation
 				for (int i = 0; i < aggs.size(); ++i)
 				{
 					Aggregate agg = aggs.get(i); 
-					row[i+1] = agg.func.apply(row[i+1], r.get(agg.col));					
+					Object more = r.get(agg.col);
+					Object chain = row[i+1];
+					row[i+1] = agg.func.apply(chain, more);					
 				}
 				prev = current;
 			}
@@ -628,4 +631,10 @@ public abstract class DataFrameOperation
 	{
 		return DefaultDataFrame.createWithHeader(header);
 	}
+	
+	public static DataFrame createFromRecordStream (RecordStream input)
+	{
+		return DefaultDataFrame.createFromRecordStream(input);
+	}
+
 }

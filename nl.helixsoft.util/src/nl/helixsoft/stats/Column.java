@@ -30,4 +30,6 @@ public interface Column<T>
 	 * Apply a function to all elements in a column
 	 */
 	public <R> R apply (R start, BiFunction<R, T, R> applyFunc);
+
+	void setHeader(String value);
 }

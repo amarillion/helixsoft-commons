@@ -379,6 +379,13 @@ public class DefaultDataFrame extends AbstractDataFrame
 	public String getRowName(int rowIx) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setColumnHeader(int colIx, String value) 
+	{
+		header.set(colIx, value);
+		rmd.setColumnName(colIx, value);
 	}	
 
 }

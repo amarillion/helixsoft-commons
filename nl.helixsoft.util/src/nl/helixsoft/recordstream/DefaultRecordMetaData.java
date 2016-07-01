@@ -14,6 +14,12 @@ public class DefaultRecordMetaData implements RecordMetaData
 	public DefaultRecordMetaData(String[] columns)
 	{
 		this.columns = columns;
+		refreshIndex();
+	}
+
+	private void refreshIndex() 
+	{
+		index.clear();
 		for (int i = 0; i < columns.length; ++i)
 		{
 			index.put (columns[i], i);
@@ -50,6 +56,13 @@ public class DefaultRecordMetaData implements RecordMetaData
 	public boolean hasColumnName(String name) 
 	{
 		return index.containsKey(name);
+	}
+
+	@Override
+	public void setColumnName(int colIx, String value) 
+	{
+		columns[colIx] = value;
+		refreshIndex();
 	}
 
 }

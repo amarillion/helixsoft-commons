@@ -38,4 +38,9 @@ public class ListColumn<T> extends AbstractColumn<T> {
 		return header;
 	}
 
+	@Override
+	public void setHeader(String value) {
+		header = value;
+	}
+
 }

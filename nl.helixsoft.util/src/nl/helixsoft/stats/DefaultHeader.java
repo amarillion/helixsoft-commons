@@ -29,6 +29,12 @@ public class DefaultHeader implements Header
 	{
 		return headerObjects.get(colIdx);
 	}
+	
+	@Override
+	public void set(int colIdx, String value)
+	{
+		((List<Object>)headerObjects).set(colIdx, value);
+	}
 
 	@Override
 	public int getSubHeaderCount() 

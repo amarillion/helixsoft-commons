@@ -98,6 +98,7 @@ public interface DataFrame
 	
 	public Object getColumnHeader(int colIx);
 	public Header getColumnHeader();
+	public void setColumnHeader(int colIx, String value);
 	
 	/**
 	 * Turn an array of column names into an array of column indices 
