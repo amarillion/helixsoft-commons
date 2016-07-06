@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.kohsuke.args4j;bundle-version="2.0.21",
  joda-time;bundle-version="1.5.2",
  nl.helixsoft.util;bundle-version="1.0.0",
- poi;bundle-version="3.9.0",
  simple-odf;bundle-version="0.6.1",
  odfdom-java;bundle-version="0.6.1",
- org.apache.xerces;bundle-version="2.9.0",
- poi-ooxml;bundle-version="3.9.0"
+ poi;bundle-version="3.14.0",
+ poi-ooxml;bundle-version="3.14.0";resolution:=optional,
+ poi-ooxml-schemas;bundle-version="3.14.0";resolution:=optional
 Export-Package: nl.helixsoft.misc
