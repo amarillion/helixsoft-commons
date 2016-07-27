@@ -69,5 +69,9 @@ subprojects {
 
     }
 
+}
 
+task docs(type: Javadoc) {
+    source subprojects*.javadoc*.source
+	classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
 }
