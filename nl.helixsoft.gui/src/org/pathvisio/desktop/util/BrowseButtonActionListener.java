@@ -34,8 +34,8 @@ public class BrowseButtonActionListener implements ActionListener
 	private final int fileSelectionMode;
 	
 	/**
-	 * @param txt: JTextField, will read default file from this field, and will write selected file to this field.
-	 * @param fileSelectionMode: one of JFileChooser.DIRECTORIES_ONLY, JFileChooser.FILES_ONLY or JFileChooser.FILES_AND_DIRECTORIES
+	 * @param txt JTextField, will read default file from this field, and will write selected file to this field.
+	 * @param fileSelectionMode one of JFileChooser.DIRECTORIES_ONLY, JFileChooser.FILES_ONLY or JFileChooser.FILES_AND_DIRECTORIES
 	 */
 	public BrowseButtonActionListener (JTextField txt, Container frame, int fileSelectionMode)
 	{

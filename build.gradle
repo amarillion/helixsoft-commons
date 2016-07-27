@@ -11,6 +11,7 @@ def builddate = new Date().format("yyyyMMdd")
 allprojects {
     apply plugin: 'java'
     apply plugin: 'ivy-publish'
+    apply plugin: 'eclipse'
 
     group = 'nl.helixsoft'
     version = '1.0.1'
