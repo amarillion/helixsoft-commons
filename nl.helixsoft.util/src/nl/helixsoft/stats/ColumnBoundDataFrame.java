@@ -181,9 +181,10 @@ public class ColumnBoundDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public void setColumnHeader(int colIx, String value) 
+	public DataFrame setColumnHeader(int colIx, String value) 
 	{
-		
+		assert false : " Not yet implemented";
+		return this;
 	}
 
 }

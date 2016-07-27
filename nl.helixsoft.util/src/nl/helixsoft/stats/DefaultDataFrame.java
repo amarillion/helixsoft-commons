@@ -382,10 +382,11 @@ public class DefaultDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public void setColumnHeader(int colIx, String value) 
+	public DataFrame setColumnHeader(int colIx, String value) 
 	{
 		header.set(colIx, value);
 		rmd.setColumnName(colIx, value);
+		return this;
 	}	
 
 }

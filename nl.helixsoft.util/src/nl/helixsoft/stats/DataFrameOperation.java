@@ -16,6 +16,7 @@ import javax.swing.table.TableModel;
 import com.google.common.collect.HashMultimap;
 
 import nl.helixsoft.recordstream.BiFunction;
+import nl.helixsoft.recordstream.Predicate;
 import nl.helixsoft.recordstream.Record;
 import nl.helixsoft.recordstream.RecordStream;
 import nl.helixsoft.recordstream.ReduceFunctions;
@@ -30,7 +31,8 @@ import nl.helixsoft.util.ObjectUtils;
  */
 public abstract class DataFrameOperation 
 {
-	public enum JoinType { LEFT, RIGHT, FULL, INNER }
+	/** Different ways to handle non-existing keys */
+	public enum JoinType { LEFT, RIGHT, FULL, INNER };
 	
 	public static DataFrame merge(DataFrame a, Map<?, ?> b, String onColumn, String valueColumnName) 
 	{
@@ -44,6 +46,7 @@ public abstract class DataFrameOperation
 		return a.merge(dfNew, onColumn);
 	}
 	
+	/** @deprecated use merge (a, b).onColumns(onThisColumn, onThatColumn).fullJoin().get() */
 	public static DataFrame merge (DataFrame a, DataFrame b, int onThisColumn, int onThatColumn)
 	{
 		return merge (a, b, onThisColumn, onThatColumn, JoinType.FULL);
@@ -196,7 +199,7 @@ public abstract class DataFrameOperation
 			if (uniformColumnLength == null) uniformColumnLength = col.getSize(); 
 			else 
 				if (uniformColumnLength != col.getSize()) 
-					throw new IllegalArgumentException ("Not all input columns have equal size");
+					throw new IllegalArgumentException ("Not all input columns have equal size: " + uniformColumnLength + " versus " + col.getSize());
 		
 			headers.add((String)col.getHeader());
 		}
@@ -215,21 +218,108 @@ public abstract class DataFrameOperation
 		return result;
 	}
 	
+	/** @deprecated use merge (a, b).onColumns(onThisColumn, onThatColumn).joinType().get() */
 	public static DataFrame merge (DataFrame a, DataFrame b, String onThisColumn, String onThatColumn, JoinType joinType)
 	{		
 		return merge (a, b, a.getColumnIndex(onThisColumn), b.getColumnIndex(onThatColumn), joinType);
 	}
 
+	/** @deprecated use merge (a, b).onColumn(onColumn).fullJoin().get() */
 	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn)
 	{
 		return merge (a, b, onColumn, onColumn, JoinType.FULL);
 	}
-	
+
+	/** @deprecated use merge (a, b).onColumn(onColumn).joinType().get() */
 	public static DataFrame merge (DataFrame a, DataFrame b, String onColumn, JoinType joinType) 
 	{
 		return merge(a, b, onColumn, onColumn, joinType);
 	}
 
+	/** Start a merge operation using a MergeBuilder. Usage example:
+	 * 		DataFrameOperation.merge (df1, df2).onColumn("ID").fullJoin().get();
+	 */
+	public static MergeBuilder merge (DataFrame a, DataFrame b)
+	{
+		return new MergeBuilder(a, b);
+	}
+	
+	/** Builder class to make it easy to set parameters for a merge (i.e. join) operation. */
+	public static class MergeBuilder
+	{
+		private final DataFrame a;
+		private final DataFrame b;
+		private JoinType joinType = JoinType.FULL;
+		private int aCol = -1;
+		private int bCol = -1;
+		
+		MergeBuilder (DataFrame a, DataFrame b)
+		{
+			this.a = a;
+			this.b = b;
+		}
+		
+		/** Set the column names that are used in the join */
+		public MergeBuilder onColumns(String aColName, String bColName)
+		{
+			aCol = a.getColumnIndex(aColName);
+			bCol = b.getColumnIndex(bColName);
+			return this;
+		}
+
+		/** Set the column indices that are used in the join */
+		public MergeBuilder onColumns(int aCol, int bCol)
+		{
+			this.aCol = aCol;
+			this.bCol = bCol;
+			return this;
+		}
+
+		/** set the join column name, in the case that it's the same column name for both data frames */ 
+		public MergeBuilder onColumn(String colName)
+		{
+			aCol = a.getColumnIndex(colName);
+			bCol = b.getColumnIndex(colName);
+			return this;
+		}
+
+		/** Set the join type to FULL */
+		public MergeBuilder fullJoin()
+		{
+			joinType = JoinType.FULL;
+			return this;
+		}
+
+		/** Set the join type to INNER */
+		public MergeBuilder innerJoin()
+		{
+			joinType = JoinType.INNER;
+			return this;
+		}		
+
+		/** Set the join type to RIGHT */
+		public MergeBuilder rightJoin()
+		{
+			joinType = JoinType.RIGHT;
+			return this;
+		}		
+
+		/** Set the join type to LEFT */
+		public MergeBuilder leftJoin()
+		{
+			joinType = JoinType.LEFT;
+			return this;
+		}		
+
+		/** Finally perform the merge operation */
+		public DataFrame get()
+		{
+			assert (aCol >= 0) : "Join column not defined";
+			assert (bCol >= 0) : "Join column not defined";
+			return DataFrameOperation.merge (a, b, aCol, bCol, joinType);
+		}
+	}
+	
 	public static WideFormatBuilder wideFormat(DataFrame a) 
 	{
 		return new WideFormatBuilder(a);
@@ -637,4 +727,21 @@ public abstract class DataFrameOperation
 		return DefaultDataFrame.createFromRecordStream(input);
 	}
 
+	/**
+	 * Create a new dataframe by selecting those rows of the input dataframe that match the predicate function.
+	 */
+	public static DataFrame filter(DataFrame df, Predicate<Record> predicate)
+	{
+		List<Integer> rowSelection = new ArrayList<Integer>();
+		
+		for (int row = 0; row < df.getRowCount(); ++row)
+		{
+			if (predicate.accept(df.getRow(row)))
+			{
+				rowSelection.add(row);
+			}
+		}
+		
+		return df.select(rowSelection);
+	}
 }

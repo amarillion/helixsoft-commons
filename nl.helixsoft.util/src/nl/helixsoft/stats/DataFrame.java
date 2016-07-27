@@ -98,7 +98,9 @@ public interface DataFrame
 	
 	public Object getColumnHeader(int colIx);
 	public Header getColumnHeader();
-	public void setColumnHeader(int colIx, String value);
+	
+	/** Replace the column header with a new value. Note: modifies DataFrame in place, returns this */
+	public DataFrame setColumnHeader(int colIx, String value);
 	
 	/**
 	 * Turn an array of column names into an array of column indices 
@@ -175,4 +177,5 @@ public interface DataFrame
 
 	//TODO: possibly better as Stream<Record> ???
 	public List<Record> filter(Predicate<Record> predicate);
+
 }

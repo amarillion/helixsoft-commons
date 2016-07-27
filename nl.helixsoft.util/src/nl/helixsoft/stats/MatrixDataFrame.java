@@ -193,8 +193,9 @@ public class MatrixDataFrame extends AbstractDataFrame
 	}
 
 	@Override
-	public void setColumnHeader(int colIx, String value) {
+	public DataFrame setColumnHeader(int colIx, String value) {		
 		columnHeader.set(colIx, value);
+		return this;
 	}
 
 }

@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import nl.helixsoft.stats.DataFrame;
+import nl.helixsoft.stats.DataFrameOperation;
 import nl.helixsoft.stats.DefaultDataFrame;
 import nl.helixsoft.util.HStringUtils;
 
@@ -201,7 +202,8 @@ public class TsvRecordStream extends AbstractRecordStream
 		{
 			return asRecordStream();
 		}
-
+		
+		/** create a RecordStream, with only a few rows in memory at a time */
 		public TsvRecordStream asRecordStream() throws StreamException
 		{
 			if (header == null)
@@ -214,6 +216,7 @@ public class TsvRecordStream extends AbstractRecordStream
 			}			
 		}
 		
+		/** create a DataFrame, loading the entire table in memory */
 		public DataFrame asDataFrame() throws StreamException
 		{
 			return DefaultDataFrame.createFromRecordStream(get());
