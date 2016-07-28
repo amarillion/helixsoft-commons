@@ -1,5 +1,6 @@
 package nl.helixsoft.stats;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -141,12 +142,12 @@ public class TestDataFrame extends TestCase
 					{ "2015", "Fall", "Project2", 9 },
 			});
 	
-	public void testWide() throws StreamException
+	public void testWide() throws StreamException, FileNotFoundException
 	{
 		//TODO
 		
 		DataFrame result = DataFrameOperation.wideFormat(dfLong).withColumnFactor("year", "quarter").withRowFactor("project").withValue("days").get();
-		TabularIO.write(result, System.out);
+		TabularIO.write(result).to(System.out).go();
 	}
 
 	public void testCollapse() throws StreamException
@@ -196,7 +197,7 @@ public class TestDataFrame extends TestCase
 	{
 		DataFrame result, expect;
 		
-		result = DataFrameOperation.merge(dfLeft, dfRight, "id", "id", JoinType.FULL).sort("id");
+		result = DataFrameOperation.merge(dfLeft, dfRight).onColumn("id").fullJoin().get().sort("id");
 		expect = DataFrameOperation.fromArray(
 				new String[] { "id", "letter", "roman" },
 				new Object[][] {
@@ -207,7 +208,7 @@ public class TestDataFrame extends TestCase
 			});
 		assertSame (expect, result);
 		
-		result = DataFrameOperation.merge(dfLeft, dfRight, "id", "id", JoinType.LEFT).sort("id");
+		result = DataFrameOperation.merge(dfLeft, dfRight).onColumn("id").leftJoin().get().sort("id");
 		expect = DataFrameOperation.fromArray(
 				new String[] { "id", "letter", "roman" },
 				new Object[][] {
@@ -218,7 +219,7 @@ public class TestDataFrame extends TestCase
 		assertSame (expect, result);
 
 		
-		result = DataFrameOperation.merge(dfLeft, dfRight, "id", "id", JoinType.RIGHT).sort("id");
+		result = DataFrameOperation.merge(dfLeft, dfRight).onColumn("id").rightJoin().get().sort("id");
 		expect = DataFrameOperation.fromArray(
 				new String[] { "id", "letter", "roman" },
 				new Object[][] {
@@ -229,7 +230,7 @@ public class TestDataFrame extends TestCase
 		assertSame (expect, result);
 
 		
-		result = DataFrameOperation.merge(dfLeft, dfRight, "id", "id", JoinType.INNER).sort("id");
+		result = DataFrameOperation.merge(dfLeft, dfRight).onColumn("id").innerJoin().get().sort("id");
 		expect = DataFrameOperation.fromArray(
 				new String[] { "id", "letter", "roman" },
 				new Object[][] {
