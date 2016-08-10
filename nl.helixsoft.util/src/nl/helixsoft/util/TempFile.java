@@ -25,7 +25,7 @@ public class TempFile
 		this.out = out;
 	}
 
-	/** use getzStream. Added z clarifies that gzip stream will be used if possible.*/
+	/** use {@link #getZStream} or {@link #getNStream}. Added z clarifies that gzip stream will be used if possible.*/
 	@Deprecated
 	public OutputStream getStream() throws IOException
 	{
@@ -95,7 +95,13 @@ public class TempFile
 		
 		decoratedStream.close();
 
-		if (!temp.renameTo(out)) throw new IOException ("Failure when attempting to rename " + temp + " to " + out);
+		if (!temp.renameTo(out))
+		{
+			String reason = "Unknown failure";
+			if (!temp.exists()) reason = "File doesn't exist anymore";
+			if (out.exists()) reason = "Target already exists";
+			throw new IOException ("Failure when attempting to rename " + temp + " to " + out + ". " + reason);
+		}
 	}
 	
 }
