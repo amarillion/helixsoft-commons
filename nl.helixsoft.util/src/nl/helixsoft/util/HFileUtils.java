@@ -395,19 +395,28 @@ public abstract class HFileUtils
 		
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(targetFile));
 		
-		// Compress the files
-		for (Map.Entry<File, String> e : files.entrySet())
+		try
 		{
-			InputStream ins = HFileUtils.openZipStream(e.getKey());
-		
-			// Add ZIP entry to output stream.
-			out.putNextEntry(new ZipEntry(e.getValue()));
-		
-			IOUtils.copy (ins, out);
-		
-			// Complete the entry
-			out.closeEntry();
-			ins.close();
+			// Compress the files
+			for (Map.Entry<File, String> e : files.entrySet())
+			{
+				InputStream ins = HFileUtils.openZipStream(e.getKey());
+			
+				// Add ZIP entry to output stream.
+				out.putNextEntry(new ZipEntry(e.getValue()));
+			
+				IOUtils.copy (ins, out);
+			
+				// Complete the entry
+				out.closeEntry();
+				ins.close();
+			}
+		}
+		catch (Exception e)
+		{	
+			// delete partial file upon exception
+			targetFile.delete();
+			throw e;
 		}
 		
 		// Complete the ZIP file
