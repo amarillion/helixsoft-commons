@@ -7,10 +7,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * I implemented this utility method because the SPARQL GROUP BY implementation of virtuoso sucks.
+ * Transforms a {@link RecordStream} into another RecordStream by applying an aggregate functions to records that group together.
+ * <p>
+ * Usage examples:
+ * <ul>
+ * <li>Calculate the sum, maximum, or average for each group
+ * <li>Flatten a gene annotation map (for example GO annotation). If you start with a gene + GO table, which each row containing only one GO identifier, and a single gene occurring in multiple rows, you can transform this 
+ * into a table where each gene is in only one row, and the GO annotations are concatenated with a delimiter.
+ * </ul>
+ * <p>
+ * A Reducer has the following parameters:
+ * <ul>
+ * <li>A parent RecordStream, which will be the input before transformation
+ * <li>A grouping column. Two consecutive records are grouped together if they have the same value in the grouping column
+ * <li>An accumulator, which is a map of (column, {@link GroupFunc}) pairs. The GroupFunc is applied to each value of that column in the group, and accumulates the result. Grouping functions can do things like: calculate the min, max, sum or average. 
+ * Concatenate values with a separator. Or just return the first item.    
+ * </ul>
+ * 
+ * <p>
+ * I started writing this utility class to work around limitations of the SPARQL GROUP BY implementation of Virtuoso 6.
  * (AVG and SUM cast double to int, CONCAT just takes the first value or complains about maximum row length in temp table, etc...)
- * Instead, just do the query without a group clause, but with output sorted on the grouping variable.
- * Then pass the result to this function to aggregate the results by group.
  */
 public class Reducer extends AbstractRecordStream
 {
@@ -21,6 +37,13 @@ public class Reducer extends AbstractRecordStream
 	private int idxGroupVar;
 	private final RecordMetaData rmd;
 	
+	/**
+	 * 
+	 * @param parent The recordstream that we want to reduce
+	 * @param groupVar
+	 * @param accumulator
+	 * @throws StreamException
+	 */
 	public Reducer (RecordStream parent, String groupVar, Map<String, GroupFunc> accumulator) throws StreamException
 	{
 		this.parent = parent;
@@ -88,11 +111,11 @@ public class Reducer extends AbstractRecordStream
 			}
 			
 			// has groupVar changed?
-			if (!(row.getValue(idxGroupVar).toString().equals(prevValue.toString())))
+			if (!(row.get(idxGroupVar).toString().equals(prevValue.toString())))
 			{
 				Record result = writeAccumulator();
 				// start with a fresh accumulator
-				prevValue = row.getValue(idxGroupVar);
+				prevValue = row.get(idxGroupVar);
 				resetAccumulator();
 				return result;
 			}
@@ -129,6 +152,7 @@ public class Reducer extends AbstractRecordStream
 
 	}
 	
+	/** Count the items in the group */
 	public static class Count implements GroupFunc
 	{
 		private int count = 0;
@@ -137,6 +161,7 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { count = 0; }
 	}
 
+	/** Calculate the log(average) of floating point values. */
 	public static class LogAverageFloat extends AbstractGroupFunc
 	{
 		public LogAverageFloat(String col) { super(col); }
@@ -151,14 +176,19 @@ public class Reducer extends AbstractRecordStream
 	}
 
 	//TODO: replace with "Reduce". // requires splitting Accumulator...
-	
+	/** Function to a apply to a group of values from a RecordStream. {@link #accumulate} is invoked with each element of the group in turn. The class should hold a running tally of the elements seen. After the last
+	 * element, {@link #getResult} is called followed by {@link #clear} to prepare for the next group. Implementations are used in {@link Reducer}, there are several canned implementations available. */
 	public interface GroupFunc
 	{
+		/** Accumulate another value */
 		public void accumulate(Record val);
+		/** Get the result so far */
 		public Object getResult();
+		/** Reset the grouping function to the starting state, to prepare it for the next group. */
 		public void clear();
 	}
 
+	/** Calculate the average of a group of Float values */
 	public static class AverageFloat extends AbstractGroupFunc
 	{
 		public AverageFloat(String col) { super(col); }
@@ -169,6 +199,7 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { count = 0; sum = 0; }
 	}
 
+	/** Calculate the sum of a group of Float values */
 	public static class SumFloat extends AbstractGroupFunc
 	{
 		public SumFloat(String col) { super(col); }
@@ -178,6 +209,7 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { sum = 0; }
 	}
 
+	/** Concatenate a group of String values with a separator between them. */
 	public static class Concatenate extends AbstractGroupFunc
 	{
 		private final String sep;
@@ -189,6 +221,7 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { first = true; builder = new StringBuilder(); }
 	}
 	
+	/** put the group of objects in a {@link List} */
 	public static class AsList extends AbstractGroupFunc
 	{
 		public AsList(String col) { super(col); }
@@ -198,6 +231,7 @@ public class Reducer extends AbstractRecordStream
 		public void clear() { list = new ArrayList<Object>(); }
 	}
 
+	/** put the group of objects in a {@link Set} */
 	public static class AsSet extends AbstractGroupFunc
 	{
 		private Set<Object> set;		
