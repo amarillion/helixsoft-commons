@@ -12,11 +12,11 @@ import java.net.URLConnection;
 
 import javax.swing.ProgressMonitorInputStream;
 
-import nl.helixsoft.util.FileUtils;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+
+import nl.helixsoft.util.HFileUtils;
 
 public class DownloadUtils 
 {
@@ -51,7 +51,7 @@ public class DownloadUtils
 		FTPClient client = new FTPClient();
 	    client.connect(url.getHost());
 	    
-        String password = System.getProperty("user.name")+ "@" + FileUtils.safeMachineName("unknown");
+        String password = System.getProperty("user.name")+ "@" + HFileUtils.safeMachineName("unknown");
         client.login("anonymous", password);
 
 	    int reply = client.getReplyCode();
@@ -101,7 +101,6 @@ public class DownloadUtils
 	/**
 	 * Download from URLconnection to an output stream.
 	 * Show progress dialog.
-	 * @param conn
 	 * @param out
 	 * @throws IOException
 	 */

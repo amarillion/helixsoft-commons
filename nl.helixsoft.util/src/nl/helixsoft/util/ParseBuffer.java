@@ -3,7 +3,12 @@ package nl.helixsoft.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-/** A ring input stream buffer */
+/** 
+ * A ring {@link InputStream} buffer with a peek() method to see ahead one character. 
+ * <p>
+ * This is a fully functional InputStream, but the peek() method doesn't work with encodings, it just returns 1 byte
+ * This makes this class rather less useful for dealing with text - use {@link PeekReader} instead.  
+ * */
 public class ParseBuffer extends InputStream
 {
 	static final int BUFFER_SIZE = 0x10000;
@@ -50,6 +55,9 @@ public class ParseBuffer extends InputStream
 		return result;
 	}
 
+	/**
+	 * @return the next byte as a positive value (between 0 and 255) or -1 on end-of-stream 
+	 */
 	public int peek() throws IOException 
 	{
 		if (pos == fill)
@@ -59,9 +67,10 @@ public class ParseBuffer extends InputStream
 			if (pos == fill && eof) return -1;
 		}
 		int result = buf[pos];
-		// check for characters above 127
-		if (result < 0) throw new IllegalStateException ("ParseBuffer does not yet support anything non-ascii!");
-		//TODO: solve with http://docs.oracle.com/javase/6/docs/api/java/nio/charset/CharsetEncoder.html
+		
+		// make sure that bytes stay above 0
+		if (result < 0) result += 256;
+		
 		return result;
 	}
 	
