@@ -116,7 +116,7 @@ public class ResultSetRecordStream extends AbstractRecordStream
 			{
 				if (wrappedConnection != null)
 					try {
-						log.info ("Returning connection to the pool");
+						log.debug ("Returning connection to the pool");
 						wrappedConnection.close();
 					} catch (SQLException e) { log.debug ("Exception during close", e); }
 			}
