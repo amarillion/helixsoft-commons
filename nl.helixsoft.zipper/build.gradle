@@ -21,11 +21,4 @@ jar {
 	// fatjar - include deps.	
 	from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 
-	manifest {
-
-		attributes 'Build-Date': builddate,
-			'Main-Class': 'nl.helixsoft.zipper.Main',
-			'Git-Hash': githash
-
-  	}
 }
