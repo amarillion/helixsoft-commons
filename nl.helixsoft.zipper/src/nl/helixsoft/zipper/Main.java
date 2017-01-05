@@ -5,18 +5,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
 import nl.helixsoft.util.HFileUtils;
 
@@ -35,6 +40,7 @@ class Main
 	public static class Config
 	{	
 		public String suffix;
+		public String section;
 		public List<Mapping> mappings = new ArrayList<Mapping>();
 		
 		// not parsed but managed during processing		
@@ -57,7 +63,6 @@ class Main
 		try
 		{
 			
-			String currentSection = null;
 			Config currentConfig = null;
 			
 			Project result = new Project();
@@ -79,8 +84,8 @@ class Main
 				Matcher m1 = patSection.matcher(line); 
 				if (m1.matches())
 				{
-					currentSection = m1.group(1);
 					currentConfig = new Config();
+					currentConfig.section = m1.group(1);
 					result.configurations.add(currentConfig);
 					continue;
 				}
@@ -104,7 +109,7 @@ class Main
 					}
 					else if ("suffix".equals(key))
 					{
-						if (currentSection == null)
+						if (currentConfig == null)
 						{
 							throw new IllegalStateException("suffix must not be in main section: " + lineno);
 						}
@@ -119,7 +124,7 @@ class Main
 					continue;
 				}
 				
-				if (currentSection == null)
+				if (currentConfig == null)
 				{
 					throw new IllegalStateException("Found pattern in main section in line " + lineno);
 				}
@@ -149,27 +154,110 @@ class Main
 		
 	}
 	
+	/** Command-line options */
+	public static class Options
+	{
+		@Option(name="-c", usage="Configuration file")
+		File configFile = new File ("zipper.conf");
+
+		@Option(name="--help", aliases="-h", usage="Show usage")
+		boolean help = false;
+
+		@Option(name="--version", aliases="-v", usage="Print version and quit")
+		boolean version = false;
+
+		@Option(name="--format", aliases="-f", usage="which formats to produce. Valid values: tgz, zip or both. Default: both")
+		String format = "both";
+
+		@Argument(usage="run selected sections only")
+		List<String> sections;
+	}
+	Options opts = new Options();
+
+	boolean formatTgz = true;
+	boolean formatZip = true;
+	
+	private void checkFormat(String fmt) throws CmdLineException
+	{
+		if ("both".equals(fmt))
+		{
+			formatTgz = true;
+			formatZip = true;
+		}
+		else if ("tgz".equals(fmt))
+		{
+			formatTgz = true;
+			formatZip = false;
+		}
+		else if ("zip".equals(fmt))
+		{
+			formatTgz = false;
+			formatZip = true;
+		}
+		else
+		{
+			throw new CmdLineException("Unknown format selected: " + fmt + " must be one of 'tgz', 'zip' or 'both'");
+		}
+	}
+	
 	public void run(String[] args) throws IOException
 	{		
+	    CmdLineParser parser = new CmdLineParser(opts);
+	    
+	    try
+	    {
+	    	parser.parseArgument(args);
+	    	if (opts.help) throw new CmdLineException (parser, "Help requested");
+	    	if (opts.version) {
+	    	
+	    		InputStream is = this.getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
+	    		if (is != null)
+	    		{
+	    			Manifest manifest = new Manifest (is);
+	    			System.out.println("buildDate: " + manifest.getMainAttributes().getValue("Build-Date"));
+	    			System.out.println("gitHash: " +  manifest.getMainAttributes().getValue("Git-Hash"));
+	    		}
+	    		return;
+	    	}
+	    	
+	    	checkFormat(opts.format);
+	    	
+	    	if (!opts.configFile.exists()) throw new CmdLineException("Could not find configuration file " + opts.configFile);
+	    }
+	    catch (CmdLineException ex)
+	    {
+	        System.err.println(ex.getMessage());
+	        
+	        parser.printUsage(System.err);
+	        return;
+	    }
+	
 		File inFile = new File ("zipper.conf");
 		// step 1: read configuration file.
 		
 		Project project = parseConfig(inFile);
-				
 		doProject(project);
 	}
 
+	private boolean isValidSection(Config config)
+	{
+		return (opts.sections == null || opts.sections.contains(config.section));
+	}
+	
 	private void doProject(Project project) throws IOException
 	{
 		for (Config config : project.configurations)
 		{
-			processConfig(project, config);
+			if (isValidSection(config)) processConfig(project, config);
 		}
 		
 		for (Config config : project.configurations)
 		{
-			doConfigZip(project, config);
-			doConfigTgz(project, config);
+			if (isValidSection(config)) 
+			{
+				if (formatZip) doConfigZip(project, config);
+				if (formatTgz) doConfigTgz(project, config);
+			}
 		}
 	}
 	
@@ -205,12 +293,13 @@ class Main
 	{		
 		ensureParentDirExists(config._destZip);
 		
+		System.out.println("Writing " + config._destZip);
 		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(config._destZip));		
 		for (Mapping pat : config.mappings)
 		{
 			for (File f : pat._files)
 			{				
-				System.out.println ("Adding " + f.getName() + " as " + pat.dest + "/" + f.getName());
+//				System.out.println ("Adding " + f.getName() + " as " + pat.dest + "/" + f.getName());
 				ZipEntry ze = new ZipEntry(pat.dest + "/" + f.getName());
 				zos.putNextEntry(ze);
 				FileInputStream fis = new FileInputStream(f);
@@ -238,11 +327,12 @@ class Main
 		FileOutputStream fos = new FileOutputStream(config._destTgz);
 		TarArchiveOutputStream zos = new TarArchiveOutputStream(new GZIPOutputStream (fos));
 		
+		System.out.println("Writing " + config._destTgz);
 		for (Mapping pat : config.mappings)
 		{
 			for (File f : pat._files)
 			{	
-				System.out.println ("Adding " + f.getName() + " as " + pat.dest + "/" + f.getName());
+//				System.out.println ("Adding " + f.getName() + " as " + pat.dest + "/" + f.getName());
 				TarArchiveEntry ze = new TarArchiveEntry(f, pat.dest + "/" + f.getName());
 				if (f.canExecute())
 				{
