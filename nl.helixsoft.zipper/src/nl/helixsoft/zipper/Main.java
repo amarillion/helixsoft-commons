@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +26,24 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import nl.helixsoft.util.HFileUtils;
+import nl.helixsoft.util.HStringUtils;
 
 
 class Main 
 {
+	static final String HELP = 
+			  "Zipper is a tool that creates zip / tar.gz bundles "
+			+ "according to instructions\nfrom an ini-style configuration file.\n"
+			+ "\n"
+			+ "Zipper lets you:\n"
+			+ "* define the name of the top-level zip entry\n"
+			+ "* select files to include using glob patterns\n"
+			+ "* create multiple bundles from a single config file\n"
+			+ "* put zip entries in a different relative location\n"
+			+ "* generate precisely the same tar.gz and zip bundles\n"
+			+ "* use macro variables using C-style #include and #define\n"
+			+ "\n";
+					  
 	public static class Mapping
 	{
 		public String srcGlob;
@@ -56,19 +72,54 @@ class Main
 		public List<Config> configurations = new ArrayList<Config>();
 	}
 	
+	private void readInclude(File inFile, Map<String, String> props) throws IOException
+	{
+		BufferedReader reader = new BufferedReader (new FileReader(inFile));
+		String raw;
+		while ((raw = reader.readLine()) != null)
+		{
+			Pattern patDefine = Pattern.compile("^#define\\s+(\\w+)\\s+(.*)");
+			
+			String line = raw.trim();
+			if ("".equals(line)) continue;
+			
+			Matcher m0 = patDefine.matcher(line); 
+			if (m0.matches()) 
+			{
+				String key = m0.group(1);
+				String value = HStringUtils.removeOptionalQuotes(m0.group(2));
+				props.put(key, value);
+			}
+		}
+		
+		reader.close();
+	}
+	
+	private String substProps(String in, Map<String, String> props)
+	{
+		String result = in;
+		for (Map.Entry<String, String> entry : props.entrySet())
+		{
+			String var = "${" + entry.getKey() + "}";
+			result = Pattern.compile(var, Pattern.LITERAL).matcher(result).replaceAll(entry.getValue());
+		}
+		return result;
+	}
+	
 	private Project parseConfig(File inFile) throws IOException
 	{
 		BufferedReader reader = new BufferedReader (new FileReader(inFile));
 		
 		try
 		{
-			
 			Config currentConfig = null;
 			
+			Map<String, String> props = new HashMap<String, String>();
 			Project result = new Project();
 			
 			Pattern patSection = Pattern.compile("\\[(.*)\\]");
 			Pattern patProperty = Pattern.compile("(.*\\S)\\s*=\\s*(.*)");
+			Pattern patInclude = Pattern.compile("^#include\\s+'(.*)'");
 			Pattern patComment = Pattern.compile("^#.*");
 			Pattern patMapping = Pattern.compile("(.*\\S)\\s*->\\s*(.*)");
 			
@@ -79,6 +130,14 @@ class Main
 				lineno++;
 				String line = raw.trim();
 				if ("".equals(line)) continue;
+				
+				Matcher m0 = patInclude.matcher(line); 
+				if (m0.matches())
+				{
+					readInclude(new File(inFile.getParentFile(), m0.group(1)), props);
+					continue;
+				}
+				
 				if (patComment.matcher(line).matches()) continue;
 				
 				Matcher m1 = patSection.matcher(line); 
@@ -94,7 +153,8 @@ class Main
 				if (m2.matches())
 				{
 					String key = m2.group(1);
-					String value = m2.group(2);
+					String value = substProps(m2.group(2), props);
+					
 					if ("version".equals(key))
 					{
 						result.version = value;
@@ -228,7 +288,8 @@ class Main
 	    {
 	        System.err.println(ex.getMessage());
 	        
-	        parser.printUsage(System.err);
+	        System.out.println(HELP);
+	        parser.printUsage(System.out);
 	        return;
 	    }
 	
