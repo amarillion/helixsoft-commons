@@ -241,7 +241,7 @@ public abstract class HFileUtils
 		}
 		else if (remain.equals (".."))
 		{
-			result.add (base.getAbsoluteFile().getParentFile());
+			result.add (new File(base, ".."));
 		}
 		else if (remain.contains("*") || remain.contains ("?"))
 		{			
