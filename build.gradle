@@ -1,9 +1,6 @@
 def localRepo = 'file://' + new File(System.getProperty('user.home'), 'prg/bundle-repository').absolutePath
 def relativeRepo = 'file://' + new File('../bundle-repository').absolutePath
 
-group = 'nl.helixsoft'
-version = '1.0.1'
-
 def githash = "git log -1 --format='%H'".execute().in.readLines()[0];
 def builddate = new Date().format("yyyyMMdd")
 
@@ -14,7 +11,7 @@ allprojects {
     apply plugin: 'eclipse'
 
     group = 'nl.helixsoft'
-    version = '1.0.1'
+    version = '2.0'
 }
 
 
